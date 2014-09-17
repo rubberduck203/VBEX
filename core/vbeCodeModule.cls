@@ -34,7 +34,7 @@ End Sub
 
 Public Sub Initialize(codeMod As CodeModule)
     Set mCodeModule = codeMod
-    Set mVbeProcedures = getProcedures(mCodeModule)
+    Set mVbeProcedures = GetProcedures(mCodeModule)
 End Sub
 
 Private Sub Class_Terminate()
@@ -42,7 +42,7 @@ Private Sub Class_Terminate()
     Set mCodeModule = Nothing
 End Sub
 
-Private Function getProcedures(codeMod As CodeModule) As vbeProcedures
+Private Function GetProcedures(codeMod As CodeModule) As vbeProcedures
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' Returns collection of all vbeProcedures in a CodeModule            '
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -55,19 +55,18 @@ Private Function getProcedures(codeMod As CodeModule) As vbeProcedures
     ' Skip past any Option statement
     '   and any module-level variable declations.
 
-    For i = codeMod.CountOfDeclarationLines + 1 To codeMod.CountOfLines
-        ' get procedure name
-        procName = codeMod.ProcOfLine(i, vbext_pk_Proc)
-        If Not procName = lastProcName Then
-            ' create new procedure object
-            Set proc = New vbeProcedure
-            proc.Initialize procName, codeMod
-            ' add it to collection
-            procs.Add proc
-            ' reset lastProcName
-            lastProcName = procName
-        End If
-    Next i
-    Set getProcedures = procs
+    Dim lineNumber As Long
+    lineNumber = codeMod.CountOfDeclarationLines + 1
+    While (lineNumber < codeMod.CountOfLines)
+        procName = codeMod.ProcOfLine(lineNumber, vbext_pk_Proc)
+        Set proc = New vbeProcedure
+        proc.Initialize procName, codeMod
+    
+        procs.Add proc
+    
+        lineNumber = proc.EndLine + 1
+    
+    Wend
+    Set GetProcedures = procs
     
 End Function
