@@ -19,7 +19,6 @@ Private Const NotInitializedErrorMessage As String = "Collection Property Not Se
 Private Const InvalidArgumentErrorMessage As String = "Invalid Argument."
 
 Private mCollection As Collection
-Private mIsSorted As Boolean
 
 Public Property Set Collection(obj As Variant)
 
@@ -60,10 +59,6 @@ End Function
 
 Public Property Get Collection() As Collection
     Set Collection = mCollection
-End Property
-
-Public Property Get IsSorted() As Boolean
-    IsSorted = mIsSorted
 End Property
 
 'Constructor
@@ -168,22 +163,18 @@ End Function
 Public Function Min() As Variant
 On Error GoTo ErrHandler
 
-    If mIsSorted Then
-        Min = First
-    Else
-        Dim item As Variant
-        Dim result As Variant
-        
-        For Each item In mCollection
-            If IsEmpty(result) Then
-                result = item
-            ElseIf item < result Then
-                result = item
-            End If
-        Next item
-        
-        Min = result
-    End If
+    Dim item As Variant
+    Dim result As Variant
+    
+    For Each item In mCollection
+        If IsEmpty(result) Then
+            result = item
+        ElseIf item < result Then
+            result = item
+        End If
+    Next item
+    
+    Min = result
 
 ExitFunction:
     Exit Function
@@ -194,22 +185,18 @@ End Function
 Public Function Max() As Variant
 On Error GoTo ErrHandler
     
-    If mIsSorted Then
-        Max = Last
-    Else
-        Dim item As Variant
-        Dim result As Variant
-        
-        For Each item In mCollection
-            If IsEmpty(result) Then
-                result = item
-            ElseIf item > result Then
-                result = item
-            End If
-        Next item
-        
-        Max = result
-    End If
+    Dim item As Variant
+    Dim result As Variant
+    
+    For Each item In mCollection
+        If IsEmpty(result) Then
+            result = item
+        ElseIf item > result Then
+            result = item
+        End If
+    Next item
+    
+    Max = result
     
 ExitFunction:
     Exit Function
@@ -306,16 +293,34 @@ On Error GoTo ErrHandler
         If Not hasSwapped Then Exit For
     Next i
     
-    mIsSorted = True
-    
 ExitFunction:
     Exit Sub
     
 ErrHandler:
-    mIsSorted = False
     HandleComparisonError Err
     
 End Sub
+
+Public Function IsSorted() As Boolean
+
+    Dim item As Variant
+    Dim previous As Variant
+
+    For Each item In mCollection
+        If item < previous Then
+            IsSorted = False
+            Exit Function
+        End If
+
+        If IsObject(item) Then
+            Set previous = item
+        Else
+            previous = item
+        End If
+    Next item
+
+    IsSorted = True
+End Function
 
 Private Sub AssignUnknown(ByRef destination As Variant, ByRef source As Variant)
     If IsObject(source) Then
