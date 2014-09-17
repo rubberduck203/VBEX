@@ -1,7 +1,13 @@
 Attribute VB_Name = "os"
+'
 ' os
 ' ==
+'
 ' Advanced filesystem operations for VBA.
+'
+' Copyright (c) 2014 Philip Wales
+' This file (os.bas) is distributed under the MIT license.
+' Obtain a copy of the license here: http://opensource.org/licenses/MIT
 '
 ' Scripting.FileSystemObject is slow and unstable since it relies on sending
 ' signals to ActiveX objects across the system.  This module only uses built-in
@@ -13,8 +19,6 @@ Attribute VB_Name = "os"
 ' Most code is based as closely on Python's "os" module (hence the name) and
 ' sub modules as possible despite language differences.
 '
-' Currently, filesystem manipulation functions return `false` if they failed instead
-' of raising an error as they should.
 '
 ' Sources referenced:
 ' http://hg.python.org/cpython/file/7ff62415e426/Lib/os.py
@@ -22,8 +26,10 @@ Attribute VB_Name = "os"
 ' http://hg.python.org/cpython/file/7ff62415e426/Lib/shutil.py
 '
 Option Explicit
+'
 ' Constants
-' ------
+' ---------
+'
 Public Const EXTSEP As String = "."
 Public Const PARDIR As String = ".."
 Public Const CURDIR As String = "."
@@ -33,8 +39,8 @@ Public Const PATHSEP As String = ";" ' not used...
 Private Const ALLPAT As String = "*"
 
 Public Enum osErrNums
-    overwriteRefusal
-    unknown
+    overwriteRefusal '= ?
+    unknown ' = ?
 End Enum
 Private Enum vbErrNums
     badFileName = 52
