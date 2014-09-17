@@ -32,6 +32,18 @@ Public Const PATHSEP As String = ";" ' not used...
 
 Private Const ALLPAT As String = "*"
 
+Public Enum osErrNums
+    overwriteRefusal
+    unknown
+End Enum
+Private Enum vbErrNums
+    badFileName = 52
+    pathNotFound = 53
+    alreadyExists = 58
+    accessError = 75
+    pathNotFound = 76
+End Enum
+
 '
 ' Path Manipulations
 ' ------------------
@@ -46,7 +58,7 @@ Private Const ALLPAT As String = "*"
 ' root/name+suffix -> suffix -> name
 ' "root/name.ext" -> ".ext" -> "name"
 ' "root/name.ext" -> "ext" -> "name."  !
-Function BaseName(ByVal file_path As String, Optional suffix As String) As String
+Public Function BaseName(ByVal file_path As String, Optional suffix As String) As String
 
     Dim path_split As Variant
     path_split = Split(file_path, SEP)
@@ -70,7 +82,7 @@ End Function
 ' r/o/o/t/name -> r/o/o/t
 ' r/o/o/t/ -> r/o/o/t
 ' name ->
-Function RootName(ByVal path As String) As String
+Public Function RootName(ByVal path As String) As String
 
     RootName = ParentDir(path, 1)
     
@@ -85,7 +97,7 @@ End Function
 ' E/D/C/B/A/name -> 6 ->
 ' E/D/C/B/A/name -> 7 ->
 ' ...
-Function ParentDir(ByVal path As String, _
+Public Function ParentDir(ByVal path As String, _
                    ByVal parent_height As Integer) As String
     
     Dim split_path As Variant
@@ -108,7 +120,7 @@ End Function
 ' path.ext -> .ext
 ' path ->
 ' path.bad.ext -> .ext
-Function Ext(ByVal file_path As String) As String
+Public Function Ext(ByVal file_path As String) As String
 
     Dim base_name As String
     base_name = BaseName(file_path)
@@ -128,7 +140,7 @@ End Function
 ' path/ -> path
 ' path -> path
 ' /path -> /path
-Private Function RTrimSep(ByVal path As String) As String
+Public Private Function RTrimSep(ByVal path As String) As String
 
     If right$(path, 1) = SEP Then
         ' ends with SEP return all but end
@@ -145,16 +157,16 @@ End Function
 ' root/ -> base -> root/base
 ' root -> base -> root/base
 ' root -> /base -> root//base ! BAD BAD BAD
-Function pJoin(ByVal root_path As String, ByVal file_path As String) As String
+Public Function pJoin(ByVal root_path As String, ByVal file_path As String) As String
 
-        pJoin = RTrimSep(root_path) & SEP & file_path
-         
+    pJoin = RTrimSep(root_path) & SEP & file_path
+    
 End Function
 ''
 ' Inserts `to_append` in behind of the base name of string `file_path` but in
 ' front of the extension
 ' root/name.ext -> appended -> root/nameappended.ext
-Function Append(ByVal file_path As String, ByVal to_append As String) As String
+Public Function Append(ByVal file_path As String, ByVal to_append As String) As String
 
     Dim file_ext As String
     file_ext = Ext(file_path)
@@ -167,7 +179,7 @@ End Function
 ''
 ' Inserts `to_prepend` in front of the base name of string `file_path`
 ' root/name.ext -> prepended -> root/prependedname.ext
-Function Prepend(ByVal file_path As String, ByVal to_prepend As String) As String
+Public Function Prepend(ByVal file_path As String, ByVal to_prepend As String) As String
     
     Prepend = pJoin(RootName(file_path), to_prepend & BaseName(file_path))
 
@@ -178,7 +190,7 @@ End Function
 ' path.old -> .new -> path.new
 ' path -> new -> path.new
 ' path.bad.old -> new -> path.bad.new
-Function ChangeExt(ByVal file_path As String, ByVal new_ext As String) As String
+Public Function ChangeExt(ByVal file_path As String, ByVal new_ext As String) As String
     
     Dim current_ext As String
     current_ext = Ext(file_path)
@@ -193,17 +205,15 @@ Function ChangeExt(ByVal file_path As String, ByVal new_ext As String) As String
     
 End Function
 '
-'  FileSystem Operations
-'  ---------------------
-'
-' ### Introspect FileSystem
+' Introspect FileSystem
+' ---------------------
 ''
 ' returns whether file or folder exists or not.
 ' Use `vbType` argument to filter/include files.
 ' See <http://msdn.microsoft.com/en-us/library/dk008ty4(v=vs.90).aspx>
 ' for more types
-Function Exists(ByVal file_path As String, _
-                Optional vbType As Integer = vbDirectory) As Boolean
+Public Function Exists(ByVal file_path As String, _
+        Optional vbType As Integer = vbDirectory) As Boolean
 
     If Not file_path = vbNullString Then
     
@@ -214,7 +224,7 @@ Function Exists(ByVal file_path As String, _
 End Function
 ''
 ' Will not return true if a folder exists of the same name
-Function FileExists(ByVal file_path As String)
+Public Function FileExists(ByVal file_path As String)
 
     FileExists = Exists(file_path, vbNormal)
     
@@ -222,7 +232,7 @@ End Function
 ''
 ' vbDirectory option still includes files.
 ' FML
-Function FolderExists(ByVal folder_path As String)
+Public Function FolderExists(ByVal folder_path As String)
 
     FolderExists = Exists(folder_path, vbDirectory) _
                    And Not Exists(folder_path, vbNormal)
@@ -231,8 +241,8 @@ End Function
 ''
 ' returns a collection of strings that are paths of subitems in root which
 ' match pat.
-Function SubItems(ByVal root As String, Optional pat As String = ALLPAT, _
-                  Optional vbType As Integer = vbDirectory) As Collection
+Public Function SubItems(ByVal root As String, Optional pat As String = ALLPAT, _
+        Optional vbType As Integer = vbDirectory) As Collection
                   
     Set SubItems = New Collection
     
@@ -247,8 +257,8 @@ Function SubItems(ByVal root As String, Optional pat As String = ALLPAT, _
     Wend
     
 End Function
-Function SubFiles(ByVal root As String, _
-                  Optional pat As String = ALLPAT) As Collection
+Public Function SubFiles(ByVal root As String, _
+        Optional pat As String = ALLPAT) As Collection
 
     Set SubFiles = SubItems(root, pat, vbNormal)
     
@@ -258,8 +268,8 @@ End Function
 ' When vbDirectory is passed to dir it still includes files.  Why the would
 ' anyone want that?  Now there is no direct way to actually list subfolders
 ' only get a list of both files and folders and filter out files
-Function SubFolders(ByVal root As String, Optional pat As String = vbNullString, _
-                    Optional skipDots As Boolean = True) As Collection
+Public Function SubFolders(ByVal root As String, Optional pat As String = vbNullString, _
+        Optional skipDots As Boolean = True) As Collection
                     
     Set SubFolders = SubItems(root, pat, vbDirectory)
     
@@ -290,8 +300,8 @@ Function SubFolders(ByVal root As String, Optional pat As String = vbNullString,
 End Function
 ''
 ' recursive search
-Sub sWalk(ByVal root As String, ByRef collec As Collection, _
-          Optional pat As String = "*", Optional vbType As Integer = vbNormal)
+Public Sub sWalk(ByVal root As String, ByRef collec As Collection, _
+        Optional pat As String = "*", Optional vbType As Integer = vbNormal)
       
     Dim file_path As Variant
     For Each file_path In SubItems(root, pat, vbType)
@@ -308,8 +318,8 @@ Sub sWalk(ByVal root As String, ByRef collec As Collection, _
     Next folder_path
     
 End Sub
-Function fWalk(ByVal root As String, Optional pat As String = "*", _
-               Optional vbType As Integer = vbNormal) As Collection
+Public Function fWalk(ByVal root As String, Optional pat As String = "*", _
+                      Optional vbType As Integer = vbNormal) As Collection
 
     Set fWalk = New Collection
     
@@ -317,10 +327,13 @@ Function fWalk(ByVal root As String, Optional pat As String = "*", _
     
 End Function
 '
-' ### File System Modifications
 '
-Sub Move(ByVal src_path As String, ByVal dest_path As String, _
-              Optional create_parent As Boolean = False)
+' File System Modifications
+' -------------------------
+'
+'
+Public Sub Move(ByVal src_path As String, ByVal dest_path As String, _
+        Optional create_parent As Boolean = False)
 
     On Error GoTo ErrHandler
 
@@ -329,108 +342,97 @@ Sub Move(ByVal src_path As String, ByVal dest_path As String, _
     If create_parent Then CreateRootPath dest_path
     
     Name src_path As dest_path
-    If Not Exists(dest_path) Then
-    
-    ' TODO Make a RaiseUnknownError function
-        Debug.Assert False ' Temporary
-        'Err.Raise Unknown Failure
-    
-    EndIf
+    If Not Exists(dest_path) Then Err.Raise -1
+    If Exists(src_path) Then Err.Raise -2
     
 CleanExit:
     Exit Function
   
 ErrHandler:
-'TODO: This bit might become a separate function
     Select Case Err.Number
-    ' Error Handels
+    Case -1
+        Err.Raise osErrNums.unknown, "Move", _
+            "Destination still doesn't exist after errorless `Name As`"
+    Case -2
+        Err.Raise osErrNums.unkown, "Move", _
+            "Source still exists after errorless `Name As`"
+    Case Else
+        Err.Raise Err.Number
     End Select
 
 End Function
-Sub Rename(ByVal path As String, ByVal new_name As String)
-    
-    Debug.Assert BaseName(new_name) = new_name
-    
-    Move path, pJoin(RootName(path), new_name)
-
-End Function
-Sub Remove(ByVal file_path As String)
+Public Sub Remove(ByVal file_path As String)
     
 
     On Error GoTo ErrHandler
     
     Kill file_path
     
-    If Exists(dest_path) Then
-        
-        Debug.Assert False ' Temporary
-        'Err.Raise Unknown Failure
-    
-    EndIf
+    If Exists(dest_path) Then Err.Raise -1
     
 CleanExit:
     Exit Function
 
 ErrHandler:
     Select Case Err.Number
-    ' Error Handels
+    Case -1
+        Err.Raise osErrNums.unknown, "Remove", _
+            "Destination still exists after errorless `Kill`"
+    Case Else
+        Err.Raise Err.Number
     End Select
     
 End Function
-Sub MakeDir(ByVal folder_path As String, Optional create_parent As Boolean = False)
+Public Sub MakeDir(ByVal folder_path As String, Optional create_parent As Boolean = False)
                 
     Dim check As Boolean
-    On Error GoTo ErrHandler
+   On Error GoTo ErrHandler
         
     If create_parent Then CreateRootPath folder_path
     MkDir folder_path
     
-    If Not FolderExists(dest_path) Then
-        
-        Debug.Assert False ' Temporary
-        'Err.Raise Unknown Failure
-    
-    EndIf
+    If Not FolderExists(dest_path) Then Err.Raise -1
     
 CleanExit:
     Exit Function
     
 ErrHandler:
     Select Case Err.Number
-    ' Error Handels
+    Case -1
+        Err.Raise osErrNums.unknown, "MakeDir", _
+            "Destination does not exist after errorless `MkDir`"
+    Case Else
+        Err.Raise Err.Number
     End Select
     
 End Function
-Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
-             Optional create_parent As Boolean = False)
+Public Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
+        Optional create_parent As Boolean = False)
     
     On Error GoTo ErrHandler
     
     DestIsFolderFeature dest_path, src_path
     
-    If FileExists(dest_path) Then
-    
-        Debug.Assert False ' Temporary
-        'Err.Raise FileExists
-    
-    EndIf
+    If FileExists(dest_path) Then Err.Raise -1
     
     If create_parent Then CreateRootPath dest_path
     FileCopy src_path, dest_path
     
-    If Not FileExists(dest_path) Then
-        
-        Debug.Assert False ' Temporary
-        'Err.Raise Unknown Failure
-    
-    EndIf
+    If Not FileExists(dest_path) Then Err.Raise -2, "CopyFile"
 
 CleanExit:
-    Exit Function
-    
+   Exit Function
+
 ErrHandler:
     Select Case Err.Number
-    ' Error Handels
+    Case -1
+        Err.Raise osErrNums.overwriteRefusal, "CopyFile", _
+            "Will not overwrite file at destination.  Remove it first if desired."
+    Case -2
+        Err.Raise osErrNums.unknown, "CopyFile", _
+            "Destination does not exist after errorless `FileCopy`"
+    Case Else
+        Err.Raise Err.Number
     End Select
     
 End Function
@@ -447,7 +449,7 @@ Private Sub CreateRootPath(ByVal path As String)
     
 End Function
 Private Sub DestIsFolderFeature(ByRef dest_path As String, _
-                                ByVal src_path As String)
+        ByVal src_path As String)
     
     If right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then 
         ' Destination is a folder.
