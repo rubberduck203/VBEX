@@ -362,6 +362,8 @@ ErrHandler:
     Case -2
         Err.Raise osErrNums.unkown, "Move", _
             "Source still exists after errorless `Name As`"
+    ' Case vbErrors
+    ' Raise better error
     Case Else
         Err.Raise Err.Number
     End Select
@@ -384,6 +386,8 @@ ErrHandler:
     Case -1
         Err.Raise osErrNums.unknown, "Remove", _
             "Destination still exists after errorless `Kill`"
+    ' Case vbErrors
+    ' Raise better error
     Case Else
         Err.Raise Err.Number
     End Select
@@ -407,6 +411,8 @@ ErrHandler:
     Case -1
         Err.Raise osErrNums.unknown, "MakeDir", _
             "Destination does not exist after errorless `MkDir`"
+    ' Case vbErrors
+    ' Raise better error
     Case Else
         Err.Raise Err.Number
     End Select
@@ -437,6 +443,8 @@ ErrHandler:
     Case -2
         Err.Raise osErrNums.unknown, "CopyFile", _
             "Destination does not exist after errorless `FileCopy`"
+    ' Case vbErrors
+    ' Raise better error
     Case Else
         Err.Raise Err.Number
     End Select
