@@ -1,12 +1,3 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "List"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
 '
 ' List Class
 ' ==========
@@ -54,6 +45,9 @@ Private Sub Replace(ByVal index As Long, ByVal element As Variant)
     End If
     
 End Sub
+Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Variant)
+    Err.Raise 13, TypeName(Me) & "." & method, TypeName(scalar) & " is not iterable."
+End Sub
 '
 ''
 ' Constructor
@@ -68,7 +62,6 @@ End Sub
 ''
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
-Attribute NewEnum.VB_UserMemId = -4
     
     Set NewEnum = collec.[_NewEnum]
     
@@ -77,9 +70,9 @@ End Property
 ' Public Methods
 ' --------------
 '
-' General pattern is to have a property or method that applies to one 
+' General pattern is to have a property or method that applies to one
 ' element and then extend that to sequences.
-' 
+'
 ' ### Access and Replace
 '
 ' `Item` allows for access and replacement of an element through indexes.
@@ -89,21 +82,18 @@ End Property
 ''
 ' Default member is Item
 Public Property Let Item(ByVal index As Long, ByVal element As Variant)
-Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
     Replace index, element
     
 End Property
 Public Property Set Item(ByVal index As Long, ByVal element As Variant)
-Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
     Replace index, element
     
 End Property
 Public Property Get Item(ByVal index As Long) As Variant
-Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
     seq.Assign Item, collec.Item(index)
@@ -138,6 +128,8 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     End If
     
     Dim i As Long: i = a
+    
+    On Error GoTo NotSequence
     Dim element As Variant
     For Each element In sequence
         
@@ -147,6 +139,10 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     Next element
     
     Debug.Assert (i - s = b)
+    
+Exit Sub
+NotSequence:
+    RaiseNotSequenceError "Slice", sequence
     
 End Property
 '
@@ -162,12 +158,12 @@ Public Sub Remove(ByVal index As Long)
 End Sub
 ''
 ' Revisions from CR
-Public Sub Clear(ByVal start As Long, ByVal count As Long)
+Public Sub Clear(ByVal start As Long, ByVal Count As Long)
     
     TransformIndex start
     
     Dim i As Long
-    For i = 0 To count
+    For i = 0 To Count
         collec.Remove start
     Next i
 
@@ -186,10 +182,15 @@ End Sub
 ' `myList.Extend rng.Value ' shtbrx`
 Public Sub Extend(ByVal sequence As Variant)
     
+    On Error GoTo NotSequence
     Dim element As Variant
     For Each element In sequence
         collec.Add element
     Next element
+
+Exit Sub
+NotSequence:
+    RaiseNotSequenceError "Extend", sequence
     
 End Sub
 '
@@ -209,6 +210,7 @@ End Sub
 Public Sub Insert(ByVal index As Long, ByVal sequence As Variant)
     
     TransformIndex index
+    On Error GoTo NotSequence
     seq.Reverse sequence ' sequence becomes a stack
     
     Dim element As Variant
@@ -216,6 +218,10 @@ Public Sub Insert(ByVal index As Long, ByVal sequence As Variant)
         ' push back previous element
         collec.Add element, before:=index
     Next element
+
+Exit Sub
+NotSequence:
+    RaiseNotSequenceError "Insert", sequence
     
 End Sub
 '
