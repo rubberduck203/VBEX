@@ -73,6 +73,7 @@ Attribute NewEnum.VB_UserMemId = -4
     Set NewEnum = collec.[_NewEnum]
     
 End Property
+'
 ' Public Methods
 ' --------------
 '
@@ -115,7 +116,7 @@ Public Property Get Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     
     Set Slice = New List
     
-    If s < 1 Then Err.Raise "List.Slice", "Step " & s & " is not a natural number."
+    If s < 1 Then Err.Raise TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
     s = IIF(a < b, s, -s)
     
     Dim i As Long
@@ -129,11 +130,11 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     TransformIndex a
     TransformIndex b
     
-    If s < 1 Then Err.Raise "List.Slice", "Step " & s & " is not a natural number."
+    If s < 1 Then Err.Raise TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
     s = IIF(a < b, s, -s)
     
     If Abs(a - b) + 1 <> seq.Length(sequence) Then
-        Err.Raise 9, "List.Slice", "Subscript out of Range."
+        Err.Raise 9, TypeName(Me) & ".Slice", "Subscript out of Range."
     End If
     
     Dim i As Long: i = a
