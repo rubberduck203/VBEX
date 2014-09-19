@@ -14,7 +14,9 @@ Public Sub ExportSourceFiles(destPath As String)
     
     Dim comp As VBComponent
     For Each comp In Application.VBE.ActiveVBProject.VBComponents
-        comp.Export destPath & comp.Name & ToFileExtension(comp.Type)
+        If Left(comp.Name, 5) <> "Sheet" And comp.Name <> "ThisWorkbook" Then
+            comp.Export destPath & comp.Name & ToFileExtension(comp.Type)
+        End If
     Next
     
 End Sub
