@@ -146,7 +146,7 @@ End Function
 ' path/ -> path
 ' path -> path
 ' /path -> /path
-Public Private Function RTrimSep(ByVal path As String) As String
+Private Function RTrimSep(ByVal path As String) As String
 
     If right$(path, 1) = SEP Then
         ' ends with SEP return all but end
