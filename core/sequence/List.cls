@@ -46,7 +46,7 @@ Private Sub Replace(ByVal index As Long, ByVal element As Variant)
     
 End Sub
 Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Variant)
-    Err.Raise 13, TypeName(Me) & "." & method, TypeName(scalar) & " is not iterable."
+    Err.Raise 13, TypeName(Me) & "." & method, """" & TypeName(scalar) & """ is not an iterable type."
 End Sub
 '
 ''
