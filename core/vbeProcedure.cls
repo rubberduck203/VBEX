@@ -51,8 +51,13 @@ Private Const ObjectNotIntializedMsg = "Object Not Initialized"
 Private Const ReadOnlyPropertyMsg = "Property is Read-Only after initialization"
 
 ' exposed property variables
-Private mParentModule As CodeModule
-Private mName As String
+Private Type TVbeProcedure
+    ParentModule As CodeModule
+    Name As String
+    procKind As vbext_ProcKind
+End Type
+
+Private this As TVbeProcedure
 
 ' truly private property variables
 Private isNameSet As Boolean
@@ -61,7 +66,7 @@ Private isParentModSet As Boolean
 Public Property Get Name() As String
 Attribute Name.VB_UserMemId = 0
     If isNameSet Then
-        Name = mName
+        Name = this.Name
     Else
         RaiseObjectNotIntializedError
     End If
@@ -72,7 +77,7 @@ Public Property Let Name(ByVal vNewValue As String)
         If vNewValue = vbNullString Then
             RaiseInvalidArgError "Name", "The Name property can not be set to an empty string."
         End If
-        mName = vNewValue
+        this.Name = vNewValue
         isNameSet = True
     Else
         RaiseReadOnlyPropertyError
@@ -82,7 +87,7 @@ End Property
 Public Property Get ParentModule() As CodeModule
 Attribute ParentModule.VB_Description = "Gets or Sets the Parent VBIDE.CodeModule"
     If isParentModSet Then
-        Set ParentModule = mParentModule
+        Set ParentModule = this.ParentModule
     Else
         RaiseObjectNotIntializedError
     End If
@@ -91,16 +96,20 @@ End Property
 Public Property Let ParentModule(ByRef vNewValue As CodeModule)
 ' Object assignments should use Set, but that forces Initialize() through the Getter, raising ObjectNotInitialized
     If Not isParentModSet Then
-        Set mParentModule = vNewValue
+        Set this.ParentModule = vNewValue
         isParentModSet = True
     Else
         RaiseReadOnlyPropertyError
     End If
 End Property
 
+Public Property Get procKind() As vbext_ProcKind
+    procKind = this.procKind
+End Property
+
 Public Property Get StartLine() As Long
     ValidateIsInitialized
-    StartLine = Me.ParentModule.ProcStartLine(Me.Name, vbext_pk_Proc)
+    StartLine = Me.ParentModule.ProcStartLine(Me.Name, this.procKind)
 End Property
 
 Public Property Get EndLine() As Long
@@ -110,12 +119,13 @@ End Property
 
 Public Property Get CountOfLines() As Long
     ValidateIsInitialized
-    CountOfLines = Me.ParentModule.ProcCountLines(Me.Name, vbext_pk_Proc)
+    CountOfLines = Me.ParentModule.ProcCountLines(Me.Name, this.procKind)
 End Property
 
-Public Sub Initialize(Name As String, codeMod As CodeModule)
+Public Sub Initialize(Name As String, codeMod As CodeModule, procKind As vbext_ProcKind)
     Me.Name = Name
     Me.ParentModule = codeMod
+    this.procKind = procKind
 End Sub
 
 Public Property Get Lines() As String
@@ -170,7 +180,8 @@ Public Property Get ModuleMemberType() As MemberType
             ElseIf mPropType = "Set" Then
                 ModuleMemberType = mt_PropertySetter
             Else
-                Err.Raise 5
+                Const InvalidProcedureCallOrArguement As Long = 5
+                Err.Raise InvalidProcedureCallOrArguement
             End If
             
         Case "Function"

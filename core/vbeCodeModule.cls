@@ -49,30 +49,67 @@ Private Sub Class_Terminate()
 End Sub
 
 Private Function GetProcedures(codeMod As CodeModule) As vbeProcedures
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Returns collection of all vbeProcedures in a CodeModule            '
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     Dim procName As String
-    Dim lastProcName As String
     Dim procs As New vbeProcedures
     Dim proc As vbeProcedure
+    Dim line As String
+    Dim procKind As vbext_ProcKind
     
-    Dim i As Long
-    ' Skip past any Option statement
-    '   and any module-level variable declations.
-
     Dim lineNumber As Long
-    lineNumber = codeMod.CountOfDeclarationLines + 1
-    While (lineNumber < codeMod.CountOfLines)
-        procName = codeMod.ProcOfLine(lineNumber, vbext_pk_Proc)
-        Set proc = New vbeProcedure
-        proc.Initialize procName, codeMod
-    
-        procs.Add proc
-    
-        lineNumber = proc.EndLine + 1
-    
-    Wend
+    For lineNumber = 1 To codeMod.CountOfLines
+        line = codeMod.Lines(lineNumber, 1)
+        If IsSignature(line) Then
+            procKind = GetProcedureType(line)
+            procName = codeMod.ProcOfLine(lineNumber, procKind)
+            
+            Set proc = New vbeProcedure
+            proc.Initialize procName, codeMod, procKind
+        End If
+    Next lineNumber
+
     Set GetProcedures = procs
+End Function
+
+Private Function GetProcedureType(signatureLine As String) As vbext_ProcKind
+    If InStr(1, signatureLine, "Property Get") > 0 Then
+        GetProcedureType = vbext_pk_Get
+    ElseIf InStr(1, signatureLine, "Property Let") > 0 Then
+        GetProcedureType = vbext_pk_Let
+    ElseIf InStr(1, signatureLine, "Property Set") > 0 Then
+        GetProcedureType = vbext_pk_Set
+    ElseIf InStr(1, signatureLine, "Sub") > 0 Or InStr(1, signatureLine, "Function") > 0 Then
+        GetProcedureType = vbext_pk_Proc
+    Else
+        Const InvalidProcedureCallOrArgument As Long = 5
+        Err.Raise InvalidProcedureCallOrArgument
+    End If
+End Function
+
+Private Function IsSignature(line As String) As Boolean
+    If line = vbNullString Then Exit Function
+    
+    Dim propertyPosition As Long
+    Dim functionPosition As Long
+    Dim subPosition As Long
+    Dim commentPosition As Long
+    
+    propertyPosition = InStr(1, line, "Property")
+    functionPosition = InStr(1, line, "Function")
+    subPosition = InStr(1, line, "Sub")
+    commentPosition = InStr(1, line, "'")
+    
+    If propertyPosition > 0 Or functionPosition > 0 Or subPosition > 0 Then
+        If InStr(1, line, "End") = 0 Then
+            If commentPosition > propertyPosition Then
+                Exit Function
+            ElseIf commentPosition > functionPosition Then
+                Exit Function
+            ElseIf commentPosition > subPosition Then
+                Exit Function
+            Else
+                IsSignature = True
+            End If
+        End If
+    End If
     
 End Function
