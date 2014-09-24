@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "vbeProcedures"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
@@ -16,6 +16,10 @@ Option Explicit
 ' *******************************************************************
 
 Private mCollection As Collection
+
+Public Function Create() As vbeProcedures
+    Set Create = New vbeProcedures
+End Function
 
 Public Sub Clear()
 Attribute Clear.VB_Description = "Clears the collection and removes any procedure in it from memory."
@@ -35,10 +39,10 @@ Public Function Remove(ByVal Index As Variant)
     mCollection.Remove (Index)
 End Function
 
-Public Function Item(ByVal Index As Variant) As vbeProcedure
-Attribute Item.VB_Description = "Gets the procedure at the specified index."
-Attribute Item.VB_UserMemId = 0
-    Set Item = mCollection(Index)
+Public Function item(ByVal Index As Variant) As vbeProcedure
+Attribute item.VB_Description = "Gets the procedure at the specified index."
+Attribute item.VB_UserMemId = 0
+    Set item = mCollection(Index)
 End Function
 
 Public Function Count() As Long

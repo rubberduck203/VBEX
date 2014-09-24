@@ -5,7 +5,7 @@ END
 Attribute VB_Name = "vbeCodeModule"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 ' requires Microsoft Visual Basic for Applications Extensibility 5.3 library
 Option Explicit
@@ -31,6 +31,12 @@ Public Sub Insert(ComponentType As vbext_ComponentType)
     'project.VBComponents.Add ComponentType
 End Sub
 
+Public Function Create(codeMod As CodeModule) As vbeCodeModule
+' allows calls from other projects without breaking the exisiting API
+
+    Set Create = New vbeCodeModule
+    Create.Initialize codeMod
+End Function
 
 Public Sub Initialize(codeMod As CodeModule)
     Set mCodeModule = codeMod
