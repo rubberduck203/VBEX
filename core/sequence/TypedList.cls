@@ -33,8 +33,11 @@ Private pTypedName As String
 '
 ''
 ' TypeCheck:
-Private Sub TypeCheck(ByVal Item As Variant, ByVal source As String)
-    If (TypeName(Item) <> pTypedName) Then RaiseTypeError Item, source
+Private Sub TypeCheck(ByVal element As Variant, ByVal source As String)
+    
+    If pTypedName = vbNullString Then pTypedName = TypeName(element)
+    If (TypeName(element) <> pTypedName) Then RaiseTypeError element, source
+    
 End Function
 ''
 ' TypeCheckSequence:
@@ -71,7 +74,7 @@ End Sub
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
     
-    Set NewEnum = this.[_NewEnum]
+    Set NewEnum = this.NewEnum
     
 End Property
 '
