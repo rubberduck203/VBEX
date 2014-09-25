@@ -1,4 +1,12 @@
-'
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "List"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False'
 ' List Class
 ' ==========
 '
@@ -62,6 +70,7 @@ End Sub
 ''
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
+Attribute NewEnum.VB_UserMemId = -4
     
     Set NewEnum = collec.[_NewEnum]
     
@@ -82,18 +91,21 @@ End Property
 ''
 ' Default member is Item
 Public Property Let Item(ByVal index As Long, ByVal element As Variant)
+Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
     Replace index, element
     
 End Property
 Public Property Set Item(ByVal index As Long, ByVal element As Variant)
+Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
     Replace index, element
     
 End Property
 Public Property Get Item(ByVal index As Long) As Variant
+Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
     seq.Assign Item, collec.Item(index)
@@ -158,12 +170,12 @@ Public Sub Remove(ByVal index As Long)
 End Sub
 ''
 ' Revisions from CR
-Public Sub Clear(ByVal start As Long, ByVal Count As Long)
+Public Sub Clear(ByVal start As Long, ByVal size As Long)
     
     TransformIndex start
     
     Dim i As Long
-    For i = 0 To Count
+    For i = 0 To size
         collec.Remove start
     Next i
 
