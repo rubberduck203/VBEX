@@ -69,31 +69,47 @@ End Property
 ''
 ' TEST!
 ' Should return a 2D list only!
-Public Function Leaves() As TypedList
+Public Function Paths() As TypedList
     
-    Set Leaves = New TypedList
-    Leaves.TypedName = "List"
+    Set Paths = New TypedList
+    Paths.TypedName = "List"
     
     If IsLeaf Then
         ' This branch is a leaf
         Dim leaf As New List
         leaf.Append pData
-        Leaves.Append leaf
+        Paths.Append leaf
         ' return a 2D List
     Else
         
         Dim arm As Variant
         ' concatenate each branches leaves
         For Each arm In pBranches
-            Leaves.Extend arm.Leaves
+            Paths.Extend arm.Paths
         Next arm
         ' emplace our data at the front of each.
-        For Each arm In Leaves ' This should not create recursion.
+        For Each arm In Paths ' This should not create recursion.
             arm.Emplace 1, pData
         Next arm
                 
     End If
     
+End Function
+Public Function Leaves() As List
+    
+    Set Leaves = New List
+    
+    If IsLeaf Then
+        Leaves.Append pData
+    Else
+        
+        Dim arm As Variant
+        For Each arm in pBranches
+            Leaves.Extend arm.Leaves
+        Next arm
+  
+    End If
+
 End Function
 '
 ' ### Replace
@@ -124,10 +140,14 @@ Public Function IsLeaf() As Boolean
     IsLeaf = (pBranches.Count = 0)
 End Function
 Public Function BranchCount() As Long
+
     BranchCount = pBranches.Count
-End Function
-Public Function LeafCount() As Long
-    LeafCOunt = Leaves.Count
+
+    Dim arm As Variant
+    For Each arm in pBranches
+        BranchCount = BranchCount + arm.BranchCount
+    Next arm
+
 End Function
 '
 ' Inherit TypedList
