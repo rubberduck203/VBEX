@@ -49,7 +49,7 @@ End Sub
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
     
-    Set NewEnum = collec.[_NewEnum]
+    Set NewEnum = this.NewEnum
     
 End Property
 '
