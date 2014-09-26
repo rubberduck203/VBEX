@@ -13,7 +13,7 @@ Attribute VB_Name = "os"
 ' signals to ActiveX objects across the system.  This module only uses built-in
 ' functions of Visual Basic, such as `Dir`, `Kill`, `Name`, etc.
 '
-' _os is not object oriented_, it only deals with path-strings or collections of
+' _os is not object oriented_, it only deals with path-strings or Lists of
 ' path-strings.
 '
 ' Most code is based as closely on Python's "os" module (hence the name) and
@@ -44,7 +44,7 @@ Public Enum osErrNums
 End Enum
 Private Enum vbErrNums
     badFileName = 52
-    pathNotFound = 53
+    fileNotFound = 53
     alreadyExists = 58
     accessError = 75
     pathNotFound = 76
@@ -245,26 +245,26 @@ Public Function FolderExists(ByVal folder_path As String)
     
 End Function
 ''
-' returns a collection of strings that are paths of subitems in root which
+' returns a List of strings that are paths of subitems in root which
 ' match pat.
 Public Function SubItems(ByVal root As String, Optional pat As String = ALLPAT, _
-        Optional vbType As Integer = vbDirectory) As Collection
+        Optional vbType As Integer = vbDirectory) As List
                   
-    Set SubItems = New Collection
+    Set SubItems = New List
     
     Dim sub_item As String
     sub_item = Dir$(pJoin(root, pat), vbType)
     
     While sub_item <> vbNullString
     
-        SubItems.Add (pJoin(root, sub_item))
+        SubItems.Append pJoin(root, sub_item)
         sub_item = Dir$()
         
     Wend
     
 End Function
 Public Function SubFiles(ByVal root As String, _
-        Optional pat As String = ALLPAT) As Collection
+        Optional pat As String = ALLPAT) As List
 
     Set SubFiles = SubItems(root, pat, vbNormal)
     
@@ -275,61 +275,65 @@ End Function
 ' anyone want that?  Now there is no direct way to actually list subfolders
 ' only get a list of both files and folders and filter out files
 Public Function SubFolders(ByVal root As String, Optional pat As String = vbNullString, _
-        Optional skipDots As Boolean = True) As Collection
+        Optional skipDots As Boolean = True) As List
                     
     Set SubFolders = SubItems(root, pat, vbDirectory)
     
     If skipDots And SubFolders.count > 0 Then
-        
-        Dim dot As String, dotdot As String
-        dot = pJoin(root, CURDIR)
-        dotdot = pJoin(root, PARDIR)
-        
-        Do While SubFolders.Item(1) = dot Or SubFolders.Item(1) = dotdot
-        
-            SubFolders.Remove (1)
-            If SubFolders.count = 0 Then Exit Do
 
-        Loop
+        If SubFolders.Item(1) = pJoin(root, CURDIR) Then ' else root
+            SubFolders.Remove 1
+            If SubFolders.Item(1) = pJoin(root, PARDIR) Then  ' else mountpoint
+                SubFolders.Remove 1
+            End If 
+        End IF
         
     End If
     
-    Dim i As Integer
-    For i = SubFolders.count To 1 Step -1
-    
-        If FileExists(SubFolders.Item(i)) Then
-            SubFolders.Remove (i)
-        End If
-        
-    Next i
+    Set SubFolders = seq.Filter("os.FolderExists", SubFolders)
     
 End Function
-''
-' recursive search
-Public Sub sWalk(ByVal root As String, ByRef collec As Collection, _
+Public Function Find(ByVal root As String, Optional pat As String = "*", _
+        Optional vbType As Integer = vbNormal) As List
+
+    Set Find = New List
+    
+    FindRecurse root, Find, pat, vbType
+    
+End Function
+Private Sub FindRecurse(ByVal root As String, ByRef items As List, _
         Optional pat As String = "*", Optional vbType As Integer = vbNormal)
-      
-    Dim file_path As Variant
-    For Each file_path In SubItems(root, pat, vbType)
     
-        collec.Add file_path
-        
-    Next file_path
+    Dim folder As Variant
+    For Each folder In SubFolders(root)
+        FindRecurse folder, items, pat, vbType
+    Next folder
     
-    Dim folder_path As Variant
-    For Each folder_path In SubFolders(root)
-    
-         sWalk folder_path, collec, pat, vbType
-         
-    Next folder_path
+    items.Extend SubItems(root, pat, vbType)
     
 End Sub
-Public Function fWalk(ByVal root As String, Optional pat As String = "*", _
-                      Optional vbType As Integer = vbNormal) As Collection
-
-    Set fWalk = New Collection
+Public Function Glob(ByVal root As String, ByVal pattern As String) As List
     
-    sWalk root, fWalk, pat, vbType
+    Dim pat_list As New List
+    pat_list.Extend Split(pattern, os.SEP)
+    
+    Set Glob = GlobRecurse(root, pat_list, 1)
+    
+End Function
+Private Function GlobRecurse(ByVal root As String, ByVal pat_list As List, ByVal index As Integer) As List
+   
+    If index = pat_list.Count Then
+        Set GlobRecurse = os.SubItems(root, pat_list(index))
+    Else
+        
+        Set GlobRecurse = New List
+        
+        Dim folder As Variant
+        For Each folder In os.SubFolders(root, pat_list(index))
+            GlobRecurse.Extend GlobRecurse(folder, pat_list, index + 1)
+        Next folder
+        
+    End If
     
 End Function
 '
