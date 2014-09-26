@@ -12,7 +12,13 @@ Option Explicit
 ' Tree
 ' ====
 '
-' A TypedList of type Tree with an additional data member
+' A TypedList of type Tree with an additional variant data member.
+'
+' Copywrite (C) 2014 Philip Wales
+' This file (Tree.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
+'
+'
 '
 ' Private Members
 ' ---------------
@@ -47,12 +53,12 @@ End Sub
 ' Public Methods
 ' --------------
 '
-Public Property Get NewEnum() As IUnknown
-Attribute NewEnum.VB_UserMemId = -4
-    
-    Set NewEnum = Leaves.NewEnum
-    
-End Property
+'Public Property Get NewEnum() As IUnknown
+'Attribute NewEnum.VB_UserMemId = -4
+'    
+'    Set NewEnum = Paths.NewEnum
+'    
+'End Property
 '
 ' ### Access
 '
@@ -60,12 +66,30 @@ Public Property Get Value() As Variant
     seq.Assign Item, pData
 End Property
 Public Property Get Branches() As TypedList
-    Set Branches = subTrees
+    Set Branches = pBranches
 End Property
 Public Property Get Branch(ByVal index As Long) As Tree
 Attribute Branch.VB_UserMemID = 0
     Set Branch = pBranches(index)
 End Property
+'
+' ### Creation
+'
+Public Sub Create(ByVal data As Variant)
+    
+    Dim newBranch As New Tree
+    newBranch.Value = data
+    pBranches.Append newBranch
+    
+End Sub
+Public Sub Grow(ByVal sequence As Variant)
+
+    Dim element As Variant
+    For Each element In sequence
+        Create element
+    Next element
+    
+End Sub
 ''
 ' TEST!
 ' Should return a 2D list only!
@@ -104,7 +128,7 @@ Public Function Leaves() As List
     Else
         
         Dim arm As Variant
-        For Each arm in pBranches
+        For Each arm In pBranches
             Leaves.Extend arm.Leaves
         Next arm
   
@@ -129,13 +153,6 @@ End Property
 '
 ' ### Aux
 '
-Public Sub Create(ByVal data As Variant)
-    
-    Dim newBranch as New Tree
-    newBranch.Value = data
-    pBranches.Append newBranch
-    
-End Sub
 Public Function IsLeaf() As Boolean
     IsLeaf = (pBranches.Count = 0)
 End Function
@@ -144,7 +161,7 @@ Public Function BranchCount() As Long
     BranchCount = pBranches.Count
 
     Dim arm As Variant
-    For Each arm in pBranches
+    For Each arm In pBranches
         BranchCount = BranchCount + arm.BranchCount
     Next arm
 
