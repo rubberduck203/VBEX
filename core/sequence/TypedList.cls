@@ -15,8 +15,10 @@ Attribute VB_Exposed = False
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (TypedList.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 Option Explicit
+'
 ' Private Members
 ' ---------------
 '
@@ -38,7 +40,7 @@ Private Sub TypeCheck(ByVal element As Variant, ByVal source As String)
     If pTypedName = vbNullString Then pTypedName = TypeName(element)
     If (TypeName(element) <> pTypedName) Then RaiseTypeError element, source
     
-End Function
+End Sub
 ''
 ' TypeCheckSequence:
 Private Sub TypeCheckSequence(ByVal sequence As Variant, ByVal source As String)
@@ -186,17 +188,17 @@ Public Sub Remove(ByVal index As Long)
 End Sub
 ''
 ' Clear:
-Public Sub Clear(ByVal start As Long, ByVal count As Long)
-    this.Clear start, count
+Public Sub Clear(ByVal start As Long, ByVal size As Long)
+    this.Clear start, size
 End Sub
 '
 ' ### Aux
 '
 ''
 ' Count
-Public Property Get Count() As Long
+Public Function Count() As Long
     Count = this.Count
-End Property
+End Function
 ''
 ' Exists: Linear search for `sought`.
 Public Function Exists(ByVal sought As Variant) As Boolean
@@ -204,6 +206,9 @@ Public Function Exists(ByVal sought As Variant) As Boolean
 End Function
 ''
 ' Repr: Represent instance as String.
-Public Property Get ToString() As String
+Public Function ToString() As String
     ToString = this.ToString
-End Property
+End Function
+
+
+
