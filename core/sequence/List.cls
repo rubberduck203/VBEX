@@ -6,20 +6,17 @@ Attribute VB_Name = "List"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False'
+Attribute VB_Exposed = False
+'
 ' List Class
 ' ==========
 '
-' Base Linear Container Class
+' Base Linear Container Class.  Based on Python List class.
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (List.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
-' Decisions:
-'
-'  - Error Handling
-'    + Bubble up errors wherever they would arrise from Collection
-'    + Keep methods simple enough that bubbling is unnecessary
 '
 Option Explicit
 '
@@ -71,7 +68,7 @@ End Sub
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
-    
+
     Set NewEnum = collec.[_NewEnum]
     
 End Property
@@ -241,9 +238,9 @@ End Sub
 '
 ''
 ' Count
-Public Property Get Count() As Long
+Public Function Count() As Long
     Count = collec.Count
-End Property
+End Function
 ''
 ' Exists: Linear search for `sought`.
 Public Function Exists(ByVal sought As Variant) As Boolean
@@ -262,6 +259,7 @@ End Function
 ' ToString: Represent instance as String.
 ' Usefull for debugging only.  Doesn't work with nested
 ' lists.
-Public Property Get ToString() As String
+Public Function ToString() As String
     ToString = "[" & Join(seq.ToArray(collec), ", ") & "]"
-End Property
+End Function
+
