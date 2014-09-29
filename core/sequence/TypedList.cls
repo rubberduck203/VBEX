@@ -106,14 +106,14 @@ Public Property Let Item(ByVal index As Long, ByVal element As Variant)
 Attribute Item.VB_UserMemId = 0
     
     TypeCheck element, TypeName(Me) & ".Item"
-    this.index(index) = element
+    this.Item(index) = element
     
 End Property
 Public Property Set Item(ByVal index As Long, ByVal element As Variant)
 Attribute Item.VB_UserMemId = 0
     
     TypeCheck element, TypeName(Me) & ".Item"
-    Set this.index(index) = element
+    Set this.Item(index) = element
     
 End Property
 ''
