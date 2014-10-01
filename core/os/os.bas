@@ -64,7 +64,7 @@ End Enum
 ' root/name+suffix -> suffix -> name
 ' "root/name.ext" -> ".ext" -> "name"
 ' "root/name.ext" -> "ext" -> "name."  !
-Public Function BaseName(ByVal file_path As String, Optional suffix As String) As String
+Public Function BaseName(ByVal file_path As String, ByVal Optional suffix As String) As String
 
     Dim path_split As Variant
     path_split = Split(file_path, SEP)
@@ -210,6 +210,26 @@ Public Function ChangeExt(ByVal file_path As String, ByVal new_ext As String) As
     ChangeExt = left$(file_path, base_length) & EXTSEP & new_ext
     
 End Function
+''
+' Returns if the path contains a "?" or a "*"
+Public Function IsPattern(ByVal path As String) As Boolean
+    IsPattern = (InStr(1, path, "?") + InStr(1, path, "*") <> 0)
+End Function
+''
+' Finds the longest path in pattern that is not a pattern.
+Public Function LongestRoot(ByVal pattern As String) As String
+    
+    Dim charPos As Integer
+    charPos = InStr(1, pattern, "?") - 1
+    If charPos < 0 Then charPos = Len(pattern)
+    
+    Dim wildPos As Integer
+    wildPos = InStr(1, pattern, "*") - 1
+    If wildPos < 0 Then wildPos = Len(pattern)
+
+    LongestRoot = RootName(Left$(pattern, IIf(charPos <= wildPos, charPos, wildPos)))
+    
+End Function
 '
 ' Introspect FileSystem
 ' ---------------------
@@ -219,7 +239,7 @@ End Function
 ' See <http://msdn.microsoft.com/en-us/library/dk008ty4(v=vs.90).aspx>
 ' for more types
 Public Function Exists(ByVal file_path As String, _
-        Optional vbType As Integer = vbDirectory) As Boolean
+        ByVal Optional vbType As Integer = vbDirectory) As Boolean
 
     If Not file_path = vbNullString Then
     
@@ -247,8 +267,8 @@ End Function
 ''
 ' returns a List of strings that are paths of subitems in root which
 ' match pat.
-Public Function SubItems(ByVal root As String, Optional pat As String = ALLPAT, _
-        Optional vbType As Integer = vbDirectory) As List
+Public Function SubItems(ByVal root As String, ByVal Optional pat As String = ALLPAT, _
+        ByVal Optional vbType As Integer = vbDirectory) As List
                   
     Set SubItems = New List
     
@@ -274,8 +294,8 @@ End Function
 ' When vbDirectory is passed to dir it still includes files.  Why the would
 ' anyone want that?  Now there is no direct way to actually list subfolders
 ' only get a list of both files and folders and filter out files
-Public Function SubFolders(ByVal root As String, Optional pat As String = vbNullString, _
-        Optional skipDots As Boolean = True) As List
+Public Function SubFolders(ByVal root As String, ByVal Optional pat As String = vbNullString, _
+        ByVal Optional skipDots As Boolean = True) As List
                     
     Set SubFolders = SubItems(root, pat, vbDirectory)
     
@@ -293,8 +313,8 @@ Public Function SubFolders(ByVal root As String, Optional pat As String = vbNull
     Set SubFolders = seq.Filter("os.FolderExists", SubFolders)
     
 End Function
-Public Function Find(ByVal root As String, Optional pat As String = "*", _
-        Optional vbType As Integer = vbNormal) As List
+Public Function Find(ByVal root As String, ByVal Optional pat As String = "*", _
+        ByVal Optional vbType As Integer = vbNormal) As List
 
     Set Find = New List
     
@@ -302,7 +322,7 @@ Public Function Find(ByVal root As String, Optional pat As String = "*", _
     
 End Function
 Private Sub FindRecurse(ByVal root As String, ByRef items As List, _
-        Optional pat As String = "*", Optional vbType As Integer = vbNormal)
+        Optional pat As String = "*", ByVal Optional vbType As Integer = vbNormal)
     
     Dim folder As Variant
     For Each folder In SubFolders(root)
@@ -312,25 +332,28 @@ Private Sub FindRecurse(ByVal root As String, ByRef items As List, _
     items.Extend SubItems(root, pat, vbType)
     
 End Sub
-Public Function Glob(ByVal root As String, ByVal pattern As String) As List
+Public Function Glob(ByVal pattern As String) As List
     
-    Dim pat_list As New List
-    pat_list.Extend Split(pattern, os.SEP)
+    Dim root As String
+    root = LongestRoot(pattern)
     
-    Set Glob = GlobRecurse(root, pat_list, 1)
+    Dim patterns() As String
+    patterns = Split(right$(pattern, Len(pattern) - Len(root)), SEP)
+    
+    Set Glob = GlobRecurse(root, patterns, 0)
     
 End Function
-Private Function GlobRecurse(ByVal root As String, ByVal pat_list As List, ByVal index As Integer) As List
+Private Function GlobRecurse(ByVal root As String, ByRef patterns() As String, ByVal index As Integer) As List
    
-    If index = pat_list.Count Then
-        Set GlobRecurse = os.SubItems(root, pat_list(index))
+    If index = UBound(patterns) Then
+        Set GlobRecurse = SubItems(root, patterns(index))
     Else
         
         Set GlobRecurse = New List
         
         Dim folder As Variant
-        For Each folder In os.SubFolders(root, pat_list(index))
-            GlobRecurse.Extend GlobRecurse(folder, pat_list, index + 1)
+        For Each folder In SubFolders(root, patterns(index))
+            GlobRecurse.Extend GlobRecurse(folder, patterns, index + 1)
         Next folder
         
     End If
@@ -397,7 +420,7 @@ ErrHandler:
     End Select
     
 End Function
-Public Sub MakeDir(ByVal folder_path As String, Optional create_parent As Boolean = False)
+Public Sub MakeDir(ByVal folder_path As String, ByVal Optional create_parent As Boolean = False)
                 
     Dim check As Boolean
    On Error GoTo ErrHandler
