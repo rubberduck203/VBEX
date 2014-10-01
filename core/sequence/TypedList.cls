@@ -54,7 +54,7 @@ End Sub
 ''
 ' RaiseTypeError:
 Private Sub RaiseTypeError(ByVal badItem As Variant, ByVal method As String)
-    Err.Raise 0, method, "Element is of type " & TypeName(badItem) & _
+    Err.Raise 13, method, "Element is of type " & TypeName(badItem) & _
                          ", not " & TypedName & "."
 End Sub
 ''
@@ -118,10 +118,10 @@ Attribute Item.VB_UserMemId = 0
 End Property
 ''
 ' Slice:
-Public Property Let Slice(ByVal a As Long, ByVal b As Long, ByVal sequence As Variant)
+Public Property Let Slice(ByVal a As Long, ByVal b As Long, ByVal s As Integer, ByVal sequence As Variant)
     
     TypeCheckSequence sequence, TypeName(Me) & ".Slice"
-    this.Slice(a, b) = sequence
+    this.Slice(a, b, s) = sequence
     
 End Property
 '
@@ -175,8 +175,8 @@ Attribute Item.VB_UserMemId = 0
 End Property
 ''
 ' Slice:
-Public Property Get Slice(ByVal a As Long, ByVal b As Long) As List
-    Set Slice = this.Slice(a, b)
+Public Property Get Slice(ByVal a As Long, ByVal b As Long, ByVal s As Integer) As List
+    Set Slice = this.Slice(a, b, s)
 End Property
 '
 ' ### Removal
