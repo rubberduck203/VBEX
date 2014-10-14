@@ -71,17 +71,17 @@ Public Sub Add(item, Optional Key, Optional Before, Optional After)
     mCollection.Add item, Key, Before, After
 End Sub
 
-Public Sub Remove(index)
-    mCollection.Remove index
+Public Sub Remove(Index)
+    mCollection.Remove Index
 End Sub
 
 Public Function Count()
     Count = mCollection.Count
 End Function
 
-Public Function item(Optional index)
+Public Function item(Optional Index)
 Attribute item.VB_UserMemId = 0
-    item = mCollection.item(index)
+    item = mCollection.item(Index)
 End Function
 
 ' "Static" functions to be used with default instance of Enumerable
