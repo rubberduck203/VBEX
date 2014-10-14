@@ -9,64 +9,64 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private test As VBAUnit.UnitTest
+Private Test As VBAUnit.UnitTest
 
 Friend Sub SetOutputStream(out As IOutput)
-    Set test = VBAUnit.UnitTestFactory.Create(TypeName(Me), out)
+    Set Test = VBAUnit.UnitTestFactory.Create(TypeName(Me), out)
 End Sub
 
 Private Sub Class_Terminate()
-    test.Dispose
-    Set test = Nothing
+    Test.Dispose
+    Set Test = Nothing
 End Sub
 
 
 Public Sub CountShouldBe5()
-    test.Assert.Name = "CountShouldBe5"
+    Test.Assert.Name = "CountShouldBe5"
     
     Dim e As Enumerable
     Set e = GetSortedEnumerable(5)
     
-    test.Assert.AreEqual 5, e.Count
-    test.Assert.IsFalse (6 = e.Count)
+    Test.Assert.AreEqual 5, e.Count
+    Test.Assert.IsFalse (6 = e.Count)
     
 End Sub
 
 Public Sub ShouldBeSorted()
-   test.Assert.Name = "ShouldBeSorted"
+   Test.Assert.Name = "ShouldBeSorted"
    
    Dim e As Enumerable
    Set e = GetSortedEnumerable(5)
    
-   test.Assert.IsTrue e.IsSorted
+   Test.Assert.IsTrue e.IsSorted
 
 End Sub
 
 Public Sub ShouldNotBeSorted()
-    test.Assert.Name = "ShouldNotBeSorted"
+    Test.Assert.Name = "ShouldNotBeSorted"
     
     Dim e As Enumerable
     Set e = GetUnsortedEnumerable
     
-    test.Assert.IsFalse e.IsSorted
+    Test.Assert.IsFalse e.IsSorted
 End Sub
 
 Public Sub MinShouldBe1()
-    test.Assert.Name = "MinShouldBe1"
+    Test.Assert.Name = "MinShouldBe1"
     
     Dim e As Enumerable
     Set e = GetUnsortedEnumerable
     
-    test.Assert.AreEqual 1, e.Min
+    Test.Assert.AreEqual 1, e.Min
 End Sub
 
 Public Sub MaxShouldBe10()
-    test.Assert.Name = "MaxShouldBe10"
+    Test.Assert.Name = "MaxShouldBe10"
     
     Dim e As Enumerable
     Set e = GetUnsortedEnumerable
     
-    test.Assert.AreEqual 10, e.Max
+    Test.Assert.AreEqual 10, e.Max
 End Sub
 
 Private Function GetSortedEnumerable(numberOfItems As Long) As Enumerable
@@ -84,3 +84,4 @@ Private Function GetUnsortedEnumerable() As Enumerable
     
     Set GetUnsortedEnumerable = e
 End Function
+

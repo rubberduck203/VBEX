@@ -2,13 +2,20 @@ Attribute VB_Name = "Controller"
 Option Explicit
 
 Public Sub RunEnumerableTests()
-    Dim test As New TestEnumerable
-    test.SetOutputStream VBAUnit.Console
+    Dim Test As New TestEnumerable
+    Test.SetOutputStream VBAUnit.Console
     
-    test.CountShouldBe5
-    test.ShouldBeSorted
-    test.ShouldNotBeSorted
-    test.MinShouldBe1
-    test.MaxShouldBe10
+    Test.CountShouldBe5
+    Test.ShouldBeSorted
+    Test.ShouldNotBeSorted
+    Test.MinShouldBe1
+    Test.MaxShouldBe10
 
+End Sub
+
+Public Sub RunVbeCodeModuleTests()
+    Dim Test As New TestVbeCodeModule_IsSignature
+    Test.SetOutputStream VBAUnit.Console
+    
+    Test.CommentedOutLineShouldBeFalse
 End Sub
