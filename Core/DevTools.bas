@@ -11,14 +11,14 @@ Public Sub ImportSourceFiles(sourcePath As String)
 End Sub
 
 Public Sub ExportSourceFiles(destPath As String)
-    
-    Dim comp As VBComponent
-    For Each comp In Application.VBE.ActiveVBProject.VBComponents
-        If Left(comp.Name, 5) <> "Sheet" And comp.Name <> "ThisWorkbook" Then
-            comp.Export destPath & comp.Name & ToFileExtension(comp.Type)
+     
+    Dim component As VBComponent
+    For Each component In Application.VBE.ActiveVBProject.VBComponents
+        If component.Type = vbext_ct_ClassModule Or component.Type = vbext_ct_StdModule Then
+            component.Export destPath & component.Name & ToFileExtension(component.Type)
         End If
     Next
-    
+     
 End Sub
 
 Public Sub RemoveAllModules()
