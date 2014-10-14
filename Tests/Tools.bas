@@ -4,12 +4,11 @@ Option Explicit
 Private Const ProjectName = "VBEXTests"
 
 Public Sub NewUnitTest()
-    VBAUnit.UnitTestModule.Add VBE.VBProjects(ProjectName)
+    VBAUnit.UnitTestModule.Add Application.VBE.VBProjects(ProjectName)
 End Sub
 
 Public Sub NewTestMethod(methodName As String)
-    VBAUnit.UnitTestModule.AddNewTestMethod VBE.VBProjects(ProjectName), methodName
+    VBAUnit.UnitTestModule.AddNewTestMethod methodName
 End Sub
-
 
 
