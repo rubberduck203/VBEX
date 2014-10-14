@@ -68,6 +68,7 @@ Private Function GetProcedures(codeMod As CodeModule) As vbeProcedures
     Next lineNumber
 
     Set GetProcedures = procs
+    
 End Function
 
 Private Function GetProcedureType(signatureLine As String) As vbext_ProcKind
@@ -86,30 +87,29 @@ Private Function GetProcedureType(signatureLine As String) As vbext_ProcKind
 End Function
 
 Private Function IsSignature(line As String) As Boolean
+    
     If line = vbNullString Then Exit Function
+    If IsDeclaration Then Exit Function
     
-    Dim propertyPosition As Long
-    Dim functionPosition As Long
-    Dim subPosition As Long
-    Dim commentPosition As Long
+    ' pattern:
+    '   any number of characters;
+    '   Doesn't start with a comment;
+    '   any number of characters;
+    '   space;
+    '   word;
+    '   space;
+    '   any number of characters
     
-    propertyPosition = InStr(1, line, "Property")
-    functionPosition = InStr(1, line, "Function")
-    subPosition = InStr(1, line, "Sub")
-    commentPosition = InStr(1, line, "'")
-    
-    If propertyPosition > 0 Or functionPosition > 0 Or subPosition > 0 Then
-        If InStr(1, line, "End") = 0 Then
-            If commentPosition > propertyPosition Then
-                Exit Function
-            ElseIf commentPosition > functionPosition Then
-                Exit Function
-            ElseIf commentPosition > subPosition Then
-                Exit Function
-            Else
-                IsSignature = True
-            End If
-        End If
+    If line Like "[!']* Property *" Then
+        IsSignature = True
+    ElseIf line Like "[!']* Function *" Then
+        IsSignature = True
+    ElseIf line Like "[!']* Sub *" Then
+        IsSignature = True
     End If
     
+End Function
+
+Private Function IsDeclaration(line As String) As Boolean
+    IsDeclaration = InStr(1, line, "Const") > 0 Or InStr(1, line, "Dim") > 0
 End Function
