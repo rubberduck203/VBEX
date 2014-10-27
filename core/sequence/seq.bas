@@ -3,51 +3,6 @@ Option Explicit
 
 ' seq
 ' ===
-'
-' Sequence Helper functions and routines.
-'
-' Compatibility
-' -------------
-' Ensure compatibility with Arrays and other sequence types
-'
-' ### Bounds
-'
-''
-' UpperBound: Sequence Objects are assumed to have a `.Count`
-' property.
-Public Function UpperBound(ByRef sequence As Variant) As Long
-    
-    On Error GoTo NotArray
-    UpperBound = UBound(sequence)
-    
-CleanExit:
-    Exit Function
-    
-NotArray:
-    UpperBound = sequence.Count
-    Resume CleanExit
-    
-End Function
-''
-' LowerBound: Sequence Objects are assumed to have 1 base offset!
-Public Function LowerBound(ByRef sequence As Variant) As Long
-    
-    On Error GoTo NotArray
-    LowerBound = LBound(sequence)
-    
-CleanExit:
-    Exit Function
-    
-NotArray:
-    LowerBound = 1
-    Resume CleanExit
-    
-End Function
-
-Public Function Length(ByVal sequence As Variant) As Long
-    Length = UpperBound(sequence) - LowerBound(sequence) + 1
-End Function
-'
 ' Just Great Helper Functions
 ' ---------------------------
 '
@@ -126,33 +81,42 @@ IsCollection:
     Err.Raise 13, "seq.SwapIndexes", "Sequence's default property is not read-write."
     
 End Sub
-'
-' Enumeration
-' -----------
-'
-' forgive the single letters I can't find an appropriate name for b that isn't taken.
-Public Function Enumeration(ByVal a As Long, ByVal b As Long) As List
+''
+' TODO: Raise Errors
+Public Function Enumeration(ByVal a As Long, ByVal b As Long, _
+        Optional ByVal s As Long = 1) As Variant()
+        
+    Debug.Assert s > 0
     
-    Set Enumeration = New List
+    Dim domain As Long
+    domain = Abs(a - b)
     
-    Dim s As Integer
-    s = IIF((a < b), 1, -1)
+    Debug.Assert domain Mod s = 0
     
-    Dim n As Long
-    For n = a To b Step s
-        Enumeration.Append n
-    Next n
+    Dim size As Long
+    size = domain \ s
+    
+    Dim result() As Variant
+    ReDim result(size) As Variant
+    
+    s = IIF((a < b), s, -s)
+    
+    Dim i As Long, n As Long
+    n = a
+    For i = 0 To size
+        result(i) = n
+        n = n + s
+    Next i
+    
+    Enumeration = result
     
 End Function
 
-Public Function Enumerated(ByVal sequence As Variant) As List
-    Set Enumerated = Enumeration(LowerBound(sequence), UpperBound(sequence))
-End Function
-
-Public Sub Fill(ByRef sequence As Variant, ByVal filler As Variant)
+Public Sub Fill(ByRef sequence As Variant, ByVal filler As Variant, _
+        ByVal lower As Long, Byval upper As Long)
     
     Dim i As Long
-    For i = LowerBound(sequence) To UpperBound(sequence)
+    For i = lower To upper
         sequence(i) = filler
     Next i
     
@@ -161,25 +125,19 @@ End Sub
 ' Comparison
 ' ----------
 '
-Public Function Compare(ByRef seqA As Variant, ByRef seqB As Variant) As Boolean
+Public Function Compare(ByRef seqA As Variant, ByRef seqB As Variant, _
+        ByVal lowA As Long, ByVal highA As Long, _
+        ByVal lowB As Long, ByVal highB As Long) As Boolean
     
     Compare = False
 
-    Dim lowA As Long
-    lowA = LowerBound(seqA)
-    
-    Dim upA As Long
-    upA = UpperBound(seqA)
-
-    If Not ((upA - lowA) = (UpperBound(seqB) - LowerBound(seqB))) Then
-        Exit Function
-    End If
+    If Not ((upA - lowA) = (highB - lowB)) The Exit Function
     
     Dim offset As Long
-    offset = LowerBound(seqB) - lowA
+    offset = lowB - lowA
     
     Dim i As Long
-    For i = lowA To upA
+    For i = lowA To highA
         If Not (seqA(i) = seqB(i + offset)) Then Exit Function
     Next i
     
@@ -187,55 +145,24 @@ Public Function Compare(ByRef seqA As Variant, ByRef seqB As Variant) As Boolean
     
 End Function
 '
-' Reversal
-' --------
+' In-Place Operations
+' -------------------
+' All In-Place operations must have bounds passed to support multiple data-types
 '
 ' Reverse should accept an array or collection
-Public Sub Reverse(ByRef sequence As Variant)
+Public Sub Reverse(ByRef sequence As Variant, _
+        ByVal lower As Long, Byval upper As Long)
     
-    Dim lower_it As Long
-    lower_it = LowerBound(sequence)
-    
-    Dim upper_it As Long
-    upper_it = UpperBound(sequence)
-    
-    While lower_it < upper_it
+    While lower < upper
         
-        SwapIndexes sequence, lower_it, upper_it
+        SwapIndexes sequence, lower, upper
         
-        lower_it = lower_it + 1
-        upper_it = upper_it - 1
+        lower = lower + 1
+        upper = upper - 1
         
     Wend
     
 End Sub
-''
-' Reversed will return the type that was passed
-' Strong typing seems silly now...
-Public Function Reversed(ByVal sequence As Variant) As Variant
-    
-    Assign Reversed, sequence
-    Reverse Reversed
-    
-End Function
-'
-' [head,t,a,i,l]
-' --------------
-'
-Public Function Head(ByVal sequence As Variant) As Variant
-    
-    Assign Head, sequence(LowerBound(sequence))
-    
-End Function
-'
-' [i,n,i,t,last]
-' --------------
-'
-Public Function Last(ByRef sequence As Variant) As Variant
-    
-    Assign Last, sequence(UpperBound(sequence))
-    
-End Function
 '
 ' Search
 ' ------
@@ -244,32 +171,32 @@ End Function
 '
 ''
 ' MaxIndex: Returns the index of `sequence` that has the maximum value
-Public Function MaxIndex(ByRef sequence As Variant) As Long
+Public Function MaxIndex(ByRef sequence As Variant, _
+        ByVal lower As Long, ByVal upper As Long) As Long
     
-    MaxIndex = LowerBound(sequence)
-    
+    MaxIndex = lower
     Dim i As Long
-    For i = LowerBound(sequence) To UpperBound(sequence)
-        
+    For i = lower To upper
         If sequence(MaxIndex) < sequence(i) Then MaxIndex = i
-    
     Next i
     
 End Function
 ''
 ' MaxValue: Returns the value of `sequence` that is the Maximum
 ' Uses `MaxIndex`
-Public Function MaxValue(ByRef sequence As Variant) As Variant
+Public Function MaxValue(ByRef sequence As Variant, _
+        ByVal lower As Long, ByVal upper As Long) As Variant
     
-    Assign MaxValue, sequence(MaxIndex(sequence))
+    Assign MaxValue, sequence(MaxIndex(sequence, lower, upper))
     
 End Function
 ''
 ' LinearSearch:
-Public Function LinearSearch(ByVal value As Variant, sequence As Variant) As Long
+Public Function LinearSearch(ByVal value As Variant, sequence As Variant, _
+        ByVal lower As Long, ByVal upper As Long) As Long
     
     Dim i As Long
-    For i = LowerBound(sequence) To UpperBound(sequence)
+    For i = lower To upper
         
         If sequence(i) = value Then
             
@@ -287,13 +214,8 @@ End Function
 ' Binary Search: Sequence must be sorted.  Has the option of returning where the
 ' value should be instead of not found.
 Public Function BinarySearch(ByVal value As Variant, ByRef sorted_seq As Variant, _
-                             Optional ByVal nearest As Boolean = False) As Long
-    
-    Dim upper As Long
-    upper = UpperBound(sorted_seq)
-    
-    Dim lower As Long
-    lower = LowerBound(sorted_seq)
+        ByVal lower As Long, ByVal upper As Long, _
+        Optional ByVal nearest As Boolean = False) As Long
     
     While lower < upper
         
@@ -317,19 +239,17 @@ End Function
 '
 ' ### Bubble Sort
 '
-Public Sub BubbleSort(ByRef sequence As Variant)
-    
-    Dim lower As Long
-    lower = LowerBound(sequence)
-    
-    Dim upper As Long
-    For upper = UpperBound(sequence) To lower + 1 Step -1
+Public Sub BubbleSort(ByRef sequence As Variant, _
+        ByVal lower As Long, ByVal upper As Long)
+
+    Dim upperIt As Long
+    For upperIt = upper To lower + 1 Step -1
         
         Dim hasSwapped As Boolean
         hasSwapped = False
         
         Dim bubble As Long
-        For bubble = lower To upper - 1
+        For bubble = lower To upperIt - 1
             
             If sequence(bubble) > sequence(bubble + 1) Then
                 
@@ -342,49 +262,9 @@ Public Sub BubbleSort(ByRef sequence As Variant)
         
         If Not hasSwapped Then Exit Sub
         
-    Next upper
+    Next upperIt
     
 End Sub
-Public Function BubbleSorted(ByVal sequence As Variant) As Variant
-    
-    Assign BubbleSorted, sequence
-    BubbleSort BubbleSorted
-    
-End Function
-'
-' ### Insert Sort
-'
-Public Sub InsertSort(ByRef sequence As Variant)
-    
-    Dim lower As Long
-    lower = LowerBound(sequence)
-    
-    Dim i As Long
-    For i = lower + 1 To UpperBound(sequence)
-        
-        Dim value As Variant
-        value = sequence(i)
-        
-        Dim j As Long
-        j = i - 1
-        While j >= lower And sequence(j) > value
-        
-            sequence(j + 1) = sequence(j)
-            j = j - 1
-        
-        Wend
-        
-        sequence(j + 1) = value
-        
-    Next i
-    
-End Sub
-Public Function InsertSorted(ByVal sequence As Variant) As Variant
-    
-    Assign InsertSorted, sequence
-    InsertSort InsertSorted
-    
-End Function
 '
 ' ### Quick Sort
 '
@@ -414,15 +294,9 @@ Public Sub QuickSort(ByRef sequence As Variant, ByVal lower As Long, ByVal upper
     ' which is the magic of the quick sort
     
 End Sub
-Public Function QuickSorted(ByVal sequence As Variant) As Variant
-    
-    Assign QuickSorted, sequence
-    QuickSort QuickSorted, LowerBound(QuickSorted), UpperBound(QuickSorted)
-    
-End Function
 Private Function Partition(ByRef sequence As Variant, ByVal lower As Long, _
-                           ByVal upper As Long, ByVal pivot As Variant) As Long
-    
+        ByVal upper As Long, ByVal pivot As Variant) As Long
+        
     While lower < upper
         
         While sequence(lower) < pivot And lower < upper
@@ -438,144 +312,7 @@ Private Function Partition(ByRef sequence As Variant, ByVal lower As Long, _
         If lower <> upper Then SwapIndexes sequence, lower, upper
         
     Wend
-    
-    Debug.Assert lower = upper
     Partition = lower
     
 End Function
-'
-' High Order Functions
-' --------------------
-'
-' `Application.Run` has all arguements passed by value.  Ergo it should never be
-' run without returning a value
-'
-Public Function Map(ByVal delegate As String, ByRef sequence As Variant) As List
-    
-    Dim mappedList As New List
-    
-    Dim i As Long
-    For i = LowerBound(sequence) To LowerBound(sequence)
-        mappedList.Append Application.Run(delegate, sequence(i))
-    Next i
-    
-    Set Map = mappedList
-    
-End Function
-Function DifficultMap(ByVal sequence As Variant, ByVal delegate As String) As List
 
-    Dim answers As Object
-    Set answers = CreateObject("Scripting.Dictionary")
-    
-    Dim mappedList As New List
-    
-    Dim i As Long
-    For i = seq.LowerBound(sequence) To seq.UpperBound(sequence)
-    
-        If Not answers.Exists(sequence(i)) Then
-        
-            answers.Add key:=sequence(i), _
-                        value:=Application.Run(delegate, sequence(i))
-            mappedList.Append answers(sequence(i))
-            
-        Else
-            mappedList.Append answers(sequence(i))
-        End If
-        
-    Next i
-    
-    Set DifficultMap = mappedList
-    
-End Function
-Public Function Fold(ByVal delegate As String, ByVal sequence As Variant, _
-                     ByVal initial_value As Variant) As Variant
-    
-    Fold = initial_value
-    
-    Dim el As Variant
-    For Each el In sequence
-        Fold = Application.Run(delegate, Fold, el)
-    Next el
-    
-End Function
-Public Function Reduce(ByVal delegate As String, ByVal sequence As Variant) As Variant
-    
-    Reduce = Fold(delegate, Tail(sequence), Head(sequence))
-    
-End Function
-Public Function Compose(ByVal delegates As Variant, ByVal initial_value As Variant) As Variant
-    
-    Compose = initial_value
-    
-    Dim delegate As String
-    For Each delegate In delegates
-        Compose = Application.Run(delegate, Compose)
-    Next delegate
-    
-End Function
-'
-' Other Functions
-' ---------------
-'
-Public Function Any_(ByVal sequence As Variant) As Boolean
-    
-    Any_ = True
-
-    Dim element As Variant
-    For Each element In sequence
-        If element Then Exit Function
-    Next element
-    
-    Any_ = False
-
-End Function
-Public Function All(ByVal sequence As Variant) As Boolean
-    
-    All = False
-
-    Dim element As Variant
-    For Each element In sequence
-        If Not element Then Exit Function
-    Next element
-    
-    All = True
-    
-End Function
-Public Function Same(ByVal sequence As Variant) As Boolean
-    
-    Dim i As Variant
-    For i = LowerBound(sequence) + 1 To UpperBound(sequence)
-        Same = (sequence(i) = sequence(i - 1))
-        If Not Same Then Exit Function
-    Next i
-    
-End Function
-Public Function ToArray(ByVal sequence As Variant) As Variant
-    
-    On Error GoTo EmptyCollection
-    
-    ' zero offset is enforced.
-    Dim arr() As Variant
-    ReDim arr(Length(sequence) - 1)
-    
-    Dim i As Long
-    Dim element As Variant
-    For Each element In sequence
-        
-        Assign arr(i), element
-        i = i + 1
-        
-    Next element
-
-CleanExit:
-    ToArray = arr
-    
-    Exit Function
-    
-EmptyCollection:
-    Err.Clear
-    Debug.Assert sequence.Count = 0
-    arr = Array()
-    Resume CleanExit
-
-End Function
