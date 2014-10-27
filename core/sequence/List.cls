@@ -5,8 +5,8 @@ END
 Attribute VB_Name = "List"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 '
 ' List Class
 ' ==========
@@ -56,7 +56,19 @@ End Sub
 '
 ''
 ' Constructor
-Private Sub Class_Initialize()
+Public Function Copy(ByVal sequence As Variant) As List
+
+    Dim result As New List
+    result.Extend sequence
+    Set Copy = result
+    
+End Function
+Public Function Create(ParamArray args() As Variant) As List
+
+    Set Create = Copy(args)
+    
+End Function
+Private Sub class_initialize()
     Set collec = New Collection
 End Sub
 ''
@@ -67,7 +79,6 @@ End Sub
 ''
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
-Attribute NewEnum.VB_UserMemId = -4
 
     Set NewEnum = collec.[_NewEnum]
     
@@ -116,7 +127,7 @@ Public Property Get Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     Set Slice = New List
     
     If s < 1 Then Err.Raise TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
-    s = IIF(a < b, s, -s)
+    s = IIf(a < b, s, -s)
     
     Dim i As Long
     For i = a To b Step s
@@ -130,7 +141,7 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     TransformIndex b
     
     If s < 1 Then Err.Raise TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
-    s = IIF(a < b, s, -s)
+    s = IIf(a < b, s, -s)
     
     If Abs(a - b) + 1 <> seq.Length(sequence) Then
         Err.Raise 9, TypeName(Me) & ".Slice", "Subscript out of Range."
@@ -149,7 +160,7 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     
     Debug.Assert (i - s = b)
     
-Exit Sub
+Exit Property
 NotSequence:
     RaiseNotSequenceError "Slice", sequence
     
@@ -172,7 +183,7 @@ Public Sub Clear(ByVal start As Long, ByVal size As Long)
     TransformIndex start
     
     Dim i As Long
-    For i = 0 To size
+    For i = 1 To size
         collec.Remove start
     Next i
 
@@ -183,8 +194,8 @@ End Sub
 '
 ''
 ' Append: Vanilla `Add`
-Public Sub Append(ByVal element As Variant)
-    collec.Add element
+Public Sub Append(ParamArray elements() As Variant)
+    Extend elements
 End Sub
 ''
 ' Extend: Append sequence
@@ -259,7 +270,21 @@ End Function
 ' ToString: Represent instance as String.
 ' Usefull for debugging only.  Doesn't work with nested
 ' lists.
-Public Function ToString() As String
-    ToString = "[" & Join(seq.ToArray(collec), ", ") & "]"
+Public Function ToString(Optional delim As String = ", ") As String
+    ToString = "[" & Join(ToArray, delim) & "]"
 End Function
+Public Function ToArray() As Variant()
 
+    If collec.Count = 0 Then
+        ToArray = Array()
+        Exit Function
+    End If
+    
+    Dim a() As Variant
+    ReDim a(collec.Count - 1) As Variant
+    Dim i As Long
+    For i = 1 To collec.Count
+        a(i - 1) = collec(i)
+    Next i
+    ToArray = a
+End Function
