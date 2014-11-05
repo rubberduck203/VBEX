@@ -29,62 +29,6 @@ Public Function MiddleInt(ByVal a As Variant, ByVal b As Variant) As Variant
     MiddleInt = (a + b) \ 2
 End Function
 
-' Swapping
-' --------
-
-''
-' Swap should work on an array or any two variables. It
-' will not work on elements of sequence objects as the
-' accessors of those return a value not a reference. For
-' those use `SwapIndexes`.
-'
-' x = "a": y = "b"
-' Swap x, y ' x="b", y="a"
-'
-' a = Array("a", "b")
-' Swap a(0), a(1) ' a = [b, a]
-'
-Public Sub Swap(ByRef x As Variant, ByRef y As Variant)
-    
-    Dim t As Variant
-    
-    Assign t, x
-    Assign x, y
-    Assign y, t
-    
-End Sub
-''
-' `SwapIndexes` is to be used on sequence objects instead of `Swap`.  It uses the 
-' default property of the object to access the elements.  If the default property
-' is read-only an error is raised.  This cannot be used with a collection.
-Public Sub SwapIndexes(ByRef sequence As Variant, ByVal a As Long, ByVal b As Long)
-    ' We cannot implement `Assign` in case sequence is an object as `Collection.Item`
-    ' returns a value and not a reference. Therefore we must reuse the pattern
-    
-    On Error GoTo IsCollection
-    
-    Dim t As Variant
-    Assign t, sequence(a)
-        
-    If IsObject(sequence(b)) Then
-        Set sequence(a) = sequence(b)
-    Else
-        sequence(a) = sequence(b)
-    End If
-    
-    If IsObject(t) Then
-        Set sequence(b) = t
-    Else
-        sequence(b) = t
-    End If
-    
-CleanExit:
-    Exit Sub
-IsCollection:
-    
-    Err.Raise 13, "seq.SwapIndexes", "Sequence's default property is not read-write."
-    
-End Sub
 ''
 ' TODO: Raise Errors
 Public Function Enumeration(ByVal a As Long, ByVal b As Long, _
@@ -148,22 +92,4 @@ Public Function Compare(ByRef seqA As Variant, ByRef seqB As Variant, _
     Compare = True
     
 End Function
-'
-' In-Place Operations
-' -------------------
-' All In-Place operations must have bounds passed to support multiple data-types
-'
-' Reverse should accept an array or collection
-Public Sub Reverse(ByRef sequence As Variant, _
-        ByVal lower As Long, Byval upper As Long)
-    
-    While lower < upper
-        
-        SwapIndexes sequence, lower, upper
-        
-        lower = lower + 1
-        upper = upper - 1
-        
-    Wend
-    
-End Sub
+
