@@ -3,9 +3,50 @@ Option Explicit
 
 ' sort
 ' ====
+' 
+' Contains in-place sorting algorithms for Arrays.
 '
-' Sort
-' ----
+' Helper Methods
+' --------------
+''
+' Swap should work on an array or any two variables. It
+' will not work on elements of sequence objects as the
+' accessors of those return a value not a reference.
+'
+' x = "a": y = "b"
+' Swap x, y ' x="b", y="a"
+'
+' a = Array("a", "b")
+' Swap a(0), a(1) ' a = [b, a]
+'
+Private Sub Swap(ByRef x As Variant, ByRef y As Variant)
+    
+    Dim t As Variant
+    Assign t, x
+    Assign x, y
+    Assign y, t
+    
+End Sub
+'
+' Reversal
+' --------
+'
+Public Sub Reverse(ByRef sequence As Variant, _
+        ByVal lower As Long, Byval upper As Long)
+    
+    While lower < upper
+        
+        Swap sequence(lower), sequence(upper)
+        
+        lower = lower + 1
+        upper = upper - 1
+        
+    Wend
+    
+End Sub
+'
+' Sorting
+' -------
 '
 ' ### Bubble Sort
 '
@@ -23,7 +64,7 @@ Public Sub BubbleSort(ByRef sequence As Variant, _
             
             If sequence(bubble) > sequence(bubble + 1) Then
                 
-                seq.SwapIndexes sequence, bubble, bubble + 1
+                Swap sequence(bubble), sequence(bubble + 1)
                 hasSwapped = True
                 
             End If
@@ -44,7 +85,7 @@ Public Sub QuickSort(ByRef sequence As Variant, ByVal lower As Long, ByVal upper
     If lower >= upper Then Exit Sub
     
     ' no special pivot selection used
-    SwapIndexes sequence, seq.MiddleInt(lower, upper), upper
+    Swap sequence(seq.MiddleInt(lower, upper)), sequence(upper)
     
     ' pivot is at the end
     Dim pivot As Variant
@@ -54,7 +95,7 @@ Public Sub QuickSort(ByRef sequence As Variant, ByVal lower As Long, ByVal upper
     middle = Partition(sequence, lower, upper, pivot)
     
     ' don't swap if they are the same (pivot is single greatest)
-    If middle <> upper Then seq.SwapIndexes sequence, upper, middle
+    If middle <> upper Then Swap sequence(upper), sequence(middle)
     
     ' Omit the location of the pivot
     QuickSort sequence, lower, middle - 1
@@ -79,7 +120,7 @@ Private Function Partition(ByRef sequence As Variant, ByVal lower As Long, _
         Wend
         
         ' don't swap if they are the same
-        If lower <> upper Then seq.SwapIndexes sequence, lower, upper
+        If lower <> upper Then Swap sequence(lower), sequence(upper)
         
     Wend
     Partition = lower
