@@ -39,7 +39,7 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-        Err.Raise Err.Number
+        Error_ReRaise Err
     End Select
 
 End Function
@@ -55,7 +55,7 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-        Err.Raise Err.Number
+        Error_ReRaise Err
     End Select
     
 End Function
@@ -75,7 +75,7 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-        Err.Raise Err.Number
+        Error_ReRaise Err
     End Select
     
 End Function
@@ -98,7 +98,7 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-       Err.Raise Err.number, GetErrorSource(method), Err.Description, Err.HelpFile, Err.HelpContext
+       Error_ReRaise Err
     End Select
     
 End Function
@@ -108,9 +108,7 @@ Private Sub CreateRootPath(ByVal path As String)
     parent_folder = RootName(path)
     
     If Not FolderExists(parent_folder) Then
-    
         MakeDir parent_folder, create_parent:=True
-        
     End If
     
 End Function
@@ -125,6 +123,9 @@ End Sub
 '
 ' ### Custom Error Messages
 '
+Private Sub Error_ReRaise(ByVal errObj as Variant)
+    Err.Raise errObj.Number, errObj.Source, errObj.Description, errObj.Helpfile, errObj.HelpContext
+End Sub
 Private Sub Error_FailedCreate(Byval method as String, ByVal operation As String)
     Err.Raise osErrNums.unknown, method, "Destination does not exist after errorless `" & operation &"`"
 End Sub
