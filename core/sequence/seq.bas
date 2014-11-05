@@ -3,6 +3,10 @@ Option Explicit
 
 ' seq
 ' ===
+'
+' This has become a dumping ground for useful methods that don't
+' really have a home.  PLEASE FIND OR MAKE THEM ONE!
+'
 ' Just Great Helper Functions
 ' ---------------------------
 '
