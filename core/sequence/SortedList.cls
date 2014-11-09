@@ -15,13 +15,14 @@ Attribute VB_Exposed = False
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (SortedList.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 Option Explicit
 
 ' Private Memebers
 ' ----------------
 '
-Private this as List
+Private this As List
 '
 ' Private Methods
 ' ---------------
@@ -29,7 +30,7 @@ Private this as List
 ''
 ' IndexOf: Finds where an item is or where it should be
 Private Function IndexOf(ByVal element As Variant) As Long
-    IndexOf = seq.BinarySearch(element, this, nearest:=true)
+    IndexOf = seq.BinarySearch(element, this, nearest:=True)
 End Function
 ''
 ' Constructor
@@ -49,7 +50,7 @@ End Sub
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
     
-    Set NewEnum = collec.[_NewEnum]
+    Set NewEnum = this.NewEnum
     
 End Property
 '
@@ -68,12 +69,12 @@ Public Sub Add(ByVal element As Variant)
     End If
     
     Dim index As Long
-    index = indexOf(element)
+    index = IndexOf(element)
     
     If this(index) = element Then Exit Sub
     
     If this(index) < element Then ' ONLY HAPPENS AT END?
-        this.append(element)
+        this.Append (element)
     Else
         this.Emplace index, element
     End If
@@ -84,7 +85,7 @@ End Sub
 Public Sub Extend(ByVal sequence As Variant)
     
     Dim element As Variant
-    For Each element in sequence
+    For Each element In sequence
         Add element
     Next element
     
@@ -94,13 +95,13 @@ End Sub
 '
 ''
 ' Removal is by element not by index
-Public Sub Remove(ByVal element as Variant)
+Public Sub Remove(ByVal element As Variant)
     
     Dim index As Long
     index = IndexOf(element)
     
     If this(index) = element Then
-        this.Remove(index)
+        this.Remove (index)
     Else
         Err.Raise 9, TypeName(Me) & ".Remove", "Element does not exist."
     End If
@@ -134,15 +135,16 @@ End Property
 '
 ' #### Aux
 '
-Public Property Get Count() As Long
+Public Function Count() As Long
     Count = this.Count
-End Property
-Public Property Get ToString() As String
+End Function
+Public Function ToString() As String
     ToString = this.ToString
-End Property
+End Function
 '
 ' ### Unimplemented
 '
 ' #### Replacement
 ' #### Insertion
 '
+
