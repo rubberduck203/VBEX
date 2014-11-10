@@ -2,24 +2,24 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "PySet"
+Attribute VB_Name = "SortedSet"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '
-' PySet
+' SortedSet
 ' ===========
 '
 ' Maintains a list of sorted unique items.
 ' It is meant to be synonymous with Python's `set` but that is
 ' a reserved keyword in VBA.  Instead of using an advanced data
-' structure, `PySet` keeps a sorted `List` and an external
+' structure, `SortedSet` keeps a sorted `List` and an external
 ' binary search function to preserve unique elements.  This allows
 ' _mutability_ and limits recursion (as VB is not tail recursive.)
 '
 ' Copywrite (C) 2014 Philip Wales
-' This file (PySet.cls) is distributed under the MIT license
+' This file (SortedSet.cls) is distributed under the MIT license
 ' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 Option Explicit
@@ -67,14 +67,14 @@ End Sub
 '
 ' ### Initializers
 '
-Public Function Copy(ByVal sequence As Variant) As PySet
+Public Function Copy(ByVal sequence As Variant) As SortedSet
     
-    Dim result As New PySet
+    Dim result As New SortedSet
     result.Extend sequence
     Set Copy = result
     
 End Function
-Public Function Create(ParamArray args() As Variant) As PySet
+Public Function Create(ParamArray args() As Variant) As SortedSet
     
     Set Create = Copy(args)
     
@@ -83,16 +83,16 @@ End Function
 ' Immutable Constructors
 ' ----------------------
 '
-Public Function Union(ByVal other As PySet) As PySet
+Public Function Union(ByVal other As SortedSet) As SortedSet
 
-    Set Union = New PySet
+    Set Union = New SortedSet
     Union.Extend other
     Union.Extend Me
     
 End Function
-Public Function Intersect(ByVal other As PySet) As PySet
+Public Function Intersect(ByVal other As SortedSet) As SortedSet
     
-    Dim result As New PySet
+    Dim result As New SortedSet
     
     Dim element As Variant
     For Each element In pList
@@ -102,9 +102,9 @@ Public Function Intersect(ByVal other As PySet) As PySet
     Set Intersect = result
     
 End Function
-Public Function Difference(ByVal other As PySet) As PySet
+Public Function Difference(ByVal other As PySet) As SortedSet
     
-    Dim result As New PySet
+    Dim result As New SortedSet
     
     Dim element As Variant
     For Each element In pList
@@ -114,7 +114,7 @@ Public Function Difference(ByVal other As PySet) As PySet
     Set Difference = result
     
 End Function
-Public Function SymmetricDifference(ByVal other As PySet) As PySet
+Public Function SymmetricDifference(ByVal other As SortedSet) As SortedSet
     Set SymmetricDifference = Difference(other).Union(other.Difference(Me))
 End Function
 '
@@ -127,10 +127,10 @@ End Function
 Public Function Exists(ByVal sought As Variant) As Boolean
     Exists = (pList(IndexOf(sought)) = sought)
 End Function
-Public Function IsDisJoint(ByVal other As PySet) As Boolean
+Public Function IsDisJoint(ByVal other As SortedSet) As Boolean
     IsDisJoint = (Intersect(other).Count = 0)
 End Function
-Public Function IsSubSetOf(ByVal other As PySet) As Boolean
+Public Function IsSubSetOf(ByVal other As SortedSet) As Boolean
     
     Dim element As Variant
     For Each element In pList
@@ -143,13 +143,13 @@ Public Function IsSubSetOf(ByVal other As PySet) As Boolean
     IsSubSetOf = True
     
 End Function
-Public Function IsProperSubSetOf(ByVal other As PySet) As Boolean
+Public Function IsProperSubSetOf(ByVal other As SortedSet) As Boolean
     IsProperSubSetOf = (IsSubSetOf(other) And (Count < other.Count))
 End Function
-Public Function IsSuperSetOf(ByVal other As PySet)
+Public Function IsSuperSetOf(ByVal other As SortedSet)
     IsSuperSetOf = other.IsSubSetOf(Me)
 End Function
-Public Function IsProperSuperSetOf(ByVal other As PySet) As Boolean
+Public Function IsProperSuperSetOf(ByVal other As SortedSet) As Boolean
     IsProperSuperSetOf = other.IsProperSubSetOf(Me)
 End Function
 '
