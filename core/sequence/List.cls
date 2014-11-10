@@ -79,6 +79,7 @@ End Sub
 ''
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
+Attribute NewEnum.VB_UserMemId = -4
 
     Set NewEnum = collec.[_NewEnum]
     
