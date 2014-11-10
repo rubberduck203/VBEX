@@ -102,7 +102,7 @@ Public Function Intersect(ByVal other As SortedSet) As SortedSet
     Set Intersect = result
     
 End Function
-Public Function Difference(ByVal other As PySet) As SortedSet
+Public Function Difference(ByVal other As SortedSet) As SortedSet
     
     Dim result As New SortedSet
     
@@ -163,7 +163,7 @@ Attribute Item.VB_UserMemId = 0
     seq.Assign Item, pList.Item(index)
     
 End Property
-Public Property Get Slice(ByVal a As Long, ByVal b As Long) As PySet
+Public Property Get Slice(ByVal a As Long, ByVal b As Long) As SortedSet
     Set Slice = pList.Slice(a, b)
 End Property
 '
