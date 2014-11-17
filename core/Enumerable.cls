@@ -33,29 +33,32 @@ Public Property Set Collection(obj As Variant)
 
 End Property
 
-Public Function Merge(collectionObject As Variant)
+Public Sub Merge(collectionObject As Variant)
 ' Tries to convert any object passed in to a collection.
 ' This allows collection *like* objects such as Worksheets and Ranges.
 
 On Error GoTo ErrHandler
+
+    'Can't loop through an object that doesn't exist; nothing to merge
+    If collectionObject Is Nothing Then Exit Sub
 
     Dim element As Variant
     For Each element In collectionObject
         mCollection.Add element
     Next
 
-Exit Function
+Exit Sub
 
 ErrHandler:
     Const ObjectNotEnumerableMessage As String = "Object is not Enumerable."
     
-    If Err.number = vbMethodNotSupportedError Then
-        Err.Raise Err.number, TypeName(Me), InvalidArgumentErrorMessage & " " & ObjectNotEnumerableMessage, Err.HelpFile, Err.HelpContext
+    If Err.Number = vbMethodNotSupportedError Then
+        Err.Raise Err.Number, TypeName(Me), InvalidArgumentErrorMessage & " " & ObjectNotEnumerableMessage, Err.HelpFile, Err.HelpContext
     Else
         ReRaiseError Err
     End If
 
-End Function
+End Sub
 
 Public Property Get Collection() As Collection
     Set Collection = mCollection
@@ -86,7 +89,7 @@ End Function
 
 ' "Static" functions to be used with default instance of Enumerable
 
-Public Function Range(ByVal startValue As Long, ByVal endValue As Long) As Enumerable 'Collection
+Public Function Range(ByVal startValue As Long, ByVal endValue As Long) As Enumerable
     
     Set mCollection = New Collection
         
@@ -204,7 +207,7 @@ ErrHandler:
     HandleComparisonError Err
 End Function
 
-Public Function Intersect(collection2 As Enumerable) As Enumerable 'Collection
+Public Function Intersect(collection2 As Enumerable) As Enumerable
     On Error GoTo ErrHandler
     
     If collection2 Is Nothing Then
@@ -242,10 +245,10 @@ End Function
 
 Public Function Clone() As Enumerable
     Set Clone = New Enumerable
-    Set Clone.Collection = CloneCollection
+    Set Clone.Collection = ToCollection
 End Function
 
-Public Function CloneCollection() As Collection
+Public Function ToCollection() As Collection
     Dim element As Variant
     Dim results As New Collection
     
@@ -253,7 +256,7 @@ Public Function CloneCollection() As Collection
         results.Add item
     Next
     
-    Set CloneCollection = results
+    Set ToCollection = results
 End Function
 
 Public Function ToArray() As Variant
@@ -334,8 +337,8 @@ Private Sub HandleComparisonError(error As ErrObject)
 
     Const ComparisonNotSupportedMessage As String = "An item in the collection does not have a default property; Cannot compare items without a default property."
 
-    If error.number = vbMethodNotSupportedError Then
-        error.Raise error.number, TypeName(Me), ComparisonNotSupportedMessage, error.HelpFile, error.HelpContext
+    If error.Number = vbMethodNotSupportedError Then
+        error.Raise error.Number, TypeName(Me), ComparisonNotSupportedMessage, error.HelpFile, error.HelpContext
     Else
         ReRaiseError error
     End If
@@ -343,7 +346,7 @@ Private Sub HandleComparisonError(error As ErrObject)
 End Sub
 
 Private Sub ReRaiseError(error As ErrObject)
-    error.Raise error.number, error.source, error.Description, error.HelpFile, error.HelpContext
+    error.Raise error.Number, error.source, error.Description, error.HelpFile, error.HelpContext
 End Sub
 
 Private Sub Class_Initialize()
