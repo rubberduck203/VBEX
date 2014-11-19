@@ -165,8 +165,8 @@ End Sub
 ' Aux Methods
 ' -----------
 '
-Public Property Get Keys() As SortedSet
-    Set Keys = SortedSet.Copy(pDict.Keys)
+Public Property Get Keys() As List
+    Set Keys = List.Copy(pDict.Keys)
 End Property
 Public Property Get Values() As List
     Set Values = List.Copy(pDict.Items)
