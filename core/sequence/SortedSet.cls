@@ -42,8 +42,17 @@ Private pList As List
 ''
 ' IndexOf: Finds where an item is or where it should be
 Private Function IndexOf(ByVal element As Variant) As Long
+On Error GoTo ErrHandler
     IndexOf = srch.BinarySearch(element, pList, 1, pList.Count, nearest:=True)
+Exit Function
+ErrHandler:
+    Debug.Assert Err.Number = 438
+    RaiseObjectWithNoDefaultPropertyError
 End Function
+Private Sub RaiseObjectWithNoDefaultPropertyError()
+    Err.Raise 438, "SortedSet.IndexOf", _
+        "Object does not have a default property and cannot be compared"
+End Sub
 ''
 ' Destructor, might be unnecessary
 Private Sub Class_Terminate()
