@@ -19,11 +19,12 @@ Attribute VB_Exposed = True
 '
 '
 Option Explicit
+Implements IEquatable
 '
 ' Private Members
 ' ---------------
 '
-Private collec As Collection ' Sole datamember
+Private pCollec As Collection ' Sole datamember
 '
 ' Public Members
 ' --------------
@@ -35,18 +36,18 @@ Private collec As Collection ' Sole datamember
 ''
 ' TransformIndex: Eforces Zero Offset and `Cylcing?.
 Private Sub TransformIndex(ByRef x As Variant)
-    If x < 0 Then x = x + collec.Count + 1
+    If x < 0 Then x = x + pCollec.Count + 1
 End Sub
 ''
 ' Replace
 Private Sub Replace(ByVal index As Long, ByVal element As Variant)
     
-    collec.Remove index
+    pCollec.Remove index
     
-    If index = collec.Count + 1 Then
-        collec.Add element
+    If index = pCollec.Count + 1 Then
+        pCollec.Add element
     Else
-        collec.Add element, before:=index
+        pCollec.Add element, before:=index
     End If
     
 End Sub
@@ -68,20 +69,20 @@ Public Function Create(ParamArray args() As Variant) As List
     Set Create = Copy(args)
     
 End Function
-Private Sub class_initialize()
-    Set collec = New Collection
+Private Sub Class_Initialize()
+    Set pCollec = New Collection
 End Sub
 ''
 ' Destructor: Might be unnecessary
 Private Sub Class_Terminate()
-    Set collec = Nothing
+    Set pCollec = Nothing
 End Sub
 ''
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
 
-    Set NewEnum = collec.[_NewEnum]
+    Set NewEnum = pCollec.[_NewEnum]
     
 End Property
 '
@@ -117,7 +118,7 @@ Public Property Get Item(ByVal index As Long) As Variant
 Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
-    seq.Assign Item, collec.Item(index)
+    seq.Assign Item, pCollec.Item(index)
     
 End Property
 Public Property Get Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As Long = 1) As List
@@ -127,12 +128,12 @@ Public Property Get Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     
     Set Slice = New List
     
-    If s < 1 Then Err.Raise TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
-    s = IIf(a < b, s, -s)
+    If s < 1 Then Err.Raise 9, TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
+    s = IIF(a < b, s, -s)
     
     Dim i As Long
     For i = a To b Step s
-        Slice.Append collec.Item(i)
+        Slice.Append pCollec.Item(i)
     Next i
     
 End Property
@@ -141,10 +142,13 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     TransformIndex a
     TransformIndex b
     
-    If s < 1 Then Err.Raise TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
-    s = IIf(a < b, s, -s)
+    If s < 1 Then Err.Raise 9, TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
+    s = IIF(a < b, s, -s)
     
-    If Abs(a - b) + 1 <> seq.Length(sequence) Then
+    Dim other As List
+    Set other = List.Copy(sequence)
+    
+    If Abs(a - b) + 1 <> other.Count Then
         Err.Raise 9, TypeName(Me) & ".Slice", "Subscript out of Range."
     End If
     
@@ -152,7 +156,7 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     
     On Error GoTo NotSequence
     Dim element As Variant
-    For Each element In sequence
+    For Each element In other
         
         Replace i, element
         i = i + s
@@ -174,7 +178,7 @@ End Property
 Public Sub Remove(ByVal index As Long)
     
     TransformIndex index
-    collec.Remove index
+    pCollec.Remove index
     
 End Sub
 ''
@@ -185,7 +189,7 @@ Public Sub Clear(ByVal start As Long, ByVal size As Long)
     
     Dim i As Long
     For i = 1 To size
-        collec.Remove start
+        pCollec.Remove start
     Next i
 
 End Sub
@@ -206,7 +210,7 @@ Public Sub Extend(ByVal sequence As Variant)
     On Error GoTo NotSequence
     Dim element As Variant
     For Each element In sequence
-        collec.Add element
+        pCollec.Add element
     Next element
 
 Exit Sub
@@ -219,11 +223,11 @@ End Sub
 '
 ''
 ' Emplace: Place element at index, existing elements shifted backward.
-' Synonymous with `collec.Add element, before:=index.`
+' Synonymous with `pCollec.Add element, before:=index.`
 Public Sub Emplace(ByVal index As Long, ByVal element As Variant)
     
     TransformIndex index
-    collec.Add element, before:=index
+    pCollec.Add element, before:=index
     
 End Sub
 ''
@@ -232,12 +236,15 @@ Public Sub Insert(ByVal index As Long, ByVal sequence As Variant)
     
     TransformIndex index
     On Error GoTo NotSequence
-    seq.Reverse sequence ' sequence becomes a stack
+    
+    Dim other As List
+    Set other = List.Copy(sequence)
+    sort.Reverse other, 1, other.Count
     
     Dim element As Variant
-    For Each element In sequence
+    For Each element In other
         ' push back previous element
-        collec.Add element, before:=index
+        pCollec.Add element, before:=index
     Next element
 
 Exit Sub
@@ -251,7 +258,7 @@ End Sub
 ''
 ' Count
 Public Function Count() As Long
-    Count = collec.Count
+    Count = pCollec.Count
 End Function
 ''
 ' Exists: Linear search for `sought`.
@@ -260,7 +267,7 @@ Public Function Exists(ByVal sought As Variant) As Boolean
     Exists = True
     
     Dim element As Variant
-    For Each element In collec
+    For Each element In pCollec
         If element = sought Then Exit Function
     Next element
     
@@ -276,16 +283,46 @@ Public Function ToString(Optional delim As String = ", ") As String
 End Function
 Public Function ToArray() As Variant()
 
-    If collec.Count = 0 Then
+    If pCollec.Count = 0 Then
         ToArray = Array()
         Exit Function
     End If
     
     Dim a() As Variant
-    ReDim a(collec.Count - 1) As Variant
+    ReDim a(pCollec.Count - 1) As Variant
     Dim i As Long
-    For i = 1 To collec.Count
-        a(i - 1) = collec(i)
+    For i = 1 To pCollec.Count
+        a(i - 1) = pCollec(i)
     Next i
     ToArray = a
+End Function
+'
+' Interfaces
+' ----------
+'
+' ### IEquatable
+'
+Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+    IEquatable_Equals = Equals(other)
+End Function
+Public Function Equals(ByVal other As Variant) As Boolean
+    On Error GoTo Nope
+    
+    Equals = False
+    If other.Count <> Count Then Exit Function
+    
+    Dim i As Long
+    For i = 1 To Count
+        If other(i) <> pCollec(i) Then Exit Function
+    Next i
+    
+    Equals = True
+    
+CleanExit:
+Exit Function
+Nope:
+
+    Equals = False
+    Resume CleanExit
+    
 End Function
