@@ -200,7 +200,7 @@ Public Sub Clear(ByVal key As Variant)
     pDict.RemoveAll
 End Sub
 
-Public Function ToString(Optional ByVal delim As String = ", ") As String
+Public Property Get ToString(Optional ByVal delim As String = ", ") As String
 
     Dim result As String
     
@@ -211,4 +211,4 @@ Public Function ToString(Optional ByVal delim As String = ", ") As String
     
     ToString = "{" & Mid(result, Len(delim) + 1) & "}"
     
-End Function
+End Property
