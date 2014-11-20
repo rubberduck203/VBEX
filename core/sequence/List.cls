@@ -21,6 +21,7 @@ Attribute VB_Exposed = True
 Option Explicit
 Implements IEquatable
 Implements ICountable
+Implements IPrintable
 '
 ' Private Members
 ' ---------------
@@ -257,11 +258,6 @@ End Sub
 ' ### Auxillary
 '
 ''
-' Count
-Public Property Get Count() As Long
-    Count = pCollec.Count
-End Property
-''
 ' Exists: Linear search for `sought`.
 Public Function Exists(ByVal sought As Variant) As Boolean
     
@@ -274,34 +270,6 @@ Public Function Exists(ByVal sought As Variant) As Boolean
     
     Exists = False
     
-End Function
-Public Function Equals(ByVal other As Variant) As Boolean
-    On Error GoTo Nope
-    
-    Equals = False
-    If other.Count <> Count Then Exit Function
-    
-    Dim i As Long
-    For i = 1 To Count
-        If other(i) <> pCollec(i) Then Exit Function
-    Next i
-    
-    Equals = True
-    
-CleanExit:
-Exit Function
-Nope:
-
-    Equals = False
-    Resume CleanExit
-    
-End Function
-''
-' ToString: Represent instance as String.
-' Usefull for debugging only.  Doesn't work with nested
-' lists.
-Public Function ToString(Optional delim As String = ", ") As String
-    ToString = "[" & Join(ToArray, delim) & "]"
 End Function
 Public Function ToArray() As Variant()
 
@@ -324,12 +292,49 @@ End Function
 '
 ' ### IEquatable
 '
+Public Function Equals(ByVal other As Variant) As Boolean
+    On Error GoTo Nope
+    
+    Equals = False
+    If other.Count <> Count Then Exit Function
+    
+    Dim i As Long
+    For i = 1 To Count
+        If other(i) <> pCollec(i) Then Exit Function
+    Next i
+    
+    Equals = True
+    
+CleanExit:
+Exit Function
+Nope:
+
+    Equals = False
+    Resume CleanExit
+    
+End Function
 Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
     IEquatable_Equals = Equals(other)
 End Function
 '
 ' ### ICountable
 '
+Public Property Get Count() As Long
+    Count = pCollec.Count
+End Property
 Public Property Get ICountable_Count() As Long
     ICountable_Count = Count
+End Property
+'
+'  ### IPrintable
+'
+''
+' ToString: Represent instance as String.
+' Usefull for debugging only.  Doesn't work with nested
+' lists.
+Public Property Get ToString(Optional delim As String = ", ") As String
+    ToString = "[" & Join(ToArray, delim) & "]"
+End Property
+Public Property Get IPrintable_ToString() As String
+    IPrintable_ToString = ToString()
 End Property
