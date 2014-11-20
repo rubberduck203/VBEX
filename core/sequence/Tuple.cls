@@ -17,6 +17,7 @@ Option Explicit
 ' 
 'Implements IEquatable ' but only against other tuples...
 Implements ICountable
+Implements IPrintable
 '
 ' Private Members
 ' ---------------
@@ -115,12 +116,7 @@ End Sub
 ' Public Properties
 ' -----------------
 '
-Public Property Get Count() As Long
-    Count = Ubound(pArray) + 1
-End Property
-Public Property Get ToString() As String
-    Debug.Print "(" & Join(pArray, ", ") & ")"
-End Property
+
 '
 ' Public Methods
 ' --------------
@@ -152,6 +148,20 @@ End Sub
 ' Interfaces
 ' ----------
 '
+' ### ICountable
+'
+Public Property Get Count() As Long
+    Count = Ubound(pArray) + 1
+End Property
 Public Property Get ICountable_Count() As Long
     ICountable_Count = Count
+End Property
+'
+' ### IPrintable
+'
+Public Property Get ToString(Optional delim As String = ", ") As String
+    ToString = "(" & Join(pArray, delim) & ")"
+End Property
+Public Property Get IPrintable_ToString() As String
+    IPrintable_ToString = ToString
 End Property
