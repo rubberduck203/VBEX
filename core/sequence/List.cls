@@ -20,6 +20,7 @@ Attribute VB_Exposed = True
 '
 Option Explicit
 Implements IEquatable
+Implements ICountable
 '
 ' Private Members
 ' ---------------
@@ -257,9 +258,9 @@ End Sub
 '
 ''
 ' Count
-Public Function Count() As Long
+Public Property Get Count() As Long
     Count = pCollec.Count
-End Function
+End Property
 ''
 ' Exists: Linear search for `sought`.
 Public Function Exists(ByVal sought As Variant) As Boolean
@@ -272,6 +273,27 @@ Public Function Exists(ByVal sought As Variant) As Boolean
     Next element
     
     Exists = False
+    
+End Function
+Public Function Equals(ByVal other As Variant) As Boolean
+    On Error GoTo Nope
+    
+    Equals = False
+    If other.Count <> Count Then Exit Function
+    
+    Dim i As Long
+    For i = 1 To Count
+        If other(i) <> pCollec(i) Then Exit Function
+    Next i
+    
+    Equals = True
+    
+CleanExit:
+Exit Function
+Nope:
+
+    Equals = False
+    Resume CleanExit
     
 End Function
 ''
@@ -305,24 +327,9 @@ End Function
 Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
     IEquatable_Equals = Equals(other)
 End Function
-Public Function Equals(ByVal other As Variant) As Boolean
-    On Error GoTo Nope
-    
-    Equals = False
-    If other.Count <> Count Then Exit Function
-    
-    Dim i As Long
-    For i = 1 To Count
-        If other(i) <> pCollec(i) Then Exit Function
-    Next i
-    
-    Equals = True
-    
-CleanExit:
-Exit Function
-Nope:
-
-    Equals = False
-    Resume CleanExit
-    
-End Function
+'
+' ### ICountable
+'
+Public Property Get ICountable_Count() As Long
+    ICountable_Count = Count
+End Property
