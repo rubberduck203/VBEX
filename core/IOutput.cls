@@ -9,7 +9,13 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+' print and end with new line
 Public Sub PrintLine(Optional ByVal object As Variant)
+End Sub
+
+' print with no new line
+' Name debatable.  `Print` is reserved :(
+Public Sub Put(Optional ByVal object As Variant)
 End Sub
 
 
