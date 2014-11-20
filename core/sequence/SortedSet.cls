@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '
 ' SortedSet
-' ===========
+' =========
 '
 ' Maintains a list of sorted unique items.
 ' It is meant to be synonymous with Python's `set` but that is
@@ -23,6 +23,9 @@ Attribute VB_Exposed = True
 ' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 Option Explicit
+
+Implements IEquatable
+
 '
 ' Public Members
 ' --------------
@@ -39,8 +42,17 @@ Private pList As List
 ''
 ' IndexOf: Finds where an item is or where it should be
 Private Function IndexOf(ByVal element As Variant) As Long
+On Error GoTo ErrHandler
     IndexOf = srch.BinarySearch(element, pList, 1, pList.Count, nearest:=True)
+Exit Function
+ErrHandler:
+    Debug.Assert Err.Number = 438
+    RaiseObjectWithNoDefaultPropertyError
 End Function
+Private Sub RaiseObjectWithNoDefaultPropertyError()
+    Err.Raise 438, "SortedSet.IndexOf", _
+        "Object does not have a default property and cannot be compared"
+End Sub
 ''
 ' Destructor, might be unnecessary
 Private Sub Class_Terminate()
@@ -215,12 +227,29 @@ Public Sub Remove(ByVal element As Variant)
     index = IndexOf(element)
     
     If pList(index) = element Then
-        pList.Remove (index)
+        pList.Remove index
     Else
         Err.Raise 9, TypeName(Me) & ".Remove", "Element does not exist."
     End If
     
 End Sub
+Public Sub Discard(ByVal element As Variant)
+
+    Dim index As Long
+    index = IndexOf(element)
+    
+    If pList(index) = element Then pList.Remove index
+    
+End Sub
+Public Sub Clear()
+    pList.Clear 1, pList.Count
+End Sub
+Public Function Pop() As Variant
+
+    seq.Assign Pop, pList(1)
+    pList.Remove 1
+    
+End Function
 '
 ' #### Misc
 '
@@ -236,3 +265,16 @@ End Function
 ' #### Replacement
 ' #### Insertion
 '
+'
+' Interfaces
+' ----------
+'
+' ### IEquatable
+'
+Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+    IEquatable_Equals = Equals(other)
+End Function
+Public Function Equals(ByVal other As Variant) As Boolean
+    Equals = pList.Equals(other)
+End Function
+
