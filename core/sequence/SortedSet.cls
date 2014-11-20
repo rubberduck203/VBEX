@@ -25,6 +25,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Implements IEquatable
+Implements ICountable
 
 '
 ' Public Members
@@ -253,8 +254,11 @@ End Function
 '
 ' #### Misc
 '
-Public Function Count() As Long
+Public Property Get Count() As Long
     Count = pList.Count
+End Property
+Public Function Equals(ByVal other As Variant) As Boolean
+    Equals = pList.Equals(other)
 End Function
 Public Function ToString() As String
     ToString = pList.ToString
@@ -274,7 +278,7 @@ End Function
 Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
     IEquatable_Equals = Equals(other)
 End Function
-Public Function Equals(ByVal other As Variant) As Boolean
-    Equals = pList.Equals(other)
-End Function
+Public Property Get ICountable_Count() As Long
+    ICountable_Count = Count
+End Property
 
