@@ -118,6 +118,9 @@ End Sub
 Public Property Get Count() As Long
     Count = Ubound(pArray) + 1
 End Property
+Public Property Get ToString() As String
+    Debug.Print "(" & Join(pArray, ", ") & ")"
+End Property
 '
 ' Public Methods
 ' --------------
@@ -145,9 +148,6 @@ Private Sub RaiseIndexError(ByVal method As String, ByVal offending As Variant)
     Err.Raise 9, TypeName(Me) & "." & method, _
         "Offending sequence is of size: " & UBound(offending) + 1 & " not " & UBound(pArray) + 1
 End Sub
-Public Property Get ToString() As String
-    Debug.Print "(" & Join(pArray, ", ") & ")"
-End Property
 '
 ' Interfaces
 ' ----------
