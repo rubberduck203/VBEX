@@ -104,25 +104,16 @@ End Sub
 '
 Public Property Get Item(ByVal key As Variant) As Variant
 Attribute Item.VB_UserMemId = 0
-
     seq.Assign Item, pDict(key)
 End Property
 Public Property Let Item(ByVal key As Variant, ByVal value As Variant)
 Attribute Item.VB_UserMemId = 0
-
-    If pDict.Exists(key) Then
-        pDict.Remove key
-        pDict.Add key, value
-    Else
-        pDict.Add key, value
-    End If
+    pDict(key) = value
 End Property
-''
-' do we bother to check if `value` is an object?
-'Public Property Set Item(ByVal key As Variant, ByVal value As Variant)
-'    Debug.Print "Warning `Set Dict.Item(key) = value` is synonymous with `Dict.Item(key) = value`"
-'    Me.Item(key) = value
-'End Property
+Public Property Set Item(ByVal key As Variant, ByVal value As Variant)
+Attribute Item.VB_UserMemId = 0
+    Set pDict(key) = value
+End Property
 Public Property Get GetItem(ByVal key As Variant, _
         Optional ByVal default As Variant = Empty) As Variant
     If pDict.Exists(key) Then
@@ -140,19 +131,22 @@ Public Property Get Pop(ByVal key As Variant, _
         seq.Assign Pop, default
     End If
 End Property
-Public Property Get PopItem(ByVal key As Variant, _
-        Optional ByVal default As Variant = Empty) As Variant
+Public Property Get Pair(ByVal key As Variant) As Tuple
+    Set Pair = Tuple.Pack(key, pDict(key))
+End Property
+Public Property Get PopPair(ByVal key As Variant, _
+        Optional ByVal default As Variant = Empty) As Tuple
     If pDict.Exists(key) Then
-        Set PopItem = Tuple.Pack(key, pDict(key))
+        Set PopPair = Pair(key)
         pDict.Remove key
     Else
-        Set PopItem = Tuple.Pack(key, default)
+        Set PopPair = Tuple.Pack(key, default)
     End If
 End Property
 Public Sub Update(ByVal other As Dict)
     Dim key As Variant
     For Each key In other.Keys
-        Item(key) = other(key)
+        pDict(key) = other(key)
     Next key
 End Sub
 Public Sub Remove(ByVal key As Variant)
@@ -168,14 +162,14 @@ End Sub
 Public Property Get Keys() As List
     Set Keys = List.Copy(pDict.Keys)
 End Property
-Public Property Get Values() As List
-    Set Values = List.Copy(pDict.Items)
-End Property
 Public Property Get Items() As List
-    Set Items = List.Create
+    Set Items = List.Copy(pDict.Items)
+End Property
+Public Property Get Pairs() As List
+    Set Pairs = List.Create
     Dim key As Variant
     For Each key In pDict.Keys
-        Items.Append Tuple.Pack(key, pDict(key))
+        Pairs.Append Pair(key)
     Next key
 End Property
 Public Property Get Count() As Long
