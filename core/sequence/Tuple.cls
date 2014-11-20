@@ -7,18 +7,53 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-Option Explicit
 
+Option Explicit
+'
+' Tuple
+' =====
+'
+' Implementation of Tuple in VB
+' 
+'Implements IEquatable ' but only against other tuples...
+Implements ICountable
+'
+' Private Members
+' ---------------
+'
+''
+' All memebers are stored in an Array
+' ...simple enough
 Private pArray As Variant
 
+'
+' Friend Methods
+' --------------
+'
+''
+'
 Friend Sub Contain(ByVal Values As Variant)
     pArray = Values
 End Sub
-Public Function Pack(ParamArray Values() As Variant) As Tuple
-   Set Pack = Implode(Values)
+Friend Property Get Encapsulated() As Variant()
+    Encapsulated = pArray
+End Property
+'
+' Constructors
+' ------------
+'
+''
+' Pack: create a tuple from a parameter array
+'
+'    Tuple.Pack(1, 2, "A") ' (1, 2, A)
+Public Function Pack(ParamArray values() As Variant) As Tuple
+   Set Pack = Implode(values)
 End Function
 ''
+' Implode: Transform an Iterable into a Tuple
 ' offsetting required for indexes
+'
+'     Tuple.Implode(Array(1, 2, "A")) ' (1, 2, A) 
 Public Function Implode(ByVal arr As Variant) As Tuple
     
     Dim arrLen As Long
@@ -34,6 +69,20 @@ Public Function Implode(ByVal arr As Variant) As Tuple
     Set Implode = result
     
 End Function
+'
+' Accessors
+' ---------
+'
+''
+' Load elements into a parameter array of varaibles
+'
+'   Set t = Tuple.Pack(1, 2, "A")
+'   t.Unpack x, y, z ' x = 1, y = 2, z = "A"
+'
+' In other languages this is the same as
+' 
+'     x, y, z = t
+'
 Public Sub Unpack(ParamArray elements() As Variant)
 
     If UBound(pArray) = UBound(elements) Then
@@ -48,6 +97,10 @@ Public Sub Unpack(ParamArray elements() As Variant)
     End If
     
 End Sub
+''
+' Explode: Load elements into array `arr`
+' arr must be an array
+'
 Public Sub Explode(ByRef arr As Variant)
     Debug.Assert LBound(arr) = 0
     
@@ -58,6 +111,30 @@ Public Sub Explode(ByRef arr As Variant)
     End If
     
 End Sub
+'
+' Public Properties
+' -----------------
+'
+Public Property Get Count() As Long
+    Count = Ubound(pArray) + 1
+End Property
+'
+' Public Methods
+' --------------
+'
+Public Function Equals(ByVal other As Tuple) As Boolean
+    Equals = False
+    If Count <> other.Count Then Exit Function
+    Dim i As Long
+    For i = 0 To Ubound(pArray)
+        If pArray(i) <> other.Encapsulated(i) Then Exit Function
+    Next i
+    Equals = True
+End Function
+'
+' Private Methods
+' ---------------
+'
 Private Sub CopyArray(ByRef dest As Variant, ByRef src As Variant, ByVal size As Long)
     Dim i As Long
     For i = 0 To size
@@ -70,4 +147,11 @@ Private Sub RaiseIndexError(ByVal method As String, ByVal offending As Variant)
 End Sub
 Public Property Get ToString() As String
     Debug.Print "(" & Join(pArray, ", ") & ")"
+End Property
+'
+' Interfaces
+' ----------
+'
+Public Property Get ICountable_Count() As Long
+    ICountable_Count = Count
 End Property
