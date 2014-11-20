@@ -4,8 +4,9 @@ Option Explicit
 ' seq
 ' ===
 '
-' This has become a dumping ground for useful methods that don't
-' really have a home.  PLEASE FIND OR MAKE THEM ONE!
+' This has become a dumping ground procedures.  They are just too
+' useful to just put down!  They are looking for a forever home
+' will your module adopt one today?
 '
 ' Just Great Helper Functions
 ' ---------------------------
