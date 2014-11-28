@@ -95,34 +95,28 @@ Private Function FromJagged(ByVal Pairs As Variant) As Dict
     Set FromJagged = result
     
 End Function
-Public Sub Add(ByVal key As Variant, ByVal value As String)
-    pDict.Add key, value
-End Sub
 '
-' Public Accessors
+' Public Properties
 ' -----------------
 '
+' ### Single Item actions
+'
+''
+' `Item`: same as usual
 Public Property Get Item(ByVal key As Variant) As Variant
 Attribute Item.VB_UserMemId = 0
-
     seq.Assign Item, pDict(key)
 End Property
 Public Property Let Item(ByVal key As Variant, ByVal value As Variant)
 Attribute Item.VB_UserMemId = 0
-
-    If pDict.Exists(key) Then
-        pDict.Remove key
-        pDict.Add key, value
-    Else
-        pDict.Add key, value
-    End If
+    pDict(key) = value
+End Property
+Public Property Set Item(ByVal key As Variant, ByVal value As Variant)
+Attribute Item.VB_UserMemId = 0
+    Set pDict(key) = value
 End Property
 ''
-' do we bother to check if `value` is an object?
-'Public Property Set Item(ByVal key As Variant, ByVal value As Variant)
-'    Debug.Print "Warning `Set Dict.Item(key) = value` is synonymous with `Dict.Item(key) = value`"
-'    Me.Item(key) = value
-'End Property
+' GetItem: Return default value if `key` does not exist
 Public Property Get GetItem(ByVal key As Variant, _
         Optional ByVal default As Variant = Empty) As Variant
     If pDict.Exists(key) Then
@@ -131,6 +125,8 @@ Public Property Get GetItem(ByVal key As Variant, _
         seq.Assign GetItem, default
     End If
 End Property
+''
+' Pop: return value, and remove value, has default implementation
 Public Property Get Pop(ByVal key As Variant, _
         Optional ByVal default As Variant = Empty) As Variant
     If pDict.Exists(key) Then
@@ -140,48 +136,71 @@ Public Property Get Pop(ByVal key As Variant, _
         seq.Assign Pop, default
     End If
 End Property
-Public Property Get PopItem(ByVal key As Variant, _
-        Optional ByVal default As Variant = Empty) As Variant
+''
+' Pair: return a `Tuple` of (key, value)
+Public Property Get Pair(ByVal key As Variant) As Tuple
+    Set Pair = Tuple.Pack(key, pDict(key))
+End Property
+''
+' PopPair: return Pair and remove them.
+Public Property Get PopPair(ByVal key As Variant, _
+        Optional ByVal default As Variant = Empty) As Tuple
     If pDict.Exists(key) Then
-        Set PopItem = Tuple.Pack(key, pDict(key))
+        Set PopPair = Pair(key)
         pDict.Remove key
     Else
-        Set PopItem = Tuple.Pack(key, default)
+        Set PopPair = Tuple.Pack(key, default)
     End If
 End Property
-Public Sub Update(ByVal other As Dict)
-    Dim key As Variant
-    For Each key In other.Keys
-        Item(key) = other(key)
-    Next key
-End Sub
-Public Sub Remove(ByVal key As Variant)
-    pDict.Remove key
-End Sub
-Public Sub Clear(ByVal key As Variant)
-    pDict.RemoveAll
-End Sub
 '
-' Aux Methods
-' -----------
+' Produce Lists
+' -------------
 '
 Public Property Get Keys() As List
     Set Keys = List.Copy(pDict.Keys)
 End Property
-Public Property Get Values() As List
-    Set Values = List.Copy(pDict.Items)
-End Property
 Public Property Get Items() As List
-    Set Items = List.Create
+    Set Items = List.Copy(pDict.Items)
+End Property
+Public Property Get Pairs() As List
+    Set Pairs = List.Create
     Dim key As Variant
     For Each key In pDict.Keys
-        Items.Append Tuple.Pack(key, pDict(key))
+        Pairs.Append Pair(key)
     Next key
 End Property
 Public Property Get Count() As Long
     Count = pDict.Count
 End Property
-Public Function ToString(Optional ByVal delim As String = ", ") As String
+'
+' Public Methods
+' --------------
+'
+''
+' `Add`: add item to dictionary TODO: Raise error if already exists
+Public Sub Add(ByVal key As Variant, ByVal value As String)
+    pDict.Add key, value
+End Sub
+''
+' Remove: Remove entry
+Public Sub Remove(ByVal key As Variant)
+    pDict.Remove key
+End Sub
+'
+''
+' Update: add another `Dict` to this `Dict` overwriting when
+' a key alread exists
+Public Sub Update(ByVal other As Dict)
+    Dim key As Variant
+    For Each key In other.Keys
+        pDict(key) = other(key)
+    Next key
+End Sub
+Public Sub Clear(ByVal key As Variant)
+    pDict.RemoveAll
+End Sub
+
+Public Property Get ToString(Optional ByVal delim As String = ", ") As String
 
     Dim result As String
     
@@ -192,4 +211,4 @@ Public Function ToString(Optional ByVal delim As String = ", ") As String
     
     ToString = "{" & Mid(result, Len(delim) + 1) & "}"
     
-End Function
+End Property

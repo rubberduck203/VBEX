@@ -20,6 +20,8 @@ Attribute VB_Exposed = True
 '
 Option Explicit
 Implements IEquatable
+Implements ICountable
+Implements IPrintable
 '
 ' Private Members
 ' ---------------
@@ -256,11 +258,6 @@ End Sub
 ' ### Auxillary
 '
 ''
-' Count
-Public Function Count() As Long
-    Count = pCollec.Count
-End Function
-''
 ' Exists: Linear search for `sought`.
 Public Function Exists(ByVal sought As Variant) As Boolean
     
@@ -273,13 +270,6 @@ Public Function Exists(ByVal sought As Variant) As Boolean
     
     Exists = False
     
-End Function
-''
-' ToString: Represent instance as String.
-' Usefull for debugging only.  Doesn't work with nested
-' lists.
-Public Function ToString(Optional delim As String = ", ") As String
-    ToString = "[" & Join(ToArray, delim) & "]"
 End Function
 Public Function ToArray() As Variant()
 
@@ -302,9 +292,6 @@ End Function
 '
 ' ### IEquatable
 '
-Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
-    IEquatable_Equals = Equals(other)
-End Function
 Public Function Equals(ByVal other As Variant) As Boolean
     On Error GoTo Nope
     
@@ -326,3 +313,28 @@ Nope:
     Resume CleanExit
     
 End Function
+Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+    IEquatable_Equals = Equals(other)
+End Function
+'
+' ### ICountable
+'
+Public Property Get Count() As Long
+    Count = pCollec.Count
+End Property
+Public Property Get ICountable_Count() As Long
+    ICountable_Count = Count
+End Property
+'
+'  ### IPrintable
+'
+''
+' ToString: Represent instance as String.
+' Usefull for debugging only.  Doesn't work with nested
+' lists.
+Public Property Get ToString(Optional delim As String = ", ") As String
+    ToString = "[" & Join(ToArray, delim) & "]"
+End Property
+Public Property Get IPrintable_ToString() As String
+    IPrintable_ToString = ToString()
+End Property
