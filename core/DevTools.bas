@@ -5,7 +5,11 @@ Public Sub ImportSourceFiles(sourcePath As String)
     Dim file As String
     file = Dir(sourcePath)
     While (file <> "")
-        Application.VBE.ActiveVBProject.VBComponents.Import sourcePath & file
+        Dim ext() As String
+        ext = Split(file, ".")
+        If ext(1) <> "frx" Then
+            Application.VBE.ActiveVBProject.VBComponents.Import sourcePath & file
+        End If
         file = Dir
     Wend
 End Sub
