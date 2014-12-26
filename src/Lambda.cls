@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
+
 '
 ' Lambda
 ' ======
@@ -69,6 +70,7 @@ Attribute VB_Exposed = True
 '
 Option Explicit
 Implements IPrintable
+Implements IApplicable
 '
 ' Constants
 ' ---------
@@ -282,11 +284,6 @@ Private Property Get LambdaCodeModule() As CodeModule
     Set LambdaCodeModule = Application.VBE.VBProjects(ThisWorkbook.VBProject.Name).VBComponents(LAMBDA_MODULE).CodeModule
     
 End Property
-Public Property Get IPrintable_ToString() As String
-
-    IPrintable_ToString = ToString
-    
-End Property
 Public Property Get ToString() As String
     
     ToString = "(" & Parameters & ") => " & Expression
@@ -295,3 +292,21 @@ End Property
 '
 ' ### Error Raising
 '
+'
+' ### Interfaces
+'
+Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
+
+    IApplicable_Apply = Apply(args)
+
+End Function
+Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
+
+    IApplicable_Exec = Apply(args)
+
+End Function
+Public Property Get IPrintable_ToString() As String
+
+    IPrintable_ToString = ToString
+    
+End Property

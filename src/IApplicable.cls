@@ -12,3 +12,7 @@ Option Explicit
 Public Function Apply(ByVal args() As Variant) As Variant
 
 End Function
+
+Public Function Exec(ParamArray args() As Variant) As Variant
+
+End Function
