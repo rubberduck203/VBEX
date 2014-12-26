@@ -28,7 +28,9 @@ Public Function MaxValue(ByVal sequence As Variant, _
     
 End Function
 Public Function Max(ParamArray Values() As Variant) As Variant
-    seq.assing Max, MaxValue(CVar(Values), LBound(Values), UBound(Values))
+
+    cast.Assign Max, MaxValue(CVar(Values), LBound(Values), UBound(Values))
+    
 End Function
 
 ''
@@ -52,7 +54,9 @@ Public Function MinValue(ByVal sequence As Variant, _
     
 End Function
 Public Function Min(ParamArray Values() As Variant) As Variant
+
     cast.Assign Min, MinValue(CVar(Values), LBound(Values), UBound(Values))
+    
 End Function
 
 '

@@ -5,9 +5,11 @@ Option Explicit
 ' ====
 '
 ' Contains in-place sorting algorithms for Arrays.
+' ** ARRAYS ONLY **
 '
 ' Helper Methods
 ' --------------
+'
 ''
 ' Swap should work on an array or any two variables. It
 ' will not work on elements of sequence objects as the
@@ -22,16 +24,16 @@ Option Explicit
 Private Sub Swap(ByRef x As Variant, ByRef y As Variant)
     
     Dim t As Variant
-    Assign t, x
-    Assign x, y
-    Assign y, t
+    cast.Assign t, x
+    cast.Assign x, y
+    cast.Assign y, t
     
 End Sub
 '
 ' Reversal
 ' --------
 '
-Public Sub Reverse(ByRef sequence As Variant, _
+Public Sub Reverse(ByRef sequence() As Variant, _
         ByVal lower As Long, ByVal upper As Long)
     
     While lower < upper
@@ -50,7 +52,7 @@ End Sub
 '
 ' ### Bubble Sort
 '
-Public Sub BubbleSort(ByRef sequence As Variant, _
+Public Sub BubbleSort(ByRef sequence() As Variant, _
         ByVal lower As Long, ByVal upper As Long)
 
     Dim upperIt As Long
@@ -79,7 +81,7 @@ End Sub
 '
 ' ### Quick Sort
 '
-Public Sub QuickSort(ByRef sequence As Variant, ByVal lower As Long, ByVal upper As Long)
+Public Sub QuickSort(ByRef sequence() As Variant, ByVal lower As Long, ByVal upper As Long)
     
     ' length <= 1; already sorted
     If lower >= upper Then Exit Sub
@@ -105,7 +107,7 @@ Public Sub QuickSort(ByRef sequence As Variant, ByVal lower As Long, ByVal upper
     ' which is the magic of the quick sort
     
 End Sub
-Private Function Partition(ByRef sequence As Variant, ByVal lower As Long, _
+Private Function Partition(ByRef sequence() As Variant, ByVal lower As Long, _
         ByVal upper As Long, ByVal pivot As Variant) As Long
         
     While lower < upper

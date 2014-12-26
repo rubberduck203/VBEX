@@ -58,7 +58,8 @@ Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Varian
 End Sub
 '
 ''
-' Constructor
+' ### Constructors
+'
 Public Function Copy(ByVal sequence As Variant) As List
 
     Dim result As New List
@@ -70,6 +71,67 @@ Public Function Create(ParamArray args() As Variant) As List
 
     Set Create = Copy(CVar(args))
     
+End Function
+'
+' ### Functional Constructors
+'
+Public Function Map(ByVal op As Lambda) As List
+
+    Dim result As New List
+    
+    Dim element As Variant
+    For Each element In pCollec
+        result.Append op.Exec(element)
+    Next element
+    
+    Set Map = result
+
+End Function
+Public Function Filter(ByVal pred As Lambda, _
+        Optional ByVal opposite As Boolean = False) As List
+    
+    Dim result As New List
+    
+    Dim element As Variant
+    For Each element In pCollec
+        If pred.Exec(element) Xor opposite Then result.Append
+    Next element
+    
+    Set Filter = result
+    
+End Function
+Public Function Fold(ByVal init As Variant, ByVal binaryOp As Lambda) As Variant
+    
+    Debug.Assert binaryOp.IsBinary
+    
+    Dim element As Variant
+    For Each element In pCollec
+        init = binaryOp.Exec(init, element)
+    Next element
+    
+     cast.Assign Fold, init
+    
+End Function
+Public Function Reduce(ByVal binaryOp As Lambda) As Variant
+    
+    cast.Assign Reduce, Slice(2, -1).Fold(pCollec(1), binaryOp)
+    
+End Function
+Public Function ForAll(ByVal pred As Lambda, _
+        Optional ByVal opposite As Boolean = False) As Boolean
+
+    ' TODO: fix Lambda so I can use Fold(True, "(x, y) => x And pred(y)")
+    Dim result As Boolean
+    result = True
+    
+    Dim element As Variant
+    For Each element In pCollec
+        If (Not pred.Exec(element)) Xor opposite Then
+            result = False
+            Exit For
+        End If
+    Next element
+
 End Function
 Private Sub Class_Initialize()
     Set pCollec = New Collection
@@ -240,8 +302,7 @@ Public Sub Insert(ByVal index As Long, ByVal sequence As Variant)
     On Error GoTo NotSequence
     
     Dim other As List
-    Set other = List.Copy(sequence)
-    sort.Reverse other, 1, other.Count
+    Set other = List.Copy(sequence).Reverse
     
     Dim element As Variant
     For Each element In other
@@ -280,15 +341,26 @@ Public Function ToArray() As Variant()
     
     Dim a() As Variant
     ReDim a(pCollec.Count - 1) As Variant
+    
     Dim i As Long
     For i = 1 To pCollec.Count
         a(i - 1) = pCollec(i)
     Next i
+    
     ToArray = a
+    
 End Function
 '
 ' Interfaces
 ' ----------
+'
+' ### IReversible
+'
+Public Property Get Reverse() As List
+    
+    Set Reverse = Slice(-1, 1)
+    
+End Property
 '
 ' ### IEquatable
 '
@@ -314,16 +386,22 @@ Nope:
     
 End Function
 Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+
     IEquatable_Equals = Equals(other)
+    
 End Function
 '
 ' ### ICountable
 '
 Public Property Get Count() As Long
+
     Count = pCollec.Count
+    
 End Property
 Public Property Get ICountable_Count() As Long
+
     ICountable_Count = Count
+    
 End Property
 '
 '  ### IPrintable
@@ -333,8 +411,12 @@ End Property
 ' Usefull for debugging only.  Doesn't work with nested
 ' lists.
 Public Property Get ToString(Optional delim As String = ", ") As String
+
     ToString = "[" & Join(ToArray, delim) & "]"
+    
 End Property
 Public Property Get IPrintable_ToString() As String
+
     IPrintable_ToString = ToString()
+    
 End Property

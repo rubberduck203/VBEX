@@ -45,24 +45,31 @@ Private pList As List
 ' IndexOf: Finds where an item is or where it should be
 Private Function IndexOf(ByVal element As Variant) As Long
 On Error GoTo ErrHandler
+
     If pList.Count > 0 Then
         IndexOf = srch.BinarySearch(element, pList, 1, pList.Count, nearest:=True)
     Else
         IndexOf = 1
     End If
+    
 Exit Function
 ErrHandler:
     Debug.Assert Err.number = 438
     RaiseObjectWithNoDefaultPropertyError
+    
 End Function
 Private Sub RaiseObjectWithNoDefaultPropertyError()
+
     Err.Raise 438, "SortedSet.IndexOf", _
         "Object does not have a default property and cannot be compared"
+        
 End Sub
 ''
 ' Destructor, might be unnecessary
 Private Sub Class_Terminate()
+
     Set pList = Nothing
+    
 End Sub
 '
 ' Public Methods
@@ -80,7 +87,9 @@ End Property
 ' ------------
 '
 Private Sub Class_Initialize()
+
     Set pList = New List
+    
 End Sub
 '
 ' ### Initializers
@@ -109,7 +118,6 @@ Public Function Union(ByVal other As SortedSet) As SortedSet
     
 End Function
 Public Function Intersect(ByVal other As SortedSet) As SortedSet
-    
     Dim result As New SortedSet
     
     Dim element As Variant
@@ -118,6 +126,7 @@ Public Function Intersect(ByVal other As SortedSet) As SortedSet
     Next element
     
     Set Intersect = result
+    
     
 End Function
 Public Function Difference(ByVal other As SortedSet) As SortedSet
@@ -133,8 +142,31 @@ Public Function Difference(ByVal other As SortedSet) As SortedSet
     
 End Function
 Public Function SymmetricDifference(ByVal other As SortedSet) As SortedSet
+
     Set SymmetricDifference = Difference(other).Union(other.Difference(Me))
+    
 End Function
+'
+' ### Functional Constructors
+'
+Public Function Map(ByVal op As Lambda) As SortedSet
+    
+    Set Map = Copy(pList.Map(op))
+    
+End Function
+Public Function Filter(ByVal pred As Lambda, _
+        Optional ByVal opposite As Boolean = False) As SortedSet
+    
+    Set Filter = Copy(pList.Filter(pred, opposite))
+    
+End Function
+Public Function ForAll(ByVal pred As Lambda, _
+        Optional ByVal opposite As Boolean = False) As Boolean
+
+    ForAll = pList.ForAll(pred, opposite)
+
+End Function
+'
 '
 '
 ' Comparision
@@ -143,14 +175,18 @@ End Function
 ''
 ' Exists: Use Binary Search for faster results.
 Public Function Exists(ByVal sought As Variant) As Boolean
+
     If pList.Count > 0 Then
         Exists = (pList(IndexOf(sought)) = sought)
     Else
         Exists = False
     End If
+    
 End Function
 Public Function IsDisJoint(ByVal other As SortedSet) As Boolean
+
     IsDisJoint = (Intersect(other).Count = 0)
+    
 End Function
 Public Function IsSubSetOf(ByVal other As SortedSet) As Boolean
     
@@ -166,13 +202,19 @@ Public Function IsSubSetOf(ByVal other As SortedSet) As Boolean
     
 End Function
 Public Function IsProperSubSetOf(ByVal other As SortedSet) As Boolean
+
     IsProperSubSetOf = (IsSubSetOf(other) And (Count < other.Count))
+    
 End Function
 Public Function IsSuperSetOf(ByVal other As SortedSet)
+
     IsSuperSetOf = other.IsSubSetOf(Me)
+    
 End Function
 Public Function IsProperSuperSetOf(ByVal other As SortedSet) As Boolean
+
     IsProperSuperSetOf = other.IsProperSubSetOf(Me)
+    
 End Function
 '
 ' ### Default Methods Implemented
@@ -249,7 +291,9 @@ Public Sub Discard(ByVal element As Variant)
     
 End Sub
 Public Sub Clear()
+
     pList.Clear 1, pList.Count
+    
 End Sub
 Public Function Pop() As Variant
 
@@ -258,38 +302,44 @@ Public Function Pop() As Variant
     
 End Function
 '
-' ### Unimplemented
-'
-' #### Replacement
-' #### Insertion
-'
-'
 ' Interfaces
 ' ----------
 '
 ' ### IEquatable
 '
 Public Function Equals(ByVal other As Variant) As Boolean
+
     Equals = pList.Equals(other)
+    
 End Function
 Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+
     IEquatable_Equals = Equals(other)
+    
 End Function
 '
 ' ### ICountable
 '
 Public Property Get Count() As Long
+
     Count = pList.Count
+    
 End Property
 Public Property Get ICountable_Count() As Long
+
     ICountable_Count = Count
+    
 End Property
 '
 ' ### IPrintable
 '
 Public Property Get ToString(Optional delim As String = ", ") As String
+
     ToString = pList.ToString(delim)
+    
 End Property
 Public Property Get IPrintable_ToString() As String
+
     IPrintable_ToString = ToString
+    
 End Property

@@ -22,22 +22,39 @@ End Sub
 
 '@TestMethod
 Public Sub ListToArray()
-    Assert.AreEqual Join(List.Create(1, 2, 3).ToArray), Join(Array(1, 2, 3)), "multiple elements"
-    Assert.AreEqual Join(List.Create(1).ToArray), Join(Array(1)), "single element"
+    Assert.AreEqual Join(Array(1, 2, 3)), Join(List.Create(1, 2, 3).ToArray), "multiple elements"
     Assert.IsNothing Join(List.Create().ToArray)
 End Sub
 
 '@TestMethod
 Public Sub ListToString()
-    Assert.AreEqual List.Create(1, 2, 3).ToString, "[1, 2, 3]"
-    Assert.AreEqual List.Create(1).ToString, "[1]"
-    Assert.AreEqual List.Create().ToString, "[]"
+    Assert.AreEqual "[1, 2, 3]", List.Create(1, 2, 3).ToString
+    Assert.AreEqual "[]", List.Create().ToString
 End Sub
 
 '@TestMethod
 Public Sub ListCount()
     Assert.AreEqual List.Create(1, 2, 3).Count, CLng(3), "NonEmpty"
     Assert.AreEqual List.Create().Count, CLng(0), "empty"
+End Sub
+
+'@TestMethod
+Public Sub ListCopy()
+    Assert.AreEqual "[1, 2, 3]", List.Copy(Array(1, 2, 3)).ToString
+    Assert.AreEqual "[]", List.Copy(Array()).ToString
+End Sub
+'@TestMethod
+Public Sub ListCopyIsCopy()
+
+    Dim xs As List
+    Set xs = List.Create(1, 2, 3)
+    
+    Dim ys As List
+    Set ys = List.Copy(xs)
+    
+    Assert.IsTrue xs.Equals(ys)
+    Assert.AreNotEqual ObjPtr(xs), ObjPtr(ys)
+    
 End Sub
 
 '@TestMethod
@@ -50,4 +67,14 @@ Public Sub ArrayToList()
     Assert.IsTrue ys.Equals(xs)
 End Sub
 
+'@TestMethod
+Public Sub ListReduce()
+    Assert.AreEqual "abc", List.Create("a", "b", "c") _
+        .Reduce(Lambda.FromString("(a, b) => a & b"))
+End Sub
+'@TestMethod
+Public Sub ListFold()
+    Assert.AreEqual "abc", List.Create("a", "b", "c") _
+        .Fold("", Lambda.FromString("(a, b) => a & b"))
+End Sub
 

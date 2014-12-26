@@ -1,7 +1,7 @@
 Attribute VB_Name = "DevTools"
 Option Explicit
 
-Public Sub ImportSourceFiles(ByVal sourcePath As String)
+Public Sub ImportSourceFiles(sourcePath As String)
     Dim file As String
     file = Dir(sourcePath)
     While (file <> "")
@@ -10,13 +10,12 @@ Public Sub ImportSourceFiles(ByVal sourcePath As String)
     Wend
 End Sub
 
-Public Sub ExportSourceFiles(ByVal destPath As String)
+Public Sub ExportSourceFiles(destPath As String)
      
     Dim component As VBComponent
     For Each component In Application.VBE.ActiveVBProject.VBComponents
-        If component.Type = vbext_ct_ClassModule _
-        Or component.Type = vbext_ct_StdModule Then
-            component.Export path.pJoin(destPath, component.Name & ToFileExtension(component.Type))
+        If component.Type = vbext_ct_ClassModule Or component.Type = vbext_ct_StdModule Then
+            component.Export destPath & component.Name & ToFileExtension(component.Type)
         End If
     Next
      

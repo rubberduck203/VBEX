@@ -7,78 +7,154 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-Option Explicit
 '
 ' Lambda
-' ========
+' ======
 '
+' Create lambda expressions from strings using
+' either C# notation
+'
+'       "(x, y, z) => x * y + z"
+'
+' Or Scala short hand
+'
+'      "( _ * _ ) + _"
+'
+' both produce the same result
+'
+' RESTRICTIONS
+' ------------
+'
+'   Lambdas currently must be completely independent
+' of external definitions.  One cannot reference
+' external varaibles or functions from a lambda.  This
+' is because Lambda simple translates the strings to
+' a proper function defintion that are written to an
+' external blank module.  That module is reference by
+' the client code but not visa versa.
+'
+' _eg_ both of these are invalid
+'
+'     Public Function Intersect(ByVal other As SortedSet) As SortedSet
+'        Set Intersect = Filter(Lambda.FromString("(x) => other.Exists(x)")
+'     End Function
+'
+' `other` is not decalared in the scope of the created lambda function
+'
+'     Public Function Foo() As Integer
+'         Foo = 12
+'     End Function
+'     Public Sub Bar()
+'         Debug.Print List.Create(1,2,3).Map(Lambda.FromShortHand("_ + Foo()")).ToString
+'     End Sub
+'
+' `Foo` is not declared in the scope of the lambda.
+'
+'  Currently, the external module is located inside of
+' the VBEX project.  So it should be able to reference
+' VBEX methods.  So this is valid.
+'
+'    Private Function BaseNames(ByVal filepaths As List) As List
+'        Set BaseNames = filepaths.Map(Lambda.FromString("(f) => path.BaseName(f)"))
+'    End Function
+'
+'
+' TODO:
+' -----
+'
+'  - Generate code on class init and delete on destruction
+'    + Don't delete other lambdas
+'  - Delegate as just reference to client code procedure
+'  - pass local variables to the lambda.
+'
+Option Explicit
+Implements IPrintable
 '
 ' Constants
 ' ---------
 '
 Private Const DEFAULT_LAMBDA_ID As String = "LambdaFunction"
 Private Const CANNOT_FIND_MACRO As Integer = 1004
-Private Const LAMBDA_PROJECT As String = "LambdasProject" 'Naming convention?
+Private Const INVALID_LAMBDA_EXPRESSION As Integer = 666 ' TODO:
+'Private Const LAMBDA_PROJECT As String = "LambdasProject" 'Naming convention?
 Private Const LAMBDA_MODULE As String = "LambdasModule" '?
+Private Const SHORT_HAND_CHAR As String = "_" ' TODO: it's acutal name
 '
 ' Private Members
 ' ---------------
 '
 Private pId As String ' name of the lamda
 Private pExpression As String ' expression
-Private pParameters() As String ' name of the
+Private pParameters() As String ' name of the args
 '
 ' Constructors
 ' ------------
 '
 ''
 ' Create an Lambda Function
-Public Function Create(ByRef Parameters() As String, ByVal Expression As String) As Lambda
-    Dim anon As New Lambda
-    anon.Assign Parameters, Expression
-    Set Create = anon
-End Function
-Public Function FromStr(ByVal Expression As String) As Lambda
-    
-    Dim regex As Object
-    Set regex = CreateObject("VBScript.RegExp")
-    regex.pattern = "\(([a-zA-Z-9_]*)\)\s\=\>\s(.*)" ' Doesn't accept multiple arguements
-
-    If Not regex.test(Expression) Then
-        Err.Raise 5, "Lambda", "Invalid Lambda function expression."
-    End If
-
-    Dim regexMatch As Variant
-    Set regexMatch = regex.Execute(Expression)(0)
-    ' Nope, do not like. should be
-    If regexMatch.SubMatches(0) = vbNullString Then
-        Set FromStr = ArgLessLambda(regexMatch.SubMatches(1))
-    Else
-        Set FromStr = ArgedLambda(regexMatch.SubMatches(0), regexMatch.SubMatches(1))
-    End If
-
-End Function
-'
-' #### Private Constructors?
-'
-' I don't like these and they should leave my sight.  But I believe we
-' need to first remove the regex dependency.
-Private Function ArgLessLambda(ByVal expr As String) As Lambda
-    
-    Dim params() As String
-    Dim result As New Lambda
-    result.Assign DEFAULT_LAMBDA_ID, Right(expr, Len(expr) - Len("() => ")), params
-    Set ArgLessLambda = result
-    
-End Function
-Private Function ArgedLambda(ByVal args As String, ByVal expr As String) As Lambda
-    
-    Dim params() As String
-    params = Split(Trim(args), ",")
+Public Function Create(params() As String, ByVal expr As String) As Lambda
     
     Dim result As New Lambda
-    result.Assign DEFAULT_LAMBDA_ID, expr, params
-    Set ArgedLambda = result
+    result.Assign DEFAULT_LAMBDA_ID, params, expr
+    Set Create = result
+    
+End Function
+''
+' Initializtion wrapper.  Everything is needed at once,  we cannot do them individually
+Friend Sub Assign(ByVal id As String, params() As String, ByVal expr As String)
+    
+    pExpression = expr
+    pId = id ' TODO: Autogenerate so we can have multiple lambdas in registry.
+    pParameters = params 'TODO: VALIDATE these, All alpha characters, and trim them
+    
+End Sub
+Public Function FromString(ByVal lambdaExpression As String) As Lambda
+    
+    Set FromString = FromProperExpression(lambdaExpression)
+     
+End Function
+Private Function FromProperExpression(ByVal proper As String) As Lambda
+
+    Dim splitExpr() As String
+    splitExpr = Split(proper, ") => ")
+    
+    Dim args As String
+    args = Mid$(splitExpr(0), 2) ' skip "("
+    
+    Dim expr As String
+    expr = splitExpr(1)
+    
+    Dim params() As String
+    params = Split(Replace$(args, " ", ""), ",")
+    Set FromProperExpression = Lambda.Create(params, expr)
+    
+End Function
+Public Function FromShortHand(ByVal shorthand As String) As Lambda
+    Dim aCode As Integer
+    aCode = Asc("a")
+    
+    Dim expr As String
+    expr = shorthand
+    
+    Dim paramSize As Integer
+    paramSize = UBound(Split(expr, SHORT_HAND_CHAR)) - 1
+    
+    Dim params() As String
+    ReDim params(0 To paramSize)
+    
+    Dim i As Integer
+    For i = 0 To paramSize
+    
+        Dim paramChar As String
+        paramChar = Chr(aCode + i)
+        
+        expr = Replace(expr, SHORT_HAND_CHAR, paramChar, Count:=1)
+        
+        params(i) = paramChar
+        
+    Next i
+    
+    Set FromShortHand = Create(params, expr)
     
 End Function
 '
@@ -86,7 +162,10 @@ End Function
 ' -----
 '
 Public Function Exec(ParamArray params() As Variant) As Variant
+Attribute Exec.VB_UserMemId = 0
+    
     Exec = Apply(cast.CArray(params))
+    
 End Function
 Public Function Apply(ByRef args() As Variant) As Variant
     
@@ -124,9 +203,9 @@ Public Function Apply(ByRef args() As Variant) As Variant
 CleanExit:
     DeleteFunction
     Exit Function
-
+    
 ErrHandler:
-
+    
     If Err.number = CANNOT_FIND_MACRO Then ' more descriptive later
         Err.Raise Err.number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
     End If
@@ -134,53 +213,84 @@ ErrHandler:
     
 End Function
 '
+' Public Properties
+' -----------------
+'
+Public Property Get IsBinary() As Boolean
+    IsBinary = (ParameterCount = 2)
+End Property
+Public Property Get IsUnary() As Boolean
+    IsUnary = (ParameterCount = 1)
+End Property
+
+'
 ' Private Methods
 ' ---------------
 '
 ' ### Code Manipulation
 '
 Private Sub GenerateFunction()
+    
     With LambdaCodeModule
         .DeleteLines 1, .CountOfLines
         .AddFromString Content
     End With
+    
 End Sub
 Private Sub DeleteFunction()
+    
     With LambdaCodeModule
         .DeleteLines 1, .CountOfLines
     End With
+    
 End Sub
 '
 ' ### Private Properties
 '
-''
-' Initializtion wrapper.  Everything is needed at once,  we cannot do them individually
-Friend Sub Assign(ByVal id As String, ByVal expr As String, params() As String)
-    pExpression = expr
-    pId = id
-    pParameters = params
-End Sub
-
-Public Property Get Parameters() As String
+Private Property Get ParameterCount() As String
+    
+    ParameterCount = UBound(pParameters) - LBound(pParameters) + 1
+    
+End Property
+Private Property Get Parameters() As String
+    
     Parameters = Join(pParameters, ", ")
+    
 End Property
-Public Property Get Signature() As String
+Private Property Get Signature() As String
+    
     Signature = "Public Function " & pId & "(" & Parameters & ") As Variant"
+    
 End Property
-Public Property Get Content() As String
+Private Property Get Content() As String
+
     Content = Join(Array("", Signature, Body, "End Function", ""), vbNewLine)
+    
 End Property
-Public Property Get Expression() As String
+Private Property Get Expression() As String
+    
     Expression = pExpression
+    
 End Property
-Public Property Get Body() As String
+Private Property Get Body() As String
+    
     Body = vbTab & pId & " = " & pExpression
+    
 End Property
 Private Property Get LambdaCodeModule() As CodeModule
-    Set LambdaCodeModule = Application.VBE.VBProjects(LAMBDA_PROJECT).VBComponents(LAMBDA_MODULE).CodeModule
+    
+    Set LambdaCodeModule = Application.VBE.VBProjects(ThisWorkbook.VBProject.Name).VBComponents(LAMBDA_MODULE).CodeModule
+    
+End Property
+Public Property Get IPrintable_ToString() As String
+
+    IPrintable_ToString = ToString
+    
 End Property
 Public Property Get ToString() As String
+    
     ToString = "(" & Parameters & ") => " & Expression
+    
 End Property
 '
 ' ### Error Raising

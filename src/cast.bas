@@ -9,6 +9,8 @@ Public Sub Assign(ByRef x As Variant, ByVal y As Variant)
     
 End Sub
 Public Function CArray(ByVal a As Variant) As Variant()
+
     CArray = a
+    
 End Function
 
