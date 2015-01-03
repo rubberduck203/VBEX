@@ -1,4 +1,4 @@
-Attribute VB_Name = "shutil"
+Attribute VB_Name = "shutilE"
 '
 ' shutilE
 ' =======
