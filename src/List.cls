@@ -421,7 +421,7 @@ End Property
 ' lists.
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = "[" & Join(ToArray, delim) & "]"
+    ToString = cast.SequenceToString(Me, delim, lcap:="[", rcap:="]")
     
 End Property
 Public Property Get IPrintable_ToString() As String
