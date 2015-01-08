@@ -22,6 +22,7 @@ Option Explicit
 Implements IEquatable
 Implements ICountable
 Implements IPrintable
+Implements ISequence
 '
 ' Private Members
 ' ---------------
@@ -332,6 +333,12 @@ Public Function Exists(ByVal sought As Variant) As Boolean
     Exists = False
     
 End Function
+'
+' Interfaces
+' ----------
+'
+' ### ISequence
+'
 Public Function ToArray() As Variant()
 
     If pCollec.Count = 0 Then
@@ -350,9 +357,11 @@ Public Function ToArray() As Variant()
     ToArray = a
     
 End Function
-'
-' Interfaces
-' ----------
+Public Function ISequence_ToArray() As Variant()
+  
+    ISequence_ToArray = ToArray
+  
+End Function
 '
 ' ### IReversible
 '
