@@ -27,6 +27,7 @@ Option Explicit
 Implements IEquatable
 Implements ICountable
 Implements IPrintable
+Implements ISequence
 
 '
 ' Public Members
@@ -305,6 +306,19 @@ End Function
 ' Interfaces
 ' ----------
 '
+' ### ISequence
+'
+Public Function ToArray() As Variant()
+
+    ToArray = pList.ToArray()
+    
+End Function
+Public Function ISequence_ToArray() As Variant()
+  
+    ISequence_ToArray = ToArray
+  
+End Function
+'
 ' ### IEquatable
 '
 Public Function Equals(ByVal other As Variant) As Boolean
@@ -335,7 +349,7 @@ End Property
 '
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = pList.ToString(delim)
+    ToString = cast.SequenceToString(Me, delim, lcap:="{", rcap:="}")
     
 End Property
 Public Property Get IPrintable_ToString() As String
