@@ -8,9 +8,19 @@ Public Sub Assign(ByRef x As Variant, ByVal y As Variant)
     End If
     
 End Sub
-Public Function CArray(ByVal a As Variant) As Variant()
+Public Function CArray(ByVal xs As Variant) As Variant()
 
-    CArray = a
+    CArray = xs
     
 End Function
+Public Function ToString(ByVal x As Variant) As String
 
+    If IsObject(x) Then
+        If TypeOf x Is IPrintable Then
+            ToString = x.ToString
+        End If
+    Else
+        ToString = CString(x)
+    End If
+
+End Function
