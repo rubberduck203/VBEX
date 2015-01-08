@@ -10,25 +10,32 @@ Attribute VB_Exposed = True
 Option Explicit
 
 'Implements IOutput
-' Prints `object` to Immediate Pane in Office VBE
+' Prints `x` to Immediate Pane in Office VBE
 
-Public Sub PrintLine(Optional ByVal object As Variant)
+Public Sub PrintLine(Optional ByVal x As Variant)
+
     If IsMissing(object) Then
-        'newline
         Debug.Print vbNullString
     Else
-        Debug.Print object
+        Debug.Print cast.ToString(x)
     End If
+    
 End Sub
-Public Sub Puts(Optional ByVal object As Variant)
-    If Not IsMissing(object) Then Debug.Print object;
+Public Sub Puts(Optional ByVal x As Variant)
+
+    If Not IsMissing(x) Then Debug.Print cast.ToString(x);
+    
 End Sub
 '
 ' IOutput Interfaces.
 '
-Private Sub IOutput_PrintLine(Optional ByVal object As Variant)
-    PrintLine object
+Private Sub IOutput_PrintLine(Optional ByVal x As Variant)
+
+    PrintLine x
+    
 End Sub
-Private Sub IOutput_Puts(ByVal object As Variant)
-    Puts object
+Private Sub IOutput_Puts(ByVal x As Variant)
+
+    Puts x
+    
 End Sub
