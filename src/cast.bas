@@ -24,3 +24,19 @@ Public Function ToString(ByVal x As Variant) As String
     End If
 
 End Function
+Public Function SequenceToString(Byval xs As ISequence, 
+        Optional ByVal delim As String, _
+        Optional ByVal lcap As String, _
+        Optional ByVal rcap As String) As String
+
+    Dim ss() As Variant
+    ss = xs.ToArray
+    
+    Dim i As Long
+    For i = LBound(ss) To Ubound(ss)
+        ss(i) = ToString(ss(i))
+    Next i
+    
+    SequenceToString = lcap & Join(ss, delim) & rcap
+    
+End Function
