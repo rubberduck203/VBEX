@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Public Function Apply(ByVal args() As Variant) As Variant
+Public Function Apply(ByRef args() As Variant) As Variant
 
 End Function
 
