@@ -20,7 +20,7 @@ Public Function ToString(ByVal x As Variant) As String
             ToString = x.ToString
         End If
     Else
-        ToString = CString(x)
+        ToString = CStr(x)
     End If
 
 End Function
