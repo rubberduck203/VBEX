@@ -150,18 +150,18 @@ End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As Lambda) As SortedSet
+Public Function Map(ByVal op As IApplicable) As SortedSet
     
     Set Map = Copy(pList.Map(op))
     
 End Function
-Public Function Filter(ByVal pred As Lambda, _
+Public Function Filter(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As SortedSet
     
     Set Filter = Copy(pList.Filter(pred, opposite))
     
 End Function
-Public Function ForAll(ByVal pred As Lambda, _
+Public Function ForAll(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As Boolean
 
     ForAll = pList.ForAll(pred, opposite)
