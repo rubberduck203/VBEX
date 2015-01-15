@@ -11,7 +11,6 @@ Attribute VB_Exposed = True
 ' List Class
 ' ==========
 '
-' Base Linear Container Class.  Based on Python List class.
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (List.cls) is distributed under the MIT license
@@ -76,7 +75,7 @@ End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As Lambda) As List
+Public Function Map(ByVal op As IApplicable) As List
 
     Dim result As New List
     
@@ -88,7 +87,7 @@ Public Function Map(ByVal op As Lambda) As List
     Set Map = result
 
 End Function
-Public Function Filter(ByVal pred As Lambda, _
+Public Function Filter(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As List
     
     Dim result As New List
@@ -101,7 +100,7 @@ Public Function Filter(ByVal pred As Lambda, _
     Set Filter = result
     
 End Function
-Public Function Fold(ByVal init As Variant, ByVal binaryOp As Lambda) As Variant
+Public Function Fold(ByVal init As Variant, ByVal binaryOp As IApplicable) As Variant
     
     Debug.Assert binaryOp.IsBinary
     
@@ -113,12 +112,12 @@ Public Function Fold(ByVal init As Variant, ByVal binaryOp As Lambda) As Variant
      cast.Assign Fold, init
     
 End Function
-Public Function Reduce(ByVal binaryOp As Lambda) As Variant
+Public Function Reduce(ByVal binaryOp As IApplicable) As Variant
     
     cast.Assign Reduce, Slice(2, -1).Fold(pCollec(1), binaryOp)
     
 End Function
-Public Function ForAll(ByVal pred As Lambda, _
+Public Function ForAll(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As Boolean
 
     ' TODO: fix Lambda so I can use Fold(True, "(x, y) => x And pred(y)")
