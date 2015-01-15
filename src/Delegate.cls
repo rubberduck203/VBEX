@@ -64,7 +64,7 @@ End Function
 
 Public Function Exec(ParamArray args() As Variant) As Variant
 
-    cast.Assign Exec, Apply(cast.CArr(args))
+    cast.Assign Exec, Apply(cast.CArray(args))
 
 End Function
 '
@@ -88,6 +88,6 @@ End Function
 
 Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
 
-    IApplicable_Exec = Apply(cast.CArr(args))
+    IApplicable_Exec = Apply(cast.CArray(args))
 
 End Function
