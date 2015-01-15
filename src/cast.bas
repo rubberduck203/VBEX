@@ -24,10 +24,8 @@ Public Function ToString(ByVal x As Variant) As String
     End If
 
 End Function
-Public Function SequenceToString(Byval xs As ISequence, 
-        Optional ByVal delim As String, _
-        Optional ByVal lcap As String, _
-        Optional ByVal rcap As String) As String
+Public Function SequenceToString(Byval xs As ISequence, Optional ByVal delim As String, _
+        Optional ByVal lcap As String, Optional ByVal rcap As String) As String
 
     Dim ss() As Variant
     ss = xs.ToArray
