@@ -302,7 +302,7 @@ Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
 End Function
 Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
 
-    IApplicable_Exec = Apply(args)
+    IApplicable_Exec = Apply(cast.CArr(args))
 
 End Function
 Public Property Get IPrintable_ToString() As String
