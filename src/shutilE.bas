@@ -34,7 +34,7 @@ Public Sub Move(ByVal src_path As String, ByVal dest_path As String, _
     If Exists(src_path) Then Error_FailedDestroy "Move", "Name As"
     
 CleanExit:
-    Exit Function
+    Exit Sub
   
 ErrHandler:
     Select Case Err.Number
@@ -42,7 +42,7 @@ ErrHandler:
         Error_ReRaise Err
     End Select
 
-End Function
+End Sub
 Public Sub Remove(ByVal file_path As String)
     On Error GoTo ErrHandler
     
@@ -50,7 +50,7 @@ Public Sub Remove(ByVal file_path As String)
     If Exists(dest_path) Then Error_FailedDestroy "Remove", "Kill"
     
 CleanExit:
-    Exit Function
+    Exit Sub
 
 ErrHandler:
     Select Case Err.Number
@@ -58,7 +58,7 @@ ErrHandler:
         Error_ReRaise Err
     End Select
     
-End Function
+End Sub
 Public Sub MakeDir(ByVal folder_path As String, ByVal Optional create_parent As Boolean = False)
     
     Dim check As Boolean
@@ -70,7 +70,7 @@ Public Sub MakeDir(ByVal folder_path As String, ByVal Optional create_parent As 
     If Not FolderExists(dest_path) Then Error_FailedCreate "MakeDir", "MkDir"
     
 CleanExit:
-    Exit Function
+    Exit Sub
     
 ErrHandler:
     Select Case Err.Number
@@ -78,7 +78,7 @@ ErrHandler:
         Error_ReRaise Err
     End Select
     
-End Function
+End Sub
 Public Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
       Optional create_parent As Boolean = False)
     
@@ -93,7 +93,7 @@ Public Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
     If Not FileExists(dest_path) Then Error_FailedCreate "CopyFile", "FileCopy"
 
 CleanExit:
-   Exit Function
+   Exit Sub
 
 ErrHandler:
     Select Case Err.Number
@@ -101,7 +101,7 @@ ErrHandler:
        Error_ReRaise Err
     End Select
     
-End Function
+End Sub
 Private Sub CreateRootPath(ByVal path As String)
     
     Dim parent_folder As String
@@ -111,7 +111,7 @@ Private Sub CreateRootPath(ByVal path As String)
         MakeDir parent_folder, create_parent:=True
     End If
     
-End Function
+End Sub
 Private Sub DestIsFolderFeature(ByRef dest_path As String, _
         ByVal src_path As String)
     
