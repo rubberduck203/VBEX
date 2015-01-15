@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 
 Option Explicit
-Option IApplicable
+Implements IApplicable
 '
 '
 
@@ -56,7 +56,7 @@ End Function
 Private Function Run(???) As Variant
 End Function
 
-Public Function Apply(ByVal args() As Variant) As Variant
+Public Function Apply(ByRef args() As Variant) As Variant
 
   cast.Assign Apply, Run(???)
 
@@ -80,7 +80,7 @@ End Property
 '
 ' ### Interfaces
 '
-Public Function IApplicable_Apply(ByVal args() As Variant) As Variant
+Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
 
     IApplicable_Apply = Apply(args)
 
