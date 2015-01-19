@@ -36,6 +36,11 @@ Public Function ToString(ByVal x As Variant) As String
             ToString = x.ToString
             Exit Function
         End If
+<<<<<<< HEAD
+=======
+    Else
+        ToString = CStr(x)
+>>>>>>> origin/master
     End If
     
 On Error GoTo NoDefaultProperty
@@ -49,6 +54,7 @@ NoDefaultProperty:
     ReRaiseError Err, "ToString"
     
 End Function
+<<<<<<< HEAD
 '
 '
 ''
@@ -58,6 +64,10 @@ Public Function SequenceToString(ByVal xs As ISequence, _
         Optional ByVal delim As String, _
         Optional ByVal lcap As String = "(", _
         Optional ByVal rcap As String = ")") As String
+=======
+Public Function SequenceToString(Byval xs As ISequence, Optional ByVal delim As String, _
+        Optional ByVal lcap As String, Optional ByVal rcap As String) As String
+>>>>>>> origin/master
 
     Dim ss() As Variant
     ss = xs.ToArray

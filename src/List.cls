@@ -105,6 +105,11 @@ Public Function Filter(ByVal pred As IApplicable, _
     
 End Function
 Public Function Fold(ByVal init As Variant, ByVal binaryOp As IApplicable) As Variant
+<<<<<<< HEAD
+=======
+    
+    Debug.Assert binaryOp.IsBinary
+>>>>>>> origin/master
     
     Dim element As Variant
     For Each element In pCollec

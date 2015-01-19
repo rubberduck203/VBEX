@@ -296,7 +296,11 @@ Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
 End Function
 Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
 
+<<<<<<< HEAD
     cast.Assign IApplicable_Exec, Apply(cast.CArray(args))
+=======
+    IApplicable_Exec = Apply(cast.CArr(args))
+>>>>>>> origin/master
 
 End Function
 '
