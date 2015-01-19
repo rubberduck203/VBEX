@@ -125,7 +125,7 @@ Private Function CreateRootPath(ByVal path As String) As Boolean
     
 End Function
 Private Sub DestIsFolderFeature(ByRef dest_path As String, ByVal src_path As String)
-    If Right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then
+    If right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then
         dest_path = pJoin(dest_path, BaseName(src_path))
     End If
 End Sub

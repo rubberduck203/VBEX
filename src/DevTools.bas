@@ -34,6 +34,7 @@ Public Sub RemoveAllModules()
 End Sub
 
 Private Function ToFileExtension(vbeComponentType As vbext_ComponentType) As String
+
     Select Case vbeComponentType
         Case vbext_ComponentType.vbext_ct_ClassModule
             ToFileExtension = ".cls"

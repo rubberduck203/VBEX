@@ -3,7 +3,7 @@ Attribute VB_Name = "shutilE"
 ' shutilE
 ' =======
 '
-' Advanced filesystem operations for VBA. This variant raises errors if 
+' Advanced filesystem operations for VBA. This variant raises errors if
 ' attempted operation fails.
 '
 ' Copyright (c) 2014 Philip Wales
@@ -34,7 +34,7 @@ Public Sub Move(ByVal src_path As String, ByVal dest_path As String, _
     If Exists(src_path) Then Error_FailedDestroy "Move", "Name As"
     
 CleanExit:
-    Exit Function
+    Exit Sub
   
 ErrHandler:
     Select Case Err.Number
@@ -42,7 +42,7 @@ ErrHandler:
         Error_ReRaise Err
     End Select
 
-End Function
+End Sub
 Public Sub Remove(ByVal file_path As String)
     On Error GoTo ErrHandler
     
@@ -50,7 +50,7 @@ Public Sub Remove(ByVal file_path As String)
     If Exists(dest_path) Then Error_FailedDestroy "Remove", "Kill"
     
 CleanExit:
-    Exit Function
+    Exit Sub
 
 ErrHandler:
     Select Case Err.Number
@@ -58,8 +58,8 @@ ErrHandler:
         Error_ReRaise Err
     End Select
     
-End Function
-Public Sub MakeDir(ByVal folder_path As String, ByVal Optional create_parent As Boolean = False)
+End Sub
+Public Sub MakeDir(ByVal folder_path As String, Optional ByVal create_parent As Boolean = False)
     
     Dim check As Boolean
     On Error GoTo ErrHandler
@@ -70,7 +70,7 @@ Public Sub MakeDir(ByVal folder_path As String, ByVal Optional create_parent As 
     If Not FolderExists(dest_path) Then Error_FailedCreate "MakeDir", "MkDir"
     
 CleanExit:
-    Exit Function
+    Exit Sub
     
 ErrHandler:
     Select Case Err.Number
@@ -78,7 +78,7 @@ ErrHandler:
         Error_ReRaise Err
     End Select
     
-End Function
+End Sub
 Public Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
       Optional create_parent As Boolean = False)
     
@@ -93,7 +93,7 @@ Public Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
     If Not FileExists(dest_path) Then Error_FailedCreate "CopyFile", "FileCopy"
 
 CleanExit:
-   Exit Function
+   Exit Sub
 
 ErrHandler:
     Select Case Err.Number
@@ -101,7 +101,7 @@ ErrHandler:
        Error_ReRaise Err
     End Select
     
-End Function
+End Sub
 Private Sub CreateRootPath(ByVal path As String)
     
     Dim parent_folder As String
@@ -111,11 +111,11 @@ Private Sub CreateRootPath(ByVal path As String)
         MakeDir parent_folder, create_parent:=True
     End If
     
-End Function
+End Sub
 Private Sub DestIsFolderFeature(ByRef dest_path As String, _
         ByVal src_path As String)
     
-    If right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then 
+    If right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then
         dest_path = pJoin(dest_path, BaseName(src_path))
     End If
     
@@ -123,14 +123,14 @@ End Sub
 '
 ' ### Custom Error Messages
 '
-Private Sub Error_ReRaise(ByVal errObj as Variant)
-    Err.Raise errObj.Number, errObj.Source, errObj.Description, errObj.Helpfile, errObj.HelpContext
+Private Sub Error_ReRaise(ByVal errobj As Variant)
+    Err.Raise errobj.Number, errobj.source, errobj.Description, errobj.HelpFile, errobj.HelpContext
 End Sub
-Private Sub Error_FailedCreate(Byval method as String, ByVal operation As String)
-    Err.Raise osErrNums.unknown, method, "Destination does not exist after errorless `" & operation &"`"
+Private Sub Error_FailedCreate(ByVal method As String, ByVal operation As String)
+    Err.Raise osErrNums.unknown, method, "Destination does not exist after errorless `" & operation & "`"
 End Sub
 Private Sub Error_FailedDestroy(ByVal method As String, ByVal operation As String)
-    Err.Raise osErrNums.unknown, method, "Destination still exists after errorless `" & operation &"`"
+    Err.Raise osErrNums.unknown, method, "Destination still exists after errorless `" & operation & "`"
 End Sub
 Private Sub Error_NoOverwrite(ByVal method As String)
     Err.Raise osErrNums.overwriteRefusal, method, "Will not overwrite file at destination.  Remove it first if desired."

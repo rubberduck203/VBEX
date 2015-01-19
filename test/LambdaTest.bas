@@ -1,6 +1,7 @@
 Attribute VB_Name = "LambdaTest"
 '@TestModule
 Private Assert As New Rubberduck.AssertClass
+Option Explicit
 
 Private Const SQUARE_LAMBDA As String = "(x) => x * x"
 Private Const CONCAT_LAMBDA As String = "(a, b) => a & b"
@@ -8,13 +9,13 @@ Private Const CONCAT_LAMBDA As String = "(a, b) => a & b"
 '@TestMethod
 Public Sub LambdaFromStringIsToString()
     
-    Assert.AreEqual SQUARE_LAMBDA, Lambda.FromString(SQUARE_LAMBDA).ToString, "FromStr = ToString"
+    Assert.AreEqual "Lambda[" & SQUARE_LAMBDA & "]", Lambda.FromString(SQUARE_LAMBDA).ToString, "Lambda[FromStr] = ToString"
         
 End Sub
 '@TestMethod
 Public Sub LambdaFromStringExec()
     
-    Assert.AreEqual 4, Lambda.FromString(SQUARE_LAMBDA)(2), "(2) => 2 * 2 == 4"
+    Assert.AreEqual 4, Lambda.FromString(SQUARE_LAMBDA)(2), "Lambda[(2) => 2 * 2 == 4]"
     
 End Sub
 
@@ -30,12 +31,5 @@ Public Sub LambdaCallExecTwice()
     
 End Sub
 
-'@TestMethod
-Public Sub LambdaIsBinary()
-    
-    Assert.IsFalse Lambda.FromString(SQUARE_LAMBDA).IsBinary
-    Assert.IsTrue Lambda.FromString(CONCAT_LAMBDA).IsBinary
-    
-End Sub
 
 

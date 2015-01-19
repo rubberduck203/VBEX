@@ -28,6 +28,7 @@ Implements IEquatable
 Implements ICountable
 Implements IPrintable
 Implements ISequence
+Implements ICloneable
 
 '
 ' Public Members
@@ -55,7 +56,7 @@ On Error GoTo ErrHandler
     
 Exit Function
 ErrHandler:
-    Debug.Assert Err.number = 438
+    Debug.Assert Err.Number = 438
     RaiseObjectWithNoDefaultPropertyError
     
 End Function
@@ -79,6 +80,7 @@ End Sub
 ''
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
+Attribute NewEnum.VB_UserMemId = -4
     
     Set NewEnum = pList.NewEnum
     
@@ -113,9 +115,11 @@ End Function
 '
 Public Function Union(ByVal other As SortedSet) As SortedSet
 
-    Set Union = New SortedSet
-    Union.Extend other
-    Union.Extend Me
+    Dim result As New SortedSet
+    result.Extend other
+    result.Extend Me
+    
+    Set Union = result
     
 End Function
 Public Function Intersect(ByVal other As SortedSet) As SortedSet
@@ -150,18 +154,18 @@ End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As Lambda) As SortedSet
+Public Function Map(ByVal op As IApplicable) As SortedSet
     
     Set Map = Copy(pList.Map(op))
     
 End Function
-Public Function Filter(ByVal pred As Lambda, _
+Public Function Filter(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As SortedSet
     
     Set Filter = Copy(pList.Filter(pred, opposite))
     
 End Function
-Public Function ForAll(ByVal pred As Lambda, _
+Public Function ForAll(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As Boolean
 
     ForAll = pList.ForAll(pred, opposite)
@@ -207,7 +211,7 @@ Public Function IsProperSubSetOf(ByVal other As SortedSet) As Boolean
     IsProperSubSetOf = (IsSubSetOf(other) And (Count < other.Count))
     
 End Function
-Public Function IsSuperSetOf(ByVal other As SortedSet)
+Public Function IsSuperSetOf(ByVal other As SortedSet) As Boolean
 
     IsSuperSetOf = other.IsSubSetOf(Me)
     
@@ -306,6 +310,19 @@ End Function
 ' Interfaces
 ' ----------
 '
+' ### ICloneable
+'
+Public Function Clone() As SortedSet
+    
+    Set Clone = SortedSet.Copy(Me)
+    
+End Function
+Public Function ICloneable_Clone() As Object
+    
+    Set ICloneable_Clone = Clone()
+    
+End Function
+'
 ' ### ISequence
 '
 Public Function ToArray() As Variant()
@@ -315,7 +332,7 @@ Public Function ToArray() As Variant()
 End Function
 Public Function ISequence_ToArray() As Variant()
   
-    ISequence_ToArray = ToArray
+    ISequence_ToArray = ToArray()
   
 End Function
 '
@@ -336,12 +353,12 @@ End Function
 '
 Public Property Get Count() As Long
 
-    Count = pList.Count
+    Count = pList.Count()
     
 End Property
 Public Property Get ICountable_Count() As Long
 
-    ICountable_Count = Count
+    ICountable_Count = Count()
     
 End Property
 '
@@ -349,7 +366,7 @@ End Property
 '
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = cast.SequenceToString(Me, delim, lcap:="{", rcap:="}")
+    ToString = cast.SequenceToString(Me, delim)
     
 End Property
 Public Property Get IPrintable_ToString() As String

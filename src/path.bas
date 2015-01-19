@@ -116,7 +116,7 @@ End Function
 ' /path -> /path
 Public Function RTrimSep(ByVal path As String) As String
 
-    If Right$(path, 1) = SEP Then
+    If right$(path, 1) = SEP Then
         ' ends with SEP return all but end
         RTrimSep = Left$(path, Len(path) - 1)
         

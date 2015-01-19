@@ -133,7 +133,7 @@ Public Function Glob(ByVal pattern As String, Optional ByVal vbType As Integer =
     root = LongestRoot(pattern)
     
     Dim patterns() As String
-    patterns = Split(Right$(pattern, Len(pattern) - Len(root) - 1), SEP)
+    patterns = Split(right$(pattern, Len(pattern) - Len(root) - 1), SEP)
     
     Set Glob = GlobRecurse(root, patterns, 0, vbType)
     

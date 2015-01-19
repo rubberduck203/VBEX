@@ -14,7 +14,7 @@ Option Explicit
 
 Public Sub PrintLine(Optional ByVal x As Variant)
 
-    If IsMissing(object) Then
+    If IsMissing(x) Then
         Debug.Print vbNullString
     Else
         Debug.Print cast.ToString(x)
@@ -23,19 +23,21 @@ Public Sub PrintLine(Optional ByVal x As Variant)
 End Sub
 Public Sub Puts(Optional ByVal x As Variant)
 
-    If Not IsMissing(x) Then Debug.Print cast.ToString(x);
+    If Not IsMissing(x) Then
+        Debug.Print cast.ToString(x);
+    End If
     
 End Sub
 '
 ' IOutput Interfaces.
 '
-Private Sub IOutput_PrintLine(Optional ByVal x As Variant)
+Private Sub IOutput_PrintLine(ByVal x As Variant)
 
     PrintLine x
     
 End Sub
 Private Sub IOutput_Puts(ByVal x As Variant)
-
+  
     Puts x
-    
+  
 End Sub
