@@ -36,11 +36,6 @@ Public Function ToString(ByVal x As Variant) As String
             ToString = x.ToString
             Exit Function
         End If
-<<<<<<< HEAD
-=======
-    Else
-        ToString = CStr(x)
->>>>>>> origin/master
     End If
     
 On Error GoTo NoDefaultProperty
