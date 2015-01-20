@@ -59,12 +59,8 @@ ErrHandler:
     End Select
     
 End Sub
-<<<<<<< HEAD
 Public Sub MakeDir(ByVal folder_path As String, Optional ByVal create_parent As Boolean = False)
-=======
-Public Sub MakeDir(ByVal folder_path As String, ByVal Optional create_parent As Boolean = False)
->>>>>>> origin/master
-    
+
     Dim check As Boolean
     On Error GoTo ErrHandler
         
