@@ -1,4 +1,5 @@
 Attribute VB_Name = "shutilB"
+Option Explicit
 '
 ' shutilB
 ' =======
@@ -20,18 +21,17 @@ Attribute VB_Name = "shutilB"
 ' -------------------------
 '
 '
-Function Move(ByVal src_path As String, ByVal dest_path As String, _
-        Optional create_parent As Boolean = False) As Boolean
+Function Move(ByVal src As String, ByVal dest As String, _
+        Optional createParent As Boolean = False) As Boolean
               
     Dim check As Boolean
     On Error GoTo ErrHandler
 
-    DestIsFolderFeature dest_path, src_path
+    DestIsFolderFeature dest, src
     
-    If create_parent Then CreateRootPath dest_path
-    
-    Name src_path As dest_path
-    check = Exists(dest_path)
+    If createParent Then CreateRootPath dest
+    Name src As dest
+    check = fsview.Exists(dest)
     
 CleanExit:
     Move = check
@@ -43,20 +43,20 @@ ErrHandler:
     Resume CleanExit
     
 End Function
-Function Rename(ByVal path As String, ByVal new_name As String) As Boolean
+Function Rename(ByVal aPath As String, ByVal newName As String) As Boolean
     
-    Debug.Assert BaseName(new_name) = new_name
+    Debug.Assert path.BaseName(newName) = newName
     
-    Rename = Move(path, pJoin(RootName(path), new_name))
+    Rename = Move(aPath, path.JoinPath(path.RootName(aPath), newName))
 
 End Function
-Function Remove(ByVal file_path As String) As Boolean
+Function Remove(ByVal filePath As String) As Boolean
     
     Dim check As Boolean
     On Error GoTo ErrHandler
     
-    Kill file_path
-    check = (Not FileExists(file_path))
+    Kill filePath
+    check = (Not fsview.FileExists(filePath))
     
 CleanExit:
     Remove = check
@@ -68,15 +68,15 @@ ErrHandler:
     Resume CleanExit
 
 End Function
-Function MakeDir(ByVal folder_path As String, _
-        Optional create_parent As Boolean = False) As Boolean
+Function MakeDir(ByVal filePath As String, _
+        Optional createParent As Boolean = False) As Boolean
                 
     Dim check As Boolean
     On Error GoTo ErrHandler
         
-    If create_parent Then CreateRootPath folder_path
-    MkDir folder_path
-    check = FolderExists(folder_path)
+    If createParent Then CreateRootPath filePath
+    MkDir filePath
+    check = fsview.FolderExists(filePath)
     
 CleanExit:
     MakeDir = check
@@ -88,19 +88,19 @@ ErrHandler:
     Resume CleanExit
     
 End Function
-Function CopyFile(ByVal src_path As String, ByVal dest_path As String, _
-        Optional create_parent As Boolean = False) As Boolean
+Function CopyFile(ByVal src As String, ByVal dest As String, _
+        Optional createParent As Boolean = False) As Boolean
     
     Dim check As Boolean
     On Error GoTo ErrHandler
     
-    DestIsFolderFeature dest_path, src_path
+    DestIsFolderFeature dest, src
     
-    If FileExists(dest_path) Then GoTo CleanExit:
+    If fsview.FileExists(dest) Then GoTo CleanExit:
     
-    If create_parent Then CreateRootPath dest_path
-    FileCopy src_path, dest_path
-    check = FileExists(dest_path)
+    If createParent Then CreateRootPath dest
+    FileCopy src, dest
+    check = fsview.FileExists(dest)
 
 CleanExit:
     CopyFile = check
@@ -112,20 +112,22 @@ ErrHandler:
     Resume CleanExit
     
 End Function
-Private Function CreateRootPath(ByVal path As String) As Boolean
+Private Function CreateRootPath(ByVal aPath As String) As Boolean
 
-    Dim parent_folder As String
-    parent_folder = RootName(path)
+    Dim parentFolder As String
+    parentFolder = path.RootName(aPath)
     
-    If Not FolderExists(parent_folder) Then
+    If Not fsview.FolderExists(parentFolder) Then
     
-        CreateRootPath = MakeDir(parent_folder, create_parent:=True)
+        CreateRootPath = MakeDir(parentFolder, createParent:=True)
         
     End If
     
 End Function
-Private Sub DestIsFolderFeature(ByRef dest_path As String, ByVal src_path As String)
-    If right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then
-        dest_path = pJoin(dest_path, BaseName(src_path))
+Private Sub DestIsFolderFeature(ByRef dest As String, ByVal src As String)
+
+    If right$(dest, 1) = path.SEP Or fsview.FolderExists(dest) Then
+        dest = path.JoinPath(dest, path.BaseName(src))
     End If
+    
 End Sub

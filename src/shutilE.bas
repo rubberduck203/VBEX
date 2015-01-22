@@ -1,4 +1,5 @@
 Attribute VB_Name = "shutilE"
+Option Explicit
 '
 ' shutilE
 ' =======
@@ -20,18 +21,24 @@ Attribute VB_Name = "shutilE"
 ' -------------------------
 '
 '
-Public Sub Move(ByVal src_path As String, ByVal dest_path As String, _
-        Optional create_parent As Boolean = False)
+Public Sub Move(ByVal src As String, ByVal dest As String, _
+        Optional createParent As Boolean = False)
 
     On Error GoTo ErrHandler
 
-    DestIsFolderFeature dest_path, src_path
+    DestIsFolderFeature dest, src
     
-    If create_parent Then CreateRootPath dest_path
+    If createParent Then CreateRootPath dest
     
-    Name src_path As dest_path
-    If Not Exists(dest_path) Then Error_FailedCreate "Move", "Name As"
-    If Exists(src_path) Then Error_FailedDestroy "Move", "Name As"
+    Name src As dest
+    
+    If Not fsview.Exists(dest) Then
+        OnFailedCreateError "Move", "Name As"
+    End If
+    
+    If fsview.Exists(src) Then
+        OnFailedDestroyError "Move", "Name As"
+    End If
     
 CleanExit:
     Exit Sub
@@ -39,15 +46,18 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-        Error_ReRaise Err
+        ReRaiseError Err
     End Select
 
 End Sub
-Public Sub Remove(ByVal file_path As String)
+Public Sub Remove(ByVal aPath As String)
     On Error GoTo ErrHandler
     
-    Kill file_path
-    If Exists(dest_path) Then Error_FailedDestroy "Remove", "Kill"
+    Kill aPath
+    
+    If fsview.Exists(aPath) Then
+        OnFailedDestroyError "Remove", "Kill"
+    End If
     
 CleanExit:
     Exit Sub
@@ -55,19 +65,21 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-        Error_ReRaise Err
+        ReRaiseError Err
     End Select
     
 End Sub
-Public Sub MakeDir(ByVal folder_path As String, Optional ByVal create_parent As Boolean = False)
+Public Sub MakeDir(ByVal folderPath As String, Optional ByVal createParent As Boolean = False)
 
     Dim check As Boolean
     On Error GoTo ErrHandler
         
-    If create_parent Then CreateRootPath folder_path
-    MkDir folder_path
+    If createParent Then CreateRootPath folderPath
+    MkDir folderPath
     
-    If Not FolderExists(dest_path) Then Error_FailedCreate "MakeDir", "MkDir"
+    If Not fsview.FolderExists(folderPath) Then
+        OnFailedCreateError "MakeDir", "MkDir"
+    End If
     
 CleanExit:
     Exit Sub
@@ -75,22 +87,27 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-        Error_ReRaise Err
+        ReRaiseError Err
     End Select
     
 End Sub
-Public Sub CopyFile(ByVal src_path As String, ByVal dest_path As String, _
-      Optional create_parent As Boolean = False)
+Public Sub CopyFile(ByVal src As String, ByVal dest As String, _
+      Optional createParent As Boolean = False)
     
     On Error GoTo ErrHandler
     
-    DestIsFolderFeature dest_path, src_path
-    If FileExists(dest_path) Then Error_NoOverwrite "CopyFile"
+    DestIsFolderFeature dest, src
     
-    If create_parent Then CreateRootPath dest_path
-    FileCopy src_path, dest_path
+    If fsview.FileExists(dest) Then
+        OnNoOverwriteError "CopyFile"
+    End If
     
-    If Not FileExists(dest_path) Then Error_FailedCreate "CopyFile", "FileCopy"
+    If createParent Then CreateRootPath dest
+    FileCopy src, dest
+    
+    If Not fsview.FileExists(dest) Then
+        OnFailedCreateError "CopyFile", "FileCopy"
+    End If
 
 CleanExit:
    Exit Sub
@@ -98,40 +115,51 @@ CleanExit:
 ErrHandler:
     Select Case Err.Number
     Case Else
-       Error_ReRaise Err
+       ReRaiseError Err
     End Select
     
 End Sub
-Private Sub CreateRootPath(ByVal path As String)
+Private Sub CreateRootPath(ByVal aPath As String)
     
-    Dim parent_folder As String
-    parent_folder = RootName(path)
+    Dim parentFolder As String
+    parentFolder = path.RootName(aPath)
     
-    If Not FolderExists(parent_folder) Then
-        MakeDir parent_folder, create_parent:=True
+    If Not fsview.FolderExists(parentFolder) Then
+        MakeDir parentFolder, createParent:=True
     End If
     
 End Sub
-Private Sub DestIsFolderFeature(ByRef dest_path As String, _
-        ByVal src_path As String)
+Private Sub DestIsFolderFeature(ByRef dest As String, _
+        ByVal src As String)
     
-    If right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then
-        dest_path = pJoin(dest_path, BaseName(src_path))
+    If right$(dest, 1) = path.SEP Or fsview.FolderExists(dest) Then
+        dest = path.JoinPath(dest, path.BaseName(src))
     End If
     
 End Sub
 '
 ' ### Custom Error Messages
 '
-Private Sub Error_ReRaise(ByVal errobj As Variant)
-    Err.Raise errobj.Number, errobj.source, errobj.Description, errobj.HelpFile, errobj.HelpContext
+Private Sub ReRaiseError(ByRef e As ErrObject)
+
+    Err.Raise e.Number, e.source, e.Description, e.HelpFile, e.HelpContext
+    
 End Sub
-Private Sub Error_FailedCreate(ByVal method As String, ByVal operation As String)
-    Err.Raise osErrNums.unknown, method, "Destination does not exist after errorless `" & operation & "`"
+Private Sub OnFailedCreateError(ByVal method As String, ByVal operation As String)
+
+    Err.Raise osErrNums.unknown, method, _
+        "Destination does not exist after errorless `" & operation & "`"
+        
 End Sub
-Private Sub Error_FailedDestroy(ByVal method As String, ByVal operation As String)
-    Err.Raise osErrNums.unknown, method, "Destination still exists after errorless `" & operation & "`"
+Private Sub OnFailedDestroyError(ByVal method As String, ByVal operation As String)
+
+    Err.Raise osErrNums.unknown, method, _
+        "Destination still exists after errorless `" & operation & "`"
+    
 End Sub
-Private Sub Error_NoOverwrite(ByVal method As String)
-    Err.Raise osErrNums.overwriteRefusal, method, "Will not overwrite file at destination.  Remove it first if desired."
+Private Sub OnNoOverwriteError(ByVal method As String)
+
+    Err.Raise osErrNums.overwriteRefusal, method, _
+        "Will not overwrite file at destination.  Remove it first if desired."
+    
 End Sub

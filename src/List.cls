@@ -123,16 +123,15 @@ Public Function ForAll(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As Boolean
 
     ' TODO: fix Lambda so I can use Fold(True, "(x, y) => x And pred(y)")
-    Dim result As Boolean
-    result = True
-    
     Dim element As Variant
     For Each element In pCollec
-        If (Not pred.Exec(element)) Xor opposite Then
-            result = False
+        If Not (pred.Exec(element) Xor opposite) Then
+            ForAll = False
             Exit For
         End If
     Next element
+    
+    ForAll = True
 
 End Function
 Private Sub Class_Initialize()

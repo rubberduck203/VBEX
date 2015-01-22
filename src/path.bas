@@ -1,4 +1,5 @@
 Attribute VB_Name = "path"
+Option Explicit
 '
 ' path
 ' ====
@@ -8,7 +9,7 @@ Attribute VB_Name = "path"
 ' Copyright (c) 2014 Philip Wales
 ' This file (path.bas) is distributed under the MIT license.
 '
-Option Explicit
+
 '
 ' Constants
 ' ---------
@@ -131,9 +132,9 @@ End Function
 ' root/ -> base -> root/base
 ' root -> base -> root/base
 ' root -> /base -> root//base ! BAD BAD BAD
-Public Function pJoin(ByVal root_path As String, ByVal file_path As String) As String
+Public Function JoinPath(ByVal root_path As String, ByVal file_path As String) As String
 
-    pJoin = RTrimSep(root_path) & SEP & file_path
+    JoinPath = RTrimSep(root_path) & SEP & file_path
     
 End Function
 ''
@@ -145,7 +146,7 @@ Public Function Append(ByVal file_path As String, ByVal to_append As String) As 
     Dim file_ext As String
     file_ext = Ext(file_path)
     
-    Append = pJoin(RootName(file_path), _
+    Append = JoinPath(RootName(file_path), _
                    BaseName(file_path, suffix:=file_ext) & _
                    to_append & file_ext)
                      
@@ -155,7 +156,7 @@ End Function
 ' root/name.ext -> prepended -> root/prependedname.ext
 Public Function Prepend(ByVal file_path As String, ByVal to_prepend As String) As String
     
-    Prepend = pJoin(RootName(file_path), to_prepend & BaseName(file_path))
+    Prepend = JoinPath(RootName(file_path), to_prepend & BaseName(file_path))
 
 End Function
 ''

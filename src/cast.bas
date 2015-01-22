@@ -1,4 +1,5 @@
 Attribute VB_Name = "cast"
+Option Explicit
 '
 ' cast
 ' ====
@@ -49,7 +50,6 @@ NoDefaultProperty:
     ReRaiseError Err, "ToString"
     
 End Function
-<<<<<<< HEAD
 '
 '
 ''
@@ -59,10 +59,6 @@ Public Function SequenceToString(ByVal xs As ISequence, _
         Optional ByVal delim As String, _
         Optional ByVal lcap As String = "(", _
         Optional ByVal rcap As String = ")") As String
-=======
-Public Function SequenceToString(Byval xs As ISequence, Optional ByVal delim As String, _
-        Optional ByVal lcap As String, Optional ByVal rcap As String) As String
->>>>>>> origin/master
 
     Dim ss() As Variant
     ss = xs.ToArray

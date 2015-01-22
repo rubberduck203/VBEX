@@ -1,4 +1,5 @@
 Attribute VB_Name = "fsview"
+Option Explicit
 '
 ' fsview
 ' ======
@@ -59,11 +60,11 @@ Public Function SubItems(ByVal root As String, Optional ByVal pat As String = AL
     Set SubItems = List.Create
     
     Dim sub_item As String
-    sub_item = Dir$(pJoin(root, pat), vbType)
+    sub_item = Dir$(JoinPath(root, pat), vbType)
     
     While sub_item <> vbNullString
     
-        SubItems.Append pJoin(root, sub_item)
+        SubItems.Append JoinPath(root, sub_item)
         sub_item = Dir$()
         
     Wend
@@ -88,9 +89,9 @@ Public Function SubFolders(ByVal root As String, Optional ByVal pat As String = 
     
     If skipDots And result.Count > 0 Then
 
-        If result(1) = pJoin(root, CURDIR) Then ' else root
+        If result(1) = JoinPath(root, CURDIR) Then ' else root
             result.Remove 1
-            If result(1) = pJoin(root, PARDIR) Then  ' else mountpoint
+            If result(1) = JoinPath(root, PARDIR) Then  ' else mountpoint
                 result.Remove 1
             End If
         End If
