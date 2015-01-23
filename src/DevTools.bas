@@ -3,15 +3,21 @@ Option Explicit
 
 ''
 ' Extensibility Library: For Meta stuff
-Private Const VBA_EXTENSIBILITY_LIB As String = "C:\Program Files\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
+Private Const VBA_EXTENSIBILITY_LIB As String = _
+    "C:\Program Files\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
 Private Const VBA_EXTENSIBILITY_NAME As String = "VBIDE"
 
 ''
 ' Scripting Runtime: For Dictionary
 Private Const VBA_SCRIPTING_LIB As String = "C:\Windows\system32\scrrun.dll"
-Private Const VBA_SCRIPTING_NAME As String = "C:\Windows\system32\scrrun.dll"
+Private Const VBA_SCRIPTING_NAME As String = "Scripting"
 
 
+''
+' Rubberduck for testing
+Private Const RUBBERDUCK_LIB As String = _
+    "C:\Program Files\Rubberduck\Rubberduck\Rubberduck.tlb"
+Private Const RUBBERDUCK_NAME As String = "Rubberduck"
 ''
 ' This should mimic vbext_ComponentType.  The idea is that this module
 ' could operate with as little setup as possible.
@@ -40,13 +46,29 @@ Public Sub BuildVBEX(ByVal sourceDir As String, ByVal buildDir As String)
     BuildAddin sourceDir & "src\", buildPath, "VBEX"
     BuildAddin sourceDir & "test\", testPath, "Testing"
     
+    ' Add VBEX references
     Dim vbexWb As Workbook
     Set vbexWb = Workbooks.Open(buildPath)
     
-    AddReference vbexWb.VBProject, VBA_EXTENSIBILITY_NAME, VBA_EXTENSIBILITY_LIB
+    AddReference vbexWb.VBProject, VBA_EXTENSIBILITY_NAME, _
+        FindLibVersion(VBA_EXTENSIBILITY_LIB)
     AddReference vbexWb.VBProject, VBA_SCRIPTING_NAME, VBA_SCRIPTING_LIB
+    vbexWb.Save
     
-    vbexWb.Close savechanges:=True
+    ' Add Testing References
+    Dim testWb As Workbook
+    Set testWb = Workbooks.Open(testPath)
+    
+    AddReference testWb.VBProject, "VBEX", buildPath
+    AddReference testWb.VBProject, RUBBERDUCK_NAME, _
+        FindLibVersion(RUBBERDUCK_LIB)
+    testWb.Save
+    
+    ' closing testWB doesn't effect until procedure stops
+    ' procedure doesn't stop until vbexWB closes
+    ' vbexWB can't close until testWB closes.
+    'testWb.Close savechanges:=True
+    'vbexWb.Close savechanges:=True
     
 End Sub
 Private Sub BuildAddin(ByVal sourceDir As String, _
@@ -57,7 +79,8 @@ Private Sub BuildAddin(ByVal sourceDir As String, _
     
     Dim prj As Object
     Set prj = wb.VBProject
-    prj.name = projectName
+    
+    prj.Name = projectName
     
     ImportSourceFiles prj, sourceDir
     
@@ -77,7 +100,7 @@ Private Sub ImportSourceFiles(ByVal project As Object, ByVal sourceDir As String
     file = Dir(sourceDir)
     
     While (file <> "")
-        project.VBComponents.Import sourcePath & file
+        project.VBComponents.Import sourceDir & file
         file = Dir
     Wend
     
@@ -87,9 +110,9 @@ End Sub
 Private Function HasReference(ByVal project As Object, ByVal refName As String) As Boolean
 
     Dim ref As Variant
-    For Each ref In project.Reference
+    For Each ref In project.References
     
-        If ref.name = refName Then
+        If ref.Name = refName Then
             HasReference = True
             Exit Function
         End If
@@ -109,6 +132,35 @@ Private Sub AddReference(ByVal project As Object, ByVal refName As String, _
     End If
 
 End Sub
+Private Function FindLibVersion(ByVal alledgedLibPath As String) As String
+
+    Dim altLibPath As String
+    altLibPath = SwitchArch(alledgedLibPath)
+    
+    If Dir(alledgedLibPath) <> "" Then
+        FindLibVersion = alledgedLibPath
+    ElseIf Dir(altLibPath) <> "" Then
+        FindLibVersion = altLibPath
+    Else
+        ' Raise Error
+    End If
+    
+End Function
+''
+' Note "Program Files (x86)" is for 32 programs if your machine is 64
+' but 64 programs if your machine is 32.
+Private Function SwitchArch(ByVal libPath As String) As String
+
+    Const LOCAL_ARCH As String = "Program Files"
+    Const OTHER_ARCH As String = "Program Files (x86)"
+    
+    If InStr(1, libPath, "(x86)") <> 0 Then
+        SwitchArch = Replace$(libPath, OTHER_ARCH, LOCAL_ARCH)
+    Else
+        SwitchArch = Replace$(libPath, LOCAL_ARCH, OTHER_ARCH)
+    End If
+    
+End Function
 '
 ' Exporting VBEX
 ' --------------
@@ -126,7 +178,7 @@ Public Sub ExportSourceFiles(ByVal project As Object, ByVal destPath As String)
         If OughtExport(compType) Then
         
             Dim exportPath As String
-            exportPath = destPath & component.name & ToFileExtension(component.Type)
+            exportPath = destPath & component.Name & ToFileExtension(component.Type)
             component.Export exportPath
             
         End If
