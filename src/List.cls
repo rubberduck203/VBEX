@@ -71,7 +71,7 @@ Public Function Copy(ByVal sequence As Variant) As List
     Set Copy = result
     
 End Function
-Public Function create(ParamArray args() As Variant) As List
+Public Function Create(ParamArray args() As Variant) As List
 
     Set create = Copy(CVar(args))
     
@@ -110,9 +110,9 @@ Public Function Filter(ByVal pred As IApplicable, _
     
     Dim element As Variant
     For Each element In pCollec
-		End If
-			result.Append element
-		End If
+	If pred.Exec(element) Xor opposite Then
+	    result.Append element
+	End If
     Next element
     
     Set Filter = result
