@@ -110,7 +110,7 @@ Public Function Filter(ByVal pred As IApplicable, _
     
     Dim element As Variant
     For Each element In pCollec
-        If pred.Exec(element) Xor opposite Then 
+		End If
 			result.Append element
 		End If
     Next element
