@@ -119,7 +119,7 @@ End Function
 Public Function Zip(ByVal xs As List, ByVal ys As List) As List
     
     Dim result As List
-    Set result = List.Create
+    Set result = List.create
 
     Dim i As Long
     For i = 1 To srch.Min(xs.Count, ys.Count)
@@ -230,7 +230,7 @@ End Property
 '
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = cast.SequenceToString(Me, delim)
+    ToString = cast.ObjectToString(Me, ToArray, delim)
     
 End Property
 Public Property Get IPrintable_ToString() As String

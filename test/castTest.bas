@@ -93,19 +93,13 @@ Public Sub CastToStringIPrintable()
 
 End Sub
 '@TestMethod
-Public Sub CastSequenceToString()
+Public Sub CastToStringObject()
 
-    Dim flat As List
-    Set flat = List.Create(1, 2, 3)
-    
-    Assert.AreEqual "List(1, 2, 3)", SequenceToString(flat, delim:=", ")
-    
-    Dim nested As List
-    Set nested = List.Create(flat)
-    
-    Assert.AreEqual "List(List(1, 2, 3))", SequenceToString(nested, delim:=", ")
+    Dim c As New Collection
+    Assert.IsTrue (cast.ToString(c) Like "Collection(&*)")
 
 End Sub
+
 '
 ' ### ICloneable
 '

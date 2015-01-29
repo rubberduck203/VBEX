@@ -62,8 +62,8 @@ Public Property Get Collection() As Collection
 End Property
 
 'Constructor
-Public Function Create() As Enumerable
-    Set Create = New Enumerable
+Public Function create() As Enumerable
+    Set create = New Enumerable
 End Function
 
 ' Collection Wrappers

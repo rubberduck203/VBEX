@@ -37,9 +37,9 @@ Public Function Exists(ByVal file_path As String, _
 End Function
 ''
 ' Will not return true if a folder exists of the same name
-Public Function FileExists(ByVal file_path As String)
+Public Function fileExists(ByVal file_path As String)
 
-    FileExists = Exists(file_path, vbNormal)
+    fileExists = Exists(file_path, vbNormal)
     
 End Function
 ''
@@ -57,7 +57,7 @@ End Function
 Public Function SubItems(ByVal root As String, Optional ByVal pat As String = ALLPAT, _
         Optional ByVal vbType As Integer = vbDirectory) As List
                   
-    Set SubItems = List.Create
+    Set SubItems = List.create
     
     Dim sub_item As String
     sub_item = Dir$(JoinPath(root, pat), vbType)
@@ -101,7 +101,7 @@ Public Function SubFolders(ByVal root As String, Optional ByVal pat As String = 
     ' filter method!
     Dim i As Long
     For i = result.Count To 1 Step -1
-        If FileExists(result(i)) Then
+        If fileExists(result(i)) Then
             result.Remove i
         End If
     Next i
@@ -112,7 +112,7 @@ End Function
 Public Function Find(ByVal root As String, Optional ByVal pat As String = "*", _
         Optional ByVal vbType As Integer = vbNormal) As List
 
-    Set Find = List.Create
+    Set Find = List.create
     
     FindRecurse root, Find, pat, vbType
     
@@ -146,7 +146,7 @@ Private Function GlobRecurse(ByVal root As String, ByRef patterns() As String, _
         Set GlobRecurse = SubItems(root, patterns(index), vbType)
     Else
         
-        Set GlobRecurse = List.Create
+        Set GlobRecurse = List.create
         
         Dim folder As Variant
         For Each folder In SubFolders(root, patterns(index))

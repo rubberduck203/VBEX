@@ -17,8 +17,8 @@ Option Explicit
 
 Private mCollection As Collection
 
-Public Function Create() As vbeProcedures
-    Set Create = New vbeProcedures
+Public Function create() As vbeProcedures
+    Set create = New vbeProcedures
 End Function
 
 Public Sub Clear()

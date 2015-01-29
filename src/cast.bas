@@ -32,44 +32,44 @@ End Function
 '
 Public Function ToString(ByVal x As Variant) As String
 
-    If IsObject(x) Then
-        If TypeOf x Is IPrintable Then
-            ToString = x.ToString
-            Exit Function
-        End If
+    Dim result As String
+    
+    If TypeOf x Is IPrintable Then
+        result = x.ToString
+    ElseIf IsObject(x) Then
+        result = DefaultObjectToString(x)
+    Else
+        result = CStr(x)
     End If
     
-On Error GoTo NoDefaultProperty
-    ToString = CStr(x)
-    
-Exit Function
-
-NoDefaultProperty:
-
-    RaiseNoDefaultProperty Err, "ToString", x
-    ReRaiseError Err, "ToString"
+    ToString = result
     
 End Function
-'
-'
-''
-' Not actually for `IPrintable` but sequence objects to
-' use.
-Public Function SequenceToString(ByVal xs As ISequence, _
-        Optional ByVal delim As String, _
-        Optional ByVal lcap As String = "(", _
-        Optional ByVal rcap As String = ")") As String
+Private Function DefaultObjectToString(ByVal x As Object) As String
 
-    Dim ss() As Variant
-    ss = xs.ToArray
+    DefaultObjectToString = ObjectToString(x, cast.CArray(Array("&" & ObjPtr(x))))
+
+End Function
+Public Function xObjectToString(ByVal o As Object, ParamArray members() As Variant) As String
+	
+	xObjectToString = ObjectToString(o, cast.CArray(members))
+	
+End Function
+Public Function ObjectToString(ByVal o As Object, ByRef members() As Variant, _
+        Optional ByVal delim As String = ", ") As String
+
+    Dim stringMembers() As String
+    If LBound(members) <= UBound(members) Then
+        ReDim stringMembers(LBound(members) To UBound(members))
+    End If
     
     Dim i As Long
-    For i = LBound(ss) To UBound(ss)
-        ss(i) = ToString(ss(i))
+    For i = LBound(members) To UBound(members)
+        stringMembers(i) = ToString(members(i))
     Next i
     
-    SequenceToString = TypeName(xs) & lcap & Join(ss, delim) & rcap
-    
+    ObjectToString = TypeName(o) & "(" & Join(stringMembers, delim) & ")"
+
 End Function
 '
 ' ICloneable
@@ -93,26 +93,12 @@ End Function
 ' -----------
 '
 Public Function Equals(ByVal x As Variant, ByVal y As Variant) As Boolean
-    
-    Dim xIsObj As Boolean
-    xIsObj = IsObject(x)
-    
-    Dim yIsObj As Boolean
-    yIsObj = IsObject(y)
-    
+
     Dim xIsEquatable As Boolean
-    If xIsObj Then
-        xIsEquatable = TypeOf x Is IEquatable
-    Else
-        xIsEquatable = False
-    End If
+    xIsEquatable = TypeOf x Is IEquatable
     
     Dim yIsEquatable As Boolean
-    If yIsObj Then
-        yIsEquatable = TypeOf y Is IEquatable
-    Else
-        yIsEquatable = False
-    End If
+    yIsEquatable = TypeOf y Is IEquatable
     
     If xIsEquatable And yIsEquatable Then
         Equals = x.Equals(y)

@@ -71,6 +71,25 @@ Public Sub BuildVBEX(ByVal sourceDir As String, ByVal buildDir As String)
     'vbexWb.Close savechanges:=True
     
 End Sub
+Public Sub ExportVBEX(ByVal exportDir As String)
+
+    Dim vbexPrj As Object
+    Set vbexPrj = Workbooks("VBEX.xlam").VBProject
+    
+    Dim srcDir As String
+    srcDir = exportDir & "src\"
+    
+    ExportSourceFiles vbexPrj, srcDir
+    
+    Dim testPrj As Object
+    Set testPrj = Workbooks("VBEX-Testing.xlam").VBProject
+    
+    Dim testDir As String
+    testDir = exportDir & "test\"
+    
+    ExportSourceFiles testPrj, testDir
+
+End Sub
 Private Sub BuildAddin(ByVal sourceDir As String, _
         ByVal buildPath As String, ByVal projectName As String)
         
@@ -80,7 +99,7 @@ Private Sub BuildAddin(ByVal sourceDir As String, _
     Dim prj As Object
     Set prj = wb.VBProject
     
-    prj.Name = projectName
+    prj.name = projectName
     
     ImportSourceFiles prj, sourceDir
     
@@ -96,12 +115,12 @@ End Sub
 ' `project` is `Object` to avoid dependence
 Private Sub ImportSourceFiles(ByVal project As Object, ByVal sourceDir As String)
 
-    Dim file As String
-    file = Dir(sourceDir)
+    Dim File As String
+    File = Dir(sourceDir)
     
-    While (file <> "")
-        project.VBComponents.Import sourceDir & file
-        file = Dir
+    While (File <> "")
+        project.VBComponents.Import sourceDir & File
+        File = Dir
     Wend
     
 End Sub
@@ -112,7 +131,7 @@ Private Function HasReference(ByVal project As Object, ByVal refName As String) 
     Dim ref As Variant
     For Each ref In project.References
     
-        If ref.Name = refName Then
+        If ref.name = refName Then
             HasReference = True
             Exit Function
         End If
@@ -178,7 +197,7 @@ Public Sub ExportSourceFiles(ByVal project As Object, ByVal destPath As String)
         If OughtExport(compType) Then
         
             Dim exportPath As String
-            exportPath = destPath & component.Name & ToFileExtension(component.Type)
+            exportPath = destPath & component.name & ToFileExtension(component.Type)
             component.Export exportPath
             
         End If

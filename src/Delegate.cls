@@ -7,7 +7,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-
 Option Explicit
 Implements IApplicable
 '
@@ -41,7 +40,7 @@ Private Sub Class_Terminate()
 End Sub
 
 ' TODO: determine func datatype
-Public Function Create(ByVal func As Variant) As Delegate
+Public Function create(ByVal func As Variant) As Delegate
     
 End Function
 

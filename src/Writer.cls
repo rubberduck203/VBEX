@@ -37,14 +37,87 @@ Public Enum FileWriterError
     FileAlreadyExists
 End Enum
 '
-' Private Methods
-' ---------------
+' Constructor
+' -----------
+'
+Public Function OpenFile(ByVal filePath As String, _
+        Optional ByVal overwrite As Boolean = True) As Writer
+
+    Dim result As New Writer
+    Set result.File(False, overwrite) = filePath
+    Set OpenFile = result
+    
+End Function
+Public Function NewFile(ByVal filePath As String) As Writer
+
+    Dim result As New Writer
+     Set result.File(True, False) = filePath
+    Set NewFile = result
+    
+End Function
+'
+' ### Friend Methods
+'
+Friend Property Set File(ByVal create As Boolean, _
+        ByVal overwrite As Boolean, ByVal filePath As String)
+On Error GoTo ErrHander
+
+    If pFileNumber <> 0 Then
+        OnFileAlreadyOpenedError "Set File", filePath
+    End If
+    
+    Dim filePathExists As Boolean
+    filePathExists = fsview.fileExists(filePath)
+    
+    If create And filePathExists Then
+        OnFileAlreadyExistsError "Set File", filePath
+    ElseIf Not (create Or filePathExists) Then
+        OnFileDoesNotExistError "Set File", filePath
+    End If
+    
+    pFileNumber = FreeFile
+    pFilePath = filePath
+
+    If overwrite Or create Then
+        Open filePath For Output As #pFileNumber
+    Else
+        Open filePath For Append As #pFileNumber
+    End If
+
+Exit Property
+
+ErrHandler:
+    OnUnHandledError "Set File"
+
+End Property
+'
+' Destructors
+' -----------
 '
 Private Sub Class_Terminate()
 
     CloseFile
     
 End Sub
+'
+' Public Methods
+' --------------
+'
+Public Sub CloseFile()
+On Error GoTo ErrHandler
+
+    Close #pFileNumber
+    pFileNumber = 0
+
+Exit Sub
+
+ErrHandler:
+    OnUnHandledError "CloseFile"
+        
+End Sub
+'
+' Private Methods
+' ---------------
 '
 ' ### Writing
 '
@@ -73,8 +146,8 @@ ErrHandler:
     'close file it *any* error occurs writing to it:
     CloseFile
 
-    'bubble up all errors
-    Err.Raise Err.Number, Err.source, Err.Description
+    OnUnHandledError "AppendData"
+    
 End Sub
 '
 ' ### Errors
@@ -84,6 +157,12 @@ Private Function GetErrorSource(ByVal method As String) As String
     GetErrorSource = TypeName(Me) & "." & method
     
 End Function
+Private Sub OnUnHandledError(ByVal method As String)
+
+    Err.Raise Err.Number, GetErrorSource(method), Err.Description, _
+        Err.HelpFile, Err.HelpContext
+        
+End Sub
 Private Sub OnFileNotOpenedError(ByVal method As String)
 
     Err.Raise FileWriterError.FileNotOpened, GetErrorSource(method), _
@@ -107,98 +186,6 @@ Private Sub OnFileAlreadyExistsError(ByVal method As String, ByVal fileName As S
 
     Err.Raise FileWriterError.FileAlreadyExists, GetErrorSource(method), _
         "File '" & fileName & "' cannot be created as it already exists."
-        
-End Sub
-'
-' Friend Methods
-' --------------
-'
-Friend Sub pOpenFile(ByVal filePath As String, _
-        Optional ByVal overwrite As Boolean = True)
-
-    If pFileNumber <> 0 Then
-        OnFileAlreadyOpenedError "OpenFile", filePath
-    End If
-    
-    If Not fsview.FileExists(filePath) Then
-        OnFileDoesNotExistError "OpenFile", filePath
-    End If
-    
-    pFileNumber = FreeFile
-    pFilePath = filePath
-
-    If overwrite Then
-        Open filePath For Output As #pFileNumber
-    Else
-        Open filePath For Append As #pFileNumber
-    End If
-
-Exit Sub
-
-ErrHandler:
-    Err.Raise Err.Number, GetErrorSource("OpenFile"), Err.Description, _
-        Err.HelpFile, Err.HelpContext
-
-End Sub
-Friend Sub pNewFile(ByVal filePath As String)
-
-    If pFileNumber <> 0 Then
-        OnFileAlreadyOpenedError "NewFile", filePath
-    End If
-    
-    If fsview.FileExists(filePath) Then
-        OnFileAlreadyExistsError "NewFile", filePath
-    End If
-    
-    pFileNumber = FreeFile
-    pFilePath = filePath
-
-    If Not fsview.FileExists(filePath) Then
-        Open filePath For Output As #pFileNumber
-    End If
-
-Exit Sub
-
-ErrHandler:
-    Err.Raise Err.Number, GetErrorSource("NewFile"), Err.Description, _
-        Err.HelpFile, Err.HelpContext
-
-End Sub
-'
-' Constructor
-' -----------
-'
-Public Function OpenFile(ByVal filePath As String, _
-        Optional ByVal overwrite As Boolean = True) As Writer
-
-    Dim result As New Writer
-    result.pOpenFile filePath, overwrite:=overwrite
-    Set OpenFile = result
-    
-End Function
-Public Function NewFile(ByVal filePath As String) As Writer
-
-    Dim result As New Writer
-    result.pNewFile filePath
-    Set NewFile = result
-    
-End Function
-'
-' Public Methods
-' --------------
-'
-
-Public Sub CloseFile()
-On Error GoTo ErrHandler
-
-    Close #pFileNumber
-    pFileNumber = 0
-
-Exit Sub
-
-ErrHandler:
-    Err.Raise Err.Number, GetErrorSource("CloseFile"), Err.Description, _
-        Err.HelpFile, Err.HelpContext
         
 End Sub
 '

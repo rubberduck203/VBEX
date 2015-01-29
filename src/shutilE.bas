@@ -98,14 +98,14 @@ Public Sub CopyFile(ByVal src As String, ByVal dest As String, _
     
     DestIsFolderFeature dest, src
     
-    If fsview.FileExists(dest) Then
+    If fsview.fileExists(dest) Then
         OnNoOverwriteError "CopyFile"
     End If
     
     If createParent Then CreateRootPath dest
     FileCopy src, dest
     
-    If Not fsview.FileExists(dest) Then
+    If Not fsview.fileExists(dest) Then
         OnFailedCreateError "CopyFile", "FileCopy"
     End If
 

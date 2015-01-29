@@ -104,9 +104,9 @@ Public Function Copy(ByVal sequence As Variant) As SortedSet
     Set Copy = result
     
 End Function
-Public Function Create(ParamArray args() As Variant) As SortedSet
+Public Function create(ParamArray args() As Variant) As SortedSet
     
-    Set Create = Copy(args)
+    Set create = Copy(args)
     
 End Function
 '
@@ -366,7 +366,7 @@ End Property
 '
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = cast.SequenceToString(Me, delim)
+    ToString = cast.ObjectToString(Me, ToArray, delim)
     
 End Property
 Public Property Get IPrintable_ToString() As String

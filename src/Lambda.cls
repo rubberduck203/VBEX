@@ -94,11 +94,11 @@ Private pParameters() As String ' name of the args
 '
 ''
 ' Create an Lambda Function
-Public Function Create(ByRef params() As String, ByVal expr As String) As Lambda
+Public Function create(ByRef params() As String, ByVal expr As String) As Lambda
     
     Dim result As New Lambda
     result.Assign DEFAULT_LAMBDA_ID, params, expr
-    Set Create = result
+    Set create = result
     
 End Function
 ''
@@ -128,7 +128,7 @@ Private Function FromProper(ByVal proper As String) As Lambda
     
     Dim params() As String
     params = Split(Replace$(args, " ", ""), ",")
-    Set FromProper = Lambda.Create(params, expr)
+    Set FromProper = Lambda.create(params, expr)
     
 End Function
 Public Function FromShortHand(ByVal shorthand As String) As Lambda
@@ -157,7 +157,7 @@ Public Function FromShortHand(ByVal shorthand As String) As Lambda
         
     Next i
     
-    Set FromShortHand = Create(params, expr)
+    Set FromShortHand = create(params, expr)
     
 End Function
 '
