@@ -128,15 +128,15 @@ Public Sub Initialize(name As String, codeMod As CodeModule, procKind As vbext_P
     this.procKind = procKind
 End Sub
 
-Public Property Get Lines() As String
+Public Property Get lines() As String
     ValidateIsInitialized
-    Lines = Me.ParentModule.Lines(Me.StartLine, Me.CountOfLines)
+    lines = Me.ParentModule.lines(Me.StartLine, Me.CountOfLines)
 End Property
 
 Public Property Get Signature() As String
 ' @Mat's Mug [http://codereview.stackexchange.com/users/23788/mats-mug] wrote this.
     Dim code() As String
-    code = Split(Me.ParentModule.Lines(Me.StartLine, Me.CountOfLines), vbNewLine)
+    code = Split(Me.ParentModule.lines(Me.StartLine, Me.CountOfLines), vbNewLine)
 
     Dim i As Long
     For i = 0 To UBound(code)

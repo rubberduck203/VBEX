@@ -27,51 +27,6 @@ Public Function CArray(ByVal xs As Variant) As Variant()
     
 End Function
 '
-' IPrintable
-' ----------
-'
-Public Function ToString(ByVal x As Variant) As String
-
-    Dim result As String
-    
-    If TypeOf x Is IPrintable Then
-        result = x.ToString
-    ElseIf IsObject(x) Then
-        result = DefaultObjectToString(x)
-    Else
-        result = CStr(x)
-    End If
-    
-    ToString = result
-    
-End Function
-Private Function DefaultObjectToString(ByVal x As Object) As String
-
-    DefaultObjectToString = ObjectToString(x, cast.CArray(Array("&" & ObjPtr(x))))
-
-End Function
-Public Function xObjectToString(ByVal o As Object, ParamArray members() As Variant) As String
-	
-	xObjectToString = ObjectToString(o, cast.CArray(members))
-	
-End Function
-Public Function ObjectToString(ByVal o As Object, ByRef members() As Variant, _
-        Optional ByVal delim As String = ", ") As String
-
-    Dim stringMembers() As String
-    If LBound(members) <= UBound(members) Then
-        ReDim stringMembers(LBound(members) To UBound(members))
-    End If
-    
-    Dim i As Long
-    For i = LBound(members) To UBound(members)
-        stringMembers(i) = ToString(members(i))
-    Next i
-    
-    ObjectToString = TypeName(o) & "(" & Join(stringMembers, delim) & ")"
-
-End Function
-'
 ' ICloneable
 ' ----------
 '

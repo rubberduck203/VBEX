@@ -18,93 +18,93 @@ Option Explicit
 Public Function Move(ByVal src As String, ByVal dest As String, _
         Optional createParent As Boolean = False) As Boolean
               
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
 
     shutilE.Move src, dest, createParent
-    check = False
+    noError = True
     
 CleanExit:
-    Move = check
+    Move = noError
     Exit Function
   
 ErrHandler:
     Err.Clear
-    check = False
+    noError = False
     Resume CleanExit
     
 End Function
 Public Function Rename(ByVal aPath As String, ByVal newName As String) As Boolean
     
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
 
     shutilE.Rename aPath, newName
-    check = False
+    noError = True
     
 CleanExit:
-    Rename = check
+    Rename = noError
     Exit Function
   
 ErrHandler:
     Err.Clear
-    check = False
+    noError = False
     Resume CleanExit
     
 End Function
 Public Function Remove(ByVal filePath As String) As Boolean
     
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
 
     shutilE.Remove filePath
-    check = False
+    noError = True
     
 CleanExit:
-    Remove = check
+    Remove = noError
     Exit Function
   
 ErrHandler:
     Err.Clear
-    check = False
+    noError = False
     Resume CleanExit
     
 End Function
 Public Function MakeDir(ByVal filePath As String, _
         Optional createParent As Boolean = False) As Boolean
     
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
 
     shutilE.MakeDir filePath, createParent
-    check = False
+    noError = True
     
 CleanExit:
-    MakeDir = check
+    MakeDir = noError
     Exit Function
   
 ErrHandler:
     Err.Clear
-    check = False
+    noError = False
     Resume CleanExit
     
 End Function
 Public Function CopyFile(ByVal src As String, ByVal dest As String, _
         Optional createParent As Boolean = False) As Boolean
     
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
 
     shutilE.CopyFile src, dest, createParent
-    check = False
+    noError = True
     
 CleanExit:
-    CopyFile = check
+    CopyFile = noError
     Exit Function
   
 ErrHandler:
     Err.Clear
-    check = False
+    noError = False
     Resume CleanExit
     
 End Function

@@ -67,38 +67,7 @@ End Sub
 '
 ' ### IPrintable
 '
-'@TestMethod
-Public Sub CastToStringPrimativeData()
 
-    With Assert
-        .AreEqual "x", cast.ToString("x")
-        .AreEqual "1", cast.ToString(CInt(1))
-        .AreEqual "1", cast.ToString(CDbl(1))
-    End With
-
-End Sub
-'@TestMethod
-Public Sub CastToStringIPrintable()
-
-    Dim flatList As List
-    Set flatList = List.Create(1, 2, 3)
-    
-    Dim nestList As List
-    Set nestList = List.Create(flatList, flatList)
-
-    With Assert
-        .AreEqual flatList.ToString, cast.ToString(flatList)
-        .AreEqual nestList.ToString, cast.ToString(nestList)
-    End With
-
-End Sub
-'@TestMethod
-Public Sub CastToStringObject()
-
-    Dim c As New Collection
-    Assert.IsTrue (cast.ToString(c) Like "Collection(&*)")
-
-End Sub
 
 '
 ' ### ICloneable

@@ -57,7 +57,7 @@ Private Function GetProcedures(codeMod As CodeModule) As vbeProcedures
     
     Dim lineNumber As Long
     For lineNumber = 1 To codeMod.CountOfLines
-        line = codeMod.Lines(lineNumber, 1)
+        line = codeMod.lines(lineNumber, 1)
         If IsSignature(line) Then
             procKind = GetProcedureType(line)
             procName = codeMod.ProcOfLine(lineNumber, procKind)

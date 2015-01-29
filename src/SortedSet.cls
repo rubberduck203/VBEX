@@ -366,7 +366,7 @@ End Property
 '
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = cast.ObjectToString(Me, ToArray, delim)
+    ToString = Printable.ObjectToString(Me, ToArray, delim)
     
 End Property
 Public Property Get IPrintable_ToString() As String

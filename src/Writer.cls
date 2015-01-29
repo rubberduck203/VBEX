@@ -5,8 +5,8 @@ END
 Attribute VB_Name = "Writer"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 '
 ' File Writer
 ' ===========
@@ -30,6 +30,7 @@ Private pFileNumber As Long
 ' ---------------
 '
 'expose raised errors to clients:
+' TODO: not exposed yet Public?
 Public Enum FileWriterError
     FileNotOpened = vbObjectError + ERROR_BASE + 42
     FileAlreadyOpened
@@ -44,35 +45,36 @@ Public Function OpenFile(ByVal filePath As String, _
         Optional ByVal overwrite As Boolean = True) As Writer
 
     Dim result As New Writer
-    Set result.File(False, overwrite) = filePath
+    result.SetFile filePath, False, overwrite
     Set OpenFile = result
     
 End Function
 Public Function NewFile(ByVal filePath As String) As Writer
 
     Dim result As New Writer
-     Set result.File(True, False) = filePath
+    result.SetFile filePath, True, False
     Set NewFile = result
     
 End Function
 '
 ' ### Friend Methods
 '
-Friend Property Set File(ByVal create As Boolean, _
-        ByVal overwrite As Boolean, ByVal filePath As String)
-On Error GoTo ErrHander
+Friend Sub SetFile(ByVal filePath As String, ByVal create As Boolean, _
+        ByVal overwrite As Boolean)
+    
+On Error GoTo ErrHandler
 
     If pFileNumber <> 0 Then
-        OnFileAlreadyOpenedError "Set File", filePath
+        OnFileAlreadyOpenedError "SetFile", filePath
     End If
     
     Dim filePathExists As Boolean
     filePathExists = fsview.fileExists(filePath)
     
     If create And filePathExists Then
-        OnFileAlreadyExistsError "Set File", filePath
+        OnFileAlreadyExistsError "SetFile", filePath
     ElseIf Not (create Or filePathExists) Then
-        OnFileDoesNotExistError "Set File", filePath
+        OnFileDoesNotExistError "SetFile", filePath
     End If
     
     pFileNumber = FreeFile
@@ -84,12 +86,12 @@ On Error GoTo ErrHander
         Open filePath For Append As #pFileNumber
     End If
 
-Exit Property
+Exit Sub
 
 ErrHandler:
-    OnUnHandledError "Set File"
+    OnUnHandledError "SetFile"
 
-End Property
+End Sub
 '
 ' Destructors
 ' -----------
@@ -121,19 +123,14 @@ End Sub
 '
 ' ### Writing
 '
-Private Sub AppendData(ByVal data As String, _
-        ByVal withLineFeed As Boolean, ByVal method As String)
+Private Sub AppendData(ByVal data As String, ByVal method As String)
 On Error GoTo ErrHandler
 
     If pFileNumber = 0 Then
         OnFileNotOpenedError method
     End If
 
-    If withLineFeed Then
-        Print #pFileNumber, data
-    Else
-        Print #pFileNumber, data;
-    End If
+    Print #pFileNumber, data;
 
 CleanExit:
     Exit Sub
@@ -194,25 +191,49 @@ End Sub
 '
 ' ### IOutput
 '
-Public Sub PrintLine(ByVal data As Variant)
-    
-    AppendData cast.ToString(data), withLineFeed:=True, method:="PrintLine"
-    
-End Sub
-Public Sub Puts(ByVal data As Variant)
+'
+' #### Prints
+'
+Public Sub Prints(ByVal data As Variant)
 
-    AppendData cast.ToString(data), withLineFeed:=False, method:="Puts"
+    AppendData Printable.ToString(data), method:="Prints"
     
 End Sub
-Public Sub IOutput_PrintLine(ByVal data As Variant)
+Public Sub IOutput_Prints(ByVal data As Variant)
 
-    PrintLine data
-
-End Sub
-Public Sub IOutput_Puts(ByVal data As Variant)
-
-    Puts data
+    Prints data
 
 End Sub
+'
+' #### PrintLine
+'
+Public Sub PrintLine(ByVal line As Variant)
+    
+    AppendData Printable.ToString(line), method:="PrintLine"
+    AppendData vbNewLine, method:="PrintLine"
+    
+End Sub
+Public Sub IOutput_PrintLine(ByVal line As Variant)
+
+    PrintLine line
+
+End Sub
+'
+' #### PrintLiness
+'
+Public Sub PrintLines(ByRef lines() As Variant)
+    
+    Dim line As Variant
+    For Each line In lines
+        PrintLine line
+    Next line
+    
+End Sub
+Public Sub IOutput_PrintLines(ByRef lines() As Variant)
+
+    PrintLine lines
+
+End Sub
+
 
 

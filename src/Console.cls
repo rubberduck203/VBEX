@@ -8,36 +8,61 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
-
-'Implements IOutput
-' Prints `x` to Immediate Pane in Office VBE
-
-Public Sub PrintLine(Optional ByVal x As Variant)
-
-    If IsMissing(x) Then
-        Debug.Print vbNullString
-    Else
-        Debug.Print cast.ToString(x)
-    End If
-    
-End Sub
-Public Sub Puts(Optional ByVal x As Variant)
+'
+' Console
+' =======
+'
+' Representation of the VBE Immediate Pane
+'
+Implements IOutput
+'
+' Interfaces
+' ----------
+'
+' ### IOutput
+'
+' #### Prints
+'
+Public Sub Prints(Optional ByVal x As Variant)
 
     If Not IsMissing(x) Then
-        Debug.Print cast.ToString(x);
+        Debug.Print Printable.ToString(x);
     End If
     
 End Sub
+Private Sub IOutput_Prints(ByVal x As Variant)
+  
+    Prints x
+  
+End Sub
 '
-' IOutput Interfaces.
+' #### PrintLine
 '
+Public Sub PrintLine(Optional ByVal x As Variant)
+
+    Prints x
+    Debug.Print
+    
+End Sub
 Private Sub IOutput_PrintLine(ByVal x As Variant)
 
     PrintLine x
     
 End Sub
-Private Sub IOutput_Puts(ByVal x As Variant)
-  
-    Puts x
-  
+'
+' #### PrintLines
+'
+Public Sub PrintLines(ByRef xs() As Variant)
+
+    Dim x As Variant
+    For Each x In xs
+        PrintLine x
+    Next x
+
 End Sub
+Public Sub IOutput_PrintLines(ByRef xs() As Variant)
+
+    PrintLines xs
+
+End Sub
+

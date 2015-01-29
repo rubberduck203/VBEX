@@ -146,9 +146,16 @@ Public Function Append(ByVal file_path As String, ByVal to_append As String) As 
     Dim file_ext As String
     file_ext = Ext(file_path)
     
-    Append = JoinPath(RootName(file_path), _
-                   BaseName(file_path, suffix:=file_ext) & _
-                   to_append & file_ext)
+    Dim root As String
+    root = RootName(file_path)
+    
+    Dim base As String
+    base = BaseName(file_path, suffix:=file_ext)
+    
+    Dim new_name As String
+    new_name = base & to_append & file_ext
+    
+    Append = JoinPath(root, new_name)
                      
 End Function
 ''

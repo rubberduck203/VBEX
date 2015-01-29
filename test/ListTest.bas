@@ -118,12 +118,23 @@ End Sub
 '
 '@TestMethod
 Public Sub ListReduce()
+
     Assert.AreEqual "abc", List.Create("a", "b", "c") _
         .Reduce(Lambda.FromString("(a, b) => a & b"))
+        
 End Sub
 '@TestMethod
 Public Sub ListFold()
+
     Assert.AreEqual "abc", List.Create("a", "b", "c") _
         .Fold("", Lambda.FromString("(a, b) => a & b"))
+        
 End Sub
+'@TestMethod
+Public Sub ListFilter()
 
+End Sub
+'@TestMethod
+Public Sub ListMap()
+
+End Sub

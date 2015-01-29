@@ -71,7 +71,7 @@ Public Function Copy(ByVal sequence As Variant) As List
     Set Copy = result
     
 End Function
-Public Function Create(ParamArray args() As Variant) As List
+Public Function create(ParamArray args() As Variant) As List
 
     Set create = Copy(CVar(args))
     
@@ -112,7 +112,7 @@ Public Function Filter(ByVal pred As IApplicable, _
     For Each element In pCollec
         If pred.Exec(element) Xor opposite Then
             result.Append element
-	    End If
+        End If
     Next element
     
     Set Filter = result
@@ -451,7 +451,7 @@ End Property
 ' lists.
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = cast.ObjectToString(Me, ToArray, delim)
+    ToString = Printable.ObjectToString(Me, ToArray, delim)
     
 End Property
 Public Property Get IPrintable_ToString() As String

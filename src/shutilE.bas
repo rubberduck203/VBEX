@@ -14,7 +14,11 @@ Option Explicit
 ' Scripting.FileSystemObject is slow and unstable since it relies on sending
 ' signals to ActiveX objects across the system.  This module only uses built-in
 ' functions of Visual Basic, such as `Dir`, `Kill`, `Name`, etc.
-
+Public Enum ShutilErrors
+    overWRiteRefusal
+    failedDestroy
+    failedCreate
+End Enum
 '
 '
 ' File System Modifications
@@ -39,6 +43,30 @@ Public Sub Move(ByVal src As String, ByVal dest As String, _
     If fsview.Exists(src) Then
         OnFailedDestroyError "Move", "Name As"
     End If
+    
+CleanExit:
+    Exit Sub
+  
+ErrHandler:
+    Select Case Err.Number
+    Case Else
+        ReRaiseError Err
+    End Select
+
+End Sub
+Public Sub Rename(ByVal src As String, ByVal newName As String)
+
+    On Error GoTo ErrHandler
+    
+    Debug.Assert newName = path.BaseName(newName)
+    
+    Dim root As String
+    root = RootName(src)
+    
+    Dim dest As String
+    dest = path.JoinPath(root, newName)
+    
+    Move src, dest
     
 CleanExit:
     Exit Sub
@@ -147,19 +175,19 @@ Private Sub ReRaiseError(ByRef e As ErrObject)
 End Sub
 Private Sub OnFailedCreateError(ByVal method As String, ByVal operation As String)
 
-    Err.Raise osErrNums.unknown, method, _
+    Err.Raise ShutilErrors.failedCreate, method, _
         "Destination does not exist after errorless `" & operation & "`"
         
 End Sub
 Private Sub OnFailedDestroyError(ByVal method As String, ByVal operation As String)
 
-    Err.Raise osErrNums.unknown, method, _
+    Err.Raise ShutilErrors.failedDestroy, method, _
         "Destination still exists after errorless `" & operation & "`"
     
 End Sub
 Private Sub OnNoOverwriteError(ByVal method As String)
 
-    Err.Raise osErrNums.overwriteRefusal, method, _
+    Err.Raise ShutilErrors.overWRiteRefusal, method, _
         "Will not overwrite file at destination.  Remove it first if desired."
     
 End Sub

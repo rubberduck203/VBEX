@@ -9,13 +9,17 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+' print with no new line
+Public Sub Prints(ByVal x As Variant)
+
+End Sub
 ' print and end with new line
-Public Sub PrintLine(ByVal object As Variant)
+Public Sub PrintLine(ByVal x As Variant)
+
+End Sub
+Public Sub PrintLines(ByRef xs() As Variant)
+
 End Sub
 
-' print with no new line
-' Name debatable.  `Print` is reserved :(
-Public Sub Puts(ByVal object As Variant)
-End Sub
 
 
