@@ -11,7 +11,6 @@ Attribute VB_Exposed = True
 ' List Class
 ' ==========
 '
-' Base Linear Container Class.  Based on Python List class.
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (List.cls) is distributed under the MIT license
@@ -22,6 +21,8 @@ Option Explicit
 Implements IEquatable
 Implements ICountable
 Implements IPrintable
+Implements ISequence
+Implements ICloneable
 '
 ' Private Members
 ' ---------------
@@ -35,10 +36,11 @@ Private pCollec As Collection ' Sole datamember
 '
 ' Private Methods
 ' ---------------
-''
-' TransformIndex: Eforces Zero Offset and `Cylcing?.
+'
 Private Sub TransformIndex(ByRef x As Variant)
+
     If x < 0 Then x = x + pCollec.Count + 1
+    
 End Sub
 ''
 ' Replace
@@ -54,7 +56,9 @@ Private Sub Replace(ByVal index As Long, ByVal element As Variant)
     
 End Sub
 Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Variant)
+
     Err.Raise 13, TypeName(Me) & "." & method, """" & TypeName(scalar) & """ is not an iterable type."
+    
 End Sub
 '
 ''
@@ -67,15 +71,15 @@ Public Function Copy(ByVal sequence As Variant) As List
     Set Copy = result
     
 End Function
-Public Function Create(ParamArray args() As Variant) As List
+Public Function create(ParamArray args() As Variant) As List
 
-    Set Create = Copy(CVar(args))
+    Set create = Copy(CVar(args))
     
 End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As Lambda) As List
+Public Function Map(ByVal op As IApplicable) As List
 
     Dim result As New List
     
@@ -87,22 +91,34 @@ Public Function Map(ByVal op As Lambda) As List
     Set Map = result
 
 End Function
-Public Function Filter(ByVal pred As Lambda, _
+Public Function FlatMap(ByVal op As IApplicable) As List
+
+    Dim result As New List
+    
+    Dim element As Variant
+    For Each element In pCollec
+        result.Extend op.Exec(element)
+    Next element
+    
+    Set FlatMap = result
+
+End Function
+Public Function Filter(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As List
     
     Dim result As New List
     
     Dim element As Variant
     For Each element In pCollec
-        If pred.Exec(element) Xor opposite Then result.Append
+        If pred.Exec(element) Xor opposite Then
+            result.Append element
+        End If
     Next element
     
     Set Filter = result
     
 End Function
-Public Function Fold(ByVal init As Variant, ByVal binaryOp As Lambda) As Variant
-    
-    Debug.Assert binaryOp.IsBinary
+Public Function Fold(ByVal init As Variant, ByVal binaryOp As IApplicable) As Variant
     
     Dim element As Variant
     For Each element In pCollec
@@ -112,25 +128,24 @@ Public Function Fold(ByVal init As Variant, ByVal binaryOp As Lambda) As Variant
      cast.Assign Fold, init
     
 End Function
-Public Function Reduce(ByVal binaryOp As Lambda) As Variant
+Public Function Reduce(ByVal binaryOp As IApplicable) As Variant
     
     cast.Assign Reduce, Slice(2, -1).Fold(pCollec(1), binaryOp)
     
 End Function
-Public Function ForAll(ByVal pred As Lambda, _
+Public Function ForAll(ByVal pred As IApplicable, _
         Optional ByVal opposite As Boolean = False) As Boolean
 
     ' TODO: fix Lambda so I can use Fold(True, "(x, y) => x And pred(y)")
-    Dim result As Boolean
-    result = True
-    
     Dim element As Variant
     For Each element In pCollec
-        If (Not pred.Exec(element)) Xor opposite Then
-            result = False
+        If Not (pred.Exec(element) Xor opposite) Then
+            ForAll = False
             Exit For
         End If
     Next element
+    
+    ForAll = True
 
 End Function
 Private Sub Class_Initialize()
@@ -332,6 +347,25 @@ Public Function Exists(ByVal sought As Variant) As Boolean
     Exists = False
     
 End Function
+'
+' Interfaces
+' ----------
+'
+' ### ICloneable
+'
+Public Function Clone() As List
+    
+    Set Clone = List.Copy(Me)
+    
+End Function
+Public Function ICloneable_Clone() As Object
+    
+    Set ICloneable_Clone = Clone()
+    
+End Function
+'
+' ### ISequence
+'
 Public Function ToArray() As Variant()
 
     If pCollec.Count = 0 Then
@@ -344,17 +378,19 @@ Public Function ToArray() As Variant()
     
     Dim i As Long
     For i = 1 To pCollec.Count
-        a(i - 1) = pCollec(i)
+        cast.Assign a(i - 1), pCollec(i)
     Next i
     
     ToArray = a
     
 End Function
+Public Function ISequence_ToArray() As Variant()
+  
+    ISequence_ToArray = ToArray
+  
+End Function
 '
-' Interfaces
-' ----------
-'
-' ### IReversible
+' ### IReversible???
 '
 Public Property Get Reverse() As List
     
@@ -368,11 +404,14 @@ Public Function Equals(ByVal other As Variant) As Boolean
     On Error GoTo Nope
     
     Equals = False
+    
     If other.Count <> Count Then Exit Function
     
     Dim i As Long
     For i = 1 To Count
-        If other(i) <> pCollec(i) Then Exit Function
+        If Not cast.Equals(pCollec(i), other(i)) Then
+            Exit Function
+        End If
     Next i
     
     Equals = True
@@ -412,7 +451,7 @@ End Property
 ' lists.
 Public Property Get ToString(Optional delim As String = ", ") As String
 
-    ToString = "[" & Join(ToArray, delim) & "]"
+    ToString = Printable.ObjectToString(Me, ToArray, delim)
     
 End Property
 Public Property Get IPrintable_ToString() As String

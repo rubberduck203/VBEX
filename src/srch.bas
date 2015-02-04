@@ -64,7 +64,7 @@ End Function
 '
 ''
 ' LinearSearch:
-Public Function LinearSearch(ByVal value As Variant, sequence As Variant, _
+Public Function LinearSearch(ByVal value As Variant, ByVal sequence As Variant, _
         ByVal lower As Long, ByVal upper As Long) As Long
     
     Dim i As Long

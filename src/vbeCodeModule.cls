@@ -31,11 +31,11 @@ Public Sub Insert(ComponentType As vbext_ComponentType)
     'project.VBComponents.Add ComponentType
 End Sub
 
-Public Function Create(codeMod As CodeModule) As vbeCodeModule
+Public Function create(codeMod As CodeModule) As vbeCodeModule
 ' allows calls from other projects without breaking the exisiting API
 
-    Set Create = New vbeCodeModule
-    Create.Initialize codeMod
+    Set create = New vbeCodeModule
+    create.Initialize codeMod
 End Function
 
 Public Sub Initialize(codeMod As CodeModule)
@@ -57,7 +57,7 @@ Private Function GetProcedures(codeMod As CodeModule) As vbeProcedures
     
     Dim lineNumber As Long
     For lineNumber = 1 To codeMod.CountOfLines
-        line = codeMod.Lines(lineNumber, 1)
+        line = codeMod.lines(lineNumber, 1)
         If IsSignature(line) Then
             procKind = GetProcedureType(line)
             procName = codeMod.ProcOfLine(lineNumber, procKind)

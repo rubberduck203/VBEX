@@ -1,4 +1,5 @@
 Attribute VB_Name = "fsview"
+Option Explicit
 '
 ' fsview
 ' ======
@@ -36,9 +37,9 @@ Public Function Exists(ByVal file_path As String, _
 End Function
 ''
 ' Will not return true if a folder exists of the same name
-Public Function FileExists(ByVal file_path As String)
+Public Function fileExists(ByVal file_path As String)
 
-    FileExists = Exists(file_path, vbNormal)
+    fileExists = Exists(file_path, vbNormal)
     
 End Function
 ''
@@ -56,14 +57,14 @@ End Function
 Public Function SubItems(ByVal root As String, Optional ByVal pat As String = ALLPAT, _
         Optional ByVal vbType As Integer = vbDirectory) As List
                   
-    Set SubItems = List.Create
+    Set SubItems = List.create
     
     Dim sub_item As String
-    sub_item = Dir$(pJoin(root, pat), vbType)
+    sub_item = Dir$(JoinPath(root, pat), vbType)
     
     While sub_item <> vbNullString
     
-        SubItems.Append pJoin(root, sub_item)
+        SubItems.Append JoinPath(root, sub_item)
         sub_item = Dir$()
         
     Wend
@@ -88,9 +89,9 @@ Public Function SubFolders(ByVal root As String, Optional ByVal pat As String = 
     
     If skipDots And result.Count > 0 Then
 
-        If result(1) = pJoin(root, CURDIR) Then ' else root
+        If result(1) = JoinPath(root, CURDIR) Then ' else root
             result.Remove 1
-            If result(1) = pJoin(root, PARDIR) Then  ' else mountpoint
+            If result(1) = JoinPath(root, PARDIR) Then  ' else mountpoint
                 result.Remove 1
             End If
         End If
@@ -100,7 +101,7 @@ Public Function SubFolders(ByVal root As String, Optional ByVal pat As String = 
     ' filter method!
     Dim i As Long
     For i = result.Count To 1 Step -1
-        If FileExists(result(i)) Then
+        If fileExists(result(i)) Then
             result.Remove i
         End If
     Next i
@@ -111,7 +112,7 @@ End Function
 Public Function Find(ByVal root As String, Optional ByVal pat As String = "*", _
         Optional ByVal vbType As Integer = vbNormal) As List
 
-    Set Find = List.Create
+    Set Find = List.create
     
     FindRecurse root, Find, pat, vbType
     
@@ -133,7 +134,7 @@ Public Function Glob(ByVal pattern As String, Optional ByVal vbType As Integer =
     root = LongestRoot(pattern)
     
     Dim patterns() As String
-    patterns = Split(Right$(pattern, Len(pattern) - Len(root) - 1), SEP)
+    patterns = Split(right$(pattern, Len(pattern) - Len(root) - 1), SEP)
     
     Set Glob = GlobRecurse(root, patterns, 0, vbType)
     
@@ -145,7 +146,7 @@ Private Function GlobRecurse(ByVal root As String, ByRef patterns() As String, _
         Set GlobRecurse = SubItems(root, patterns(index), vbType)
     Else
         
-        Set GlobRecurse = List.Create
+        Set GlobRecurse = List.create
         
         Dim folder As Variant
         For Each folder In SubFolders(root, patterns(index))

@@ -1,6 +1,7 @@
 Attribute VB_Name = "DictTest"
 '@TestModule
 Private Assert As New Rubberduck.AssertClass
+Option Explicit
 
 '
 ' Constructors
@@ -25,7 +26,7 @@ End Sub
 
 '@TestMethod
 Public Sub DictNonEmptyFromTuples()
-    DictTestNonEmpty dict.FromTuples(List.Create(Tuple.pack(1, 2), Tuple.pack(3, 4), Tuple.pack(5, 6)))
+    DictTestNonEmpty dict.FromTuples(List.Create(Tuple.Pack(1, 2), Tuple.Pack(3, 4), Tuple.Pack(5, 6)))
 End Sub
 
 '@TestMethod
@@ -35,7 +36,7 @@ End Sub
 
 '@TestMethod
 Public Sub DictCreateNonEmptyDict()
-    DictTestNonEmpty dict.Create(Tuple.pack(1, 2), Tuple.pack(3, 4), Tuple.pack(5, 6))
+    DictTestNonEmpty dict.Create(Tuple.Pack(1, 2), Tuple.Pack(3, 4), Tuple.Pack(5, 6))
 End Sub
 
 '@TestMethod
@@ -45,7 +46,7 @@ End Sub
 
 '@TestMethod
 Public Sub DictCopyNonEmptyDict()
-    DictTestNonEmpty dict.Copy(dict.Create(Tuple.pack(1, 2), Tuple.pack(3, 4), Tuple.pack(5, 6)))
+    DictTestNonEmpty dict.Copy(dict.Create(Tuple.Pack(1, 2), Tuple.Pack(3, 4), Tuple.Pack(5, 6)))
 End Sub
 
 '@TestMethod

@@ -53,7 +53,7 @@ Private Const ReadOnlyPropertyMsg = "Property is Read-Only after initialization"
 ' exposed property variables
 Private Type TVbeProcedure
     ParentModule As CodeModule
-    Name As String
+    name As String
     procKind As vbext_ProcKind
 End Type
 
@@ -63,21 +63,21 @@ Private this As TVbeProcedure
 Private isNameSet As Boolean
 Private isParentModSet As Boolean
 
-Public Property Get Name() As String
-Attribute Name.VB_UserMemId = 0
+Public Property Get name() As String
+Attribute name.VB_UserMemId = 0
     If isNameSet Then
-        Name = this.Name
+        name = this.name
     Else
         RaiseObjectNotIntializedError
     End If
 End Property
 
-Public Property Let Name(ByVal vNewValue As String)
+Public Property Let name(ByVal vNewValue As String)
     If Not isNameSet Then
         If vNewValue = vbNullString Then
             RaiseInvalidArgError "Name", "The Name property can not be set to an empty string."
         End If
-        this.Name = vNewValue
+        this.name = vNewValue
         isNameSet = True
     Else
         RaiseReadOnlyPropertyError
@@ -109,7 +109,7 @@ End Property
 
 Public Property Get StartLine() As Long
     ValidateIsInitialized
-    StartLine = Me.ParentModule.ProcStartLine(Me.Name, this.procKind)
+    StartLine = Me.ParentModule.ProcStartLine(Me.name, this.procKind)
 End Property
 
 Public Property Get EndLine() As Long
@@ -119,24 +119,24 @@ End Property
 
 Public Property Get CountOfLines() As Long
     ValidateIsInitialized
-    CountOfLines = Me.ParentModule.ProcCountLines(Me.Name, this.procKind)
+    CountOfLines = Me.ParentModule.ProcCountLines(Me.name, this.procKind)
 End Property
 
-Public Sub Initialize(Name As String, codeMod As CodeModule, procKind As vbext_ProcKind)
-    Me.Name = Name
+Public Sub Initialize(name As String, codeMod As CodeModule, procKind As vbext_ProcKind)
+    Me.name = name
     Me.ParentModule = codeMod
     this.procKind = procKind
 End Sub
 
-Public Property Get Lines() As String
+Public Property Get lines() As String
     ValidateIsInitialized
-    Lines = Me.ParentModule.Lines(Me.StartLine, Me.CountOfLines)
+    lines = Me.ParentModule.lines(Me.StartLine, Me.CountOfLines)
 End Property
 
 Public Property Get Signature() As String
 ' @Mat's Mug [http://codereview.stackexchange.com/users/23788/mats-mug] wrote this.
     Dim code() As String
-    code = Split(Me.ParentModule.Lines(Me.StartLine, Me.CountOfLines), vbNewLine)
+    code = Split(Me.ParentModule.lines(Me.StartLine, Me.CountOfLines), vbNewLine)
 
     Dim i As Long
     For i = 0 To UBound(code)

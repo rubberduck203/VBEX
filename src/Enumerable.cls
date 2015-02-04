@@ -49,8 +49,8 @@ Exit Function
 ErrHandler:
     Const ObjectNotEnumerableMessage As String = "Object is not Enumerable."
     
-    If Err.number = vbMethodNotSupportedError Then
-        Err.Raise Err.number, TypeName(Me), InvalidArgumentErrorMessage & " " & ObjectNotEnumerableMessage, Err.HelpFile, Err.HelpContext
+    If Err.Number = vbMethodNotSupportedError Then
+        Err.Raise Err.Number, TypeName(Me), InvalidArgumentErrorMessage & " " & ObjectNotEnumerableMessage, Err.HelpFile, Err.HelpContext
     Else
         ReRaiseError Err
     End If
@@ -62,8 +62,8 @@ Public Property Get Collection() As Collection
 End Property
 
 'Constructor
-Public Function Create() As Enumerable
-    Set Create = New Enumerable
+Public Function create() As Enumerable
+    Set create = New Enumerable
 End Function
 
 ' Collection Wrappers
@@ -334,8 +334,8 @@ Private Sub HandleComparisonError(error As ErrObject)
 
     Const ComparisonNotSupportedMessage As String = "An item in the collection does not have a default property; Cannot compare items without a default property."
 
-    If error.number = vbMethodNotSupportedError Then
-        error.Raise error.number, TypeName(Me), ComparisonNotSupportedMessage, error.HelpFile, error.HelpContext
+    If error.Number = vbMethodNotSupportedError Then
+        error.Raise error.Number, TypeName(Me), ComparisonNotSupportedMessage, error.HelpFile, error.HelpContext
     Else
         ReRaiseError error
     End If
@@ -343,7 +343,7 @@ Private Sub HandleComparisonError(error As ErrObject)
 End Sub
 
 Private Sub ReRaiseError(error As ErrObject)
-    error.Raise error.number, error.source, error.Description, error.HelpFile, error.HelpContext
+    error.Raise error.Number, error.source, error.Description, error.HelpFile, error.HelpContext
 End Sub
 
 Private Sub Class_Initialize()

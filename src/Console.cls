@@ -8,27 +8,61 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
+'
+' Console
+' =======
+'
+' Representation of the VBE Immediate Pane
+'
+Implements IOutput
+'
+' Interfaces
+' ----------
+'
+' ### IOutput
+'
+' #### Prints
+'
+Public Sub Prints(Optional ByVal x As Variant)
 
-'Implements IOutput
-' Prints `object` to Immediate Pane in Office VBE
-
-Public Sub PrintLine(Optional ByVal object As Variant)
-    If IsMissing(object) Then
-        'newline
-        Debug.Print vbNullString
-    Else
-        Debug.Print object
+    If Not IsMissing(x) Then
+        Debug.Print Printable.ToString(x);
     End If
+    
 End Sub
-Public Sub Puts(Optional ByVal object As Variant)
-    If Not IsMissing(object) Then Debug.Print object;
+Private Sub IOutput_Prints(ByVal x As Variant)
+  
+    Prints x
+  
 End Sub
 '
-' IOutput Interfaces.
+' #### PrintLine
 '
-Private Sub IOutput_PrintLine(Optional ByVal object As Variant)
-    PrintLine object
+Public Sub PrintLine(Optional ByVal x As Variant)
+
+    Prints x
+    Debug.Print
+    
 End Sub
-Private Sub IOutput_Puts(ByVal object As Variant)
-    Puts object
+Private Sub IOutput_PrintLine(ByVal x As Variant)
+
+    PrintLine x
+    
 End Sub
+'
+' #### PrintLines
+'
+Public Sub PrintLines(ByRef xs() As Variant)
+
+    Dim x As Variant
+    For Each x In xs
+        PrintLine x
+    Next x
+
+End Sub
+Public Sub IOutput_PrintLines(ByRef xs() As Variant)
+
+    PrintLines xs
+
+End Sub
+

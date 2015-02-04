@@ -1,6 +1,7 @@
 Attribute VB_Name = "ZipTest"
 '@TestModule
 Private Assert As New Rubberduck.AssertClass
+Option Explicit
 
 '@TestMethod
 Public Sub EmptyZip()
@@ -39,19 +40,4 @@ Public Sub UnEvenZipTakesSmallest()
     Assert.AreEqual CLng(1), Tuple.Zip( _
         List.Create(1, 2, 3), List.Create("a")).Count
 End Sub
-''@TestMethod
-'Public Sub SingleTupleZip()
-'    Dim z As List
-'    Set z = Tuple.Zip(List.Create(1, 2, 3))
-'    Assert.AreEqual CLng(3), z.Count
-'    Assert.AreEqual CLng(1), z(1).Count
-'End Sub
-''@TestMethod
-'Public Sub TripleTupleZip()
-'    Dim z As List
-'    Set z = Tuple.Zip(List.Create(1, 2, 3), _
-'        List.Create("a", "b", "c"), _
-'        List.Create(1#, 2#, 3#))
-'    Assert.AreEqual CLng(3), z.Count
-'    Assert.AreEqual CLng(3), z(1).Count
-'End Sub
+

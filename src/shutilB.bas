@@ -1,4 +1,5 @@
 Attribute VB_Name = "shutilB"
+Option Explicit
 '
 ' shutilB
 ' =======
@@ -10,122 +11,101 @@ Attribute VB_Name = "shutilB"
 ' This file (shutilB.bas) is distributed under the MIT license.
 ' Obtain a copy of the license here: http://opensource.org/licenses/MIT
 '
-' Scripting.FileSystemObject is slow and unstable since it relies on sending
-' signals to ActiveX objects across the system.  This module only uses built-in
-' functions of Visual Basic, such as `Dir`, `Kill`, `Name`, etc.
-
+' It simply calls the respective `shutilE` method and uses boiler plate
+' code to evaluate succes.  Until procedures can be treated as data types
+' better this boiler-plate code will remain.
 '
-'
-' File System Modifications
-' -------------------------
-'
-'
-Function Move(ByVal src_path As String, ByVal dest_path As String, _
-        Optional create_parent As Boolean = False) As Boolean
+Public Function Move(ByVal src As String, ByVal dest As String, _
+        Optional createParent As Boolean = False) As Boolean
               
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
 
-    DestIsFolderFeature dest_path, src_path
-    
-    If create_parent Then CreateRootPath dest_path
-    
-    Name src_path As dest_path
-    check = Exists(dest_path)
+    shutilE.Move src, dest, createParent
+    noError = True
     
 CleanExit:
-    Move = check
+    Move = noError
     Exit Function
   
 ErrHandler:
     Err.Clear
-    Debug.Assert (Not check)
+    noError = False
     Resume CleanExit
     
 End Function
-Function Rename(ByVal path As String, ByVal new_name As String) As Boolean
+Public Function Rename(ByVal aPath As String, ByVal newName As String) As Boolean
     
-    Debug.Assert BaseName(new_name) = new_name
-    
-    Rename = Move(path, pJoin(RootName(path), new_name))
-
-End Function
-Function Remove(ByVal file_path As String) As Boolean
-    
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
-    
-    Kill file_path
-    check = (Not FileExists(file_path))
+
+    shutilE.Rename aPath, newName
+    noError = True
     
 CleanExit:
-    Remove = check
+    Rename = noError
     Exit Function
-
+  
 ErrHandler:
     Err.Clear
-    Debug.Assert (Not check)
+    noError = False
     Resume CleanExit
-
+    
 End Function
-Function MakeDir(ByVal folder_path As String, _
-        Optional create_parent As Boolean = False) As Boolean
-                
-    Dim check As Boolean
+Public Function Remove(ByVal filePath As String) As Boolean
+    
+    Dim noError As Boolean
     On Error GoTo ErrHandler
-        
-    If create_parent Then CreateRootPath folder_path
-    MkDir folder_path
-    check = FolderExists(folder_path)
+
+    shutilE.Remove filePath
+    noError = True
     
 CleanExit:
-    MakeDir = check
+    Remove = noError
     Exit Function
-    
+  
 ErrHandler:
     Err.Clear
-    Debug.Assert (Not check)
+    noError = False
     Resume CleanExit
     
 End Function
-Function CopyFile(ByVal src_path As String, ByVal dest_path As String, _
-        Optional create_parent As Boolean = False) As Boolean
+Public Function MakeDir(ByVal filePath As String, _
+        Optional createParent As Boolean = False) As Boolean
     
-    Dim check As Boolean
+    Dim noError As Boolean
     On Error GoTo ErrHandler
-    
-    DestIsFolderFeature dest_path, src_path
-    
-    If FileExists(dest_path) Then GoTo CleanExit:
-    
-    If create_parent Then CreateRootPath dest_path
-    FileCopy src_path, dest_path
-    check = FileExists(dest_path)
 
-CleanExit:
-    CopyFile = check
-    Exit Function
+    shutilE.MakeDir filePath, createParent
+    noError = True
     
+CleanExit:
+    MakeDir = noError
+    Exit Function
+  
 ErrHandler:
     Err.Clear
-    Debug.Assert (Not check)
+    noError = False
     Resume CleanExit
     
 End Function
-Private Function CreateRootPath(ByVal path As String) As Boolean
+Public Function CopyFile(ByVal src As String, ByVal dest As String, _
+        Optional createParent As Boolean = False) As Boolean
+    
+    Dim noError As Boolean
+    On Error GoTo ErrHandler
 
-    Dim parent_folder As String
-    parent_folder = RootName(path)
+    shutilE.CopyFile src, dest, createParent
+    noError = True
     
-    If Not FolderExists(parent_folder) Then
-    
-        CreateRootPath = MakeDir(parent_folder, create_parent:=True)
-        
-    End If
+CleanExit:
+    CopyFile = noError
+    Exit Function
+  
+ErrHandler:
+    Err.Clear
+    noError = False
+    Resume CleanExit
     
 End Function
-Private Sub DestIsFolderFeature(ByRef dest_path As String, ByVal src_path As String)
-    If Right$(dest_path, 1) = SEP Or FolderExists(dest_path) Then
-        dest_path = pJoin(dest_path, BaseName(src_path))
-    End If
-End Sub
+
