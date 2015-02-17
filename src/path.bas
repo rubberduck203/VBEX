@@ -27,67 +27,50 @@ Public Const PATHSEP As String = ";" ' not used...
 ' Returns the base name of a path, either the lowest folder or file
 ' Note! that `suffix` will be removed from the end regardless if its an actual filename
 ' extension or not.
-' root/name.ext -> name.ext
-' name.ext -> name.ext
-' root/ ->
-' root/name+suffix -> suffix -> name
-' "root/name.ext" -> ".ext" -> "name"
-' "root/name.ext" -> "ext" -> "name."  !
-Public Function BaseName(ByVal file_path As String, Optional ByVal suffix As String) As String
+Public Function BaseName(ByVal filePath As String, _
+        Optional ByVal suffix As String) As String
 
-    Dim path_split As Variant
-    path_split = Split(file_path, SEP)
+    Dim pathSplit As Variant
+    pathSplit = Split(filePath, SEP)
     
-    BaseName = path_split(UBound(path_split))
+    BaseName = pathSplit(UBound(filePath))
     
     If suffix <> vbNullString Then
     
-        Dim base_length As Integer
-        base_length = Len(BaseName) - Len(suffix)
+        Dim baseLength As Integer
+        baseLength = Len(BaseName) - Len(suffix)
         
         ' replace suffix with nothing and only look for suffix the end of the string
-        BaseName = Left$(BaseName, base_length) & _
-                   Replace$(BaseName, suffix, "", base_length + 1)
-                   
+        BaseName = Left$(BaseName, baseLength) & Replace$(BaseName, suffix, "", baseLength + 1)
+        
     End If
     
 End Function
 ''
 ' Returns the path of the parent folder. This is the opposite of `BaseName`.
-' r/o/o/t/name -> r/o/o/t
-' r/o/o/t/ -> r/o/o/t
-' name ->
 Public Function RootName(ByVal path As String) As String
 
     RootName = ParentDir(path, 1)
     
 End Function
 ''
-' path -> 0 -> path
-' path/ -> 1 -> path
-' root/name -> 1 -> root ! `RootName`
-' E/D/C/B/A/name -> 2 -> E/D/C/B
-' E/D/C/B/A/name -> 3 -> E/D/C
-' E/D/C/B/A/name -> 5 -> E
-' E/D/C/B/A/name -> 6 ->
-' E/D/C/B/A/name -> 7 ->
-' ...
-Public Function ParentDir(ByVal path As String, _
-                   ByVal parent_height As Integer) As String
+'
+Public Function ParentDir(ByVal somePath As String, _
+        ByVal parentHeight As Integer) As String
     
-    Dim split_path As Variant
-    split_path = Split(path, SEP)
+    Dim splitPath As Variant
+    splitPath = Split(path, SEP)
     
-    Dim parent_count As Integer
-    parent_count = UBound(split_path) - parent_height
+    Dim parentCount As Integer
+    parentCount = UBound(splitPath) - parentHeight
     
-    If parent_count > 0 Then
+    If parentCount > 0 Then
 
-        ReDim Preserve split_path(LBound(split_path) To parent_count)
+        ReDim Preserve splitPath(LBound(splitPath) To parentCount)
         
     End If
      
-    ParentDir = Join(split_path, SEP)
+    ParentDir = Join(splitPath, SEP)
    
 End Function
 ''
@@ -95,15 +78,15 @@ End Function
 ' path.ext -> .ext
 ' path ->
 ' path.bad.ext -> .ext
-Public Function Ext(ByVal file_path As String) As String
+Public Function Ext(ByVal filePath As String) As String
 
-    Dim base_name As String
-    base_name = BaseName(file_path)
+    Dim base As String
+    base = BaseName(filePath)
     
-    If InStr(base_name, EXTSEP) Then
+    If InStr(base, EXTSEP) Then
     
         Dim fsplit As Variant
-        fsplit = Split(base_name, EXTSEP)
+        fsplit = Split(base, EXTSEP)
         
         Ext = EXTSEP & fsplit(UBound(fsplit))
         
@@ -112,97 +95,93 @@ Public Function Ext(ByVal file_path As String) As String
 End Function
 ''
 ' Removes trailing SEP from path
-' path/ -> path
-' path -> path
-' /path -> /path
 Public Function RTrimSep(ByVal path As String) As String
 
     If right$(path, 1) = SEP Then
         ' ends with SEP return all but end
         RTrimSep = Left$(path, Len(path) - 1)
-        
     Else
         RTrimSep = path
-        
     End If
     
 End Function
 ''
 ' safely join two strings to form a path, inserting `SEP` if needed.
-' root/ -> base -> root/base
-' root -> base -> root/base
-' root -> /base -> root//base ! BAD BAD BAD
-Public Function JoinPath(ByVal root_path As String, ByVal file_path As String) As String
+Public Function JoinPath(ByVal rootPath As String, ByVal filePath As String) As String
 
-    JoinPath = RTrimSep(root_path) & SEP & file_path
+    JoinPath = RTrimSep(rootPath) & SEP & filePath
     
 End Function
 ''
-' Inserts `to_append` in behind of the base name of string `file_path` but in
+' Inserts `toAppend` in behind of the base name of string `filePath` but in
 ' front of the extension
-' root/name.ext -> appended -> root/nameappended.ext
-Public Function Append(ByVal file_path As String, ByVal to_append As String) As String
+Public Function Append(ByVal filePath As String, ByVal toAppend As String) As String
 
-    Dim file_ext As String
-    file_ext = Ext(file_path)
+    Dim fileExt As String
+    fileExt = Ext(filePath)
     
     Dim root As String
-    root = RootName(file_path)
+    root = RootName(filePath)
     
     Dim base As String
-    base = BaseName(file_path, suffix:=file_ext)
+    base = BaseName(filePath, suffix:=fileExt)
     
-    Dim new_name As String
-    new_name = base & to_append & file_ext
+    Dim newName As String
+    new_name = base & toAppend & fileExt
     
-    Append = JoinPath(root, new_name)
+    Append = JoinPath(root, newName)
                      
 End Function
 ''
-' Inserts `to_prepend` in front of the base name of string `file_path`
+' Inserts `toPrepend` in front of the base name of string `filePath`
 ' root/name.ext -> prepended -> root/prependedname.ext
-Public Function Prepend(ByVal file_path As String, ByVal to_prepend As String) As String
+Public Function Prepend(ByVal filePath As String, ByVal toPrepend As String) As String
     
-    Prepend = JoinPath(RootName(file_path), to_prepend & BaseName(file_path))
+    Prepend = JoinPath(RootName(filePath), toPrepend & BaseName(filePath))
 
 End Function
 ''
-' Replaces current extension of `file_path` with `new_ext`
-' path.old -> new -> path.new
-' path.old -> .new -> path.new
-' path -> new -> path.new
-' path.bad.old -> new -> path.bad.new
-Public Function ChangeExt(ByVal file_path As String, ByVal new_ext As String) As String
+' Replaces current extension of `filePath` with `newExt`
+Public Function ChangeExt(ByVal filePath As String, ByVal newExt As String) As String
     
-    Dim current_ext As String
-    current_ext = Ext(file_path)
+    Dim currentExt As String
+    currentExt = Ext(filePath)
     
-    Dim base_length As String
-    base_length = Len(file_path) - Len(current_ext)
+    Dim baseLength As String
+    baseLength = Len(filePath) - Len(currentExt)
     
     ' ".ext" or "ext" -> "ext"
-    new_ext = Replace$(new_ext, EXTSEP, vbNullString, 1, 1)
+    newExt = Replace$(newExt, EXTSEP, vbNullString, 1, 1)
 
-    ChangeExt = Left$(file_path, base_length) & EXTSEP & new_ext
+    ChangeExt = Left$(filePath, baseLength) & EXTSEP & newExt
     
 End Function
 ''
-' Returns if the path contains a "?" or a "*"
-Public Function IsPattern(ByVal path As String) As Boolean
-    IsPattern = (InStr(1, path, "?") + InStr(1, path, "*") <> 0)
+' Returns if the filePath contains a "?" or a "*"
+Public Function IsPattern(ByVal filePath As String) As Boolean
+    IsPattern = (InStr(1, filePath, "?") + InStr(1, filePath, "*") <> 0)
 End Function
 ''
-' Finds the longest path in pattern that is not a pattern.
+' Finds the longest filePath in pattern that is not a pattern.
 Public Function LongestRoot(ByVal pattern As String) As String
     
     Dim charPos As Integer
     charPos = InStr(1, pattern, "?") - 1
-    If charPos < 0 Then charPos = Len(pattern)
-    
+
     Dim wildPos As Integer
     wildPos = InStr(1, pattern, "*") - 1
-    If wildPos < 0 Then wildPos = Len(pattern)
 
-    LongestRoot = RootName(Left$(pattern, IIf(charPos <= wildPos, charPos, wildPos)))
+    Dim firstPatternPos As Integer
+    If wildPos < 0 And charPos < 0 Then ' not a pattern
+        firstPatternPos = Len(pattern)
+    ElseIf wildPos < 0 Then
+        firstPatternPos = charPos
+    ElseIf charPos < 0 Then
+        firstPatternPos = wildPos
+    Else
+        firstPatternPos =  srch.Min(wildPos, charPos)
+    End If
+    
+    LongestRoot = RootName(Left$(pattern, firstPatternPos))
     
 End Function
