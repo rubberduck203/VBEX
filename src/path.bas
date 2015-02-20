@@ -127,7 +127,7 @@ Public Function Append(ByVal filePath As String, ByVal toAppend As String) As St
     base = BaseName(filePath, suffix:=fileExt)
     
     Dim newName As String
-    new_name = base & toAppend & fileExt
+    newName = base & toAppend & fileExt
     
     Append = JoinPath(root, newName)
                      
