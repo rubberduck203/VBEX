@@ -43,7 +43,7 @@ Public Sub Reverse(ByRef sequence() As Variant, _
         lower = lower + 1
         upper = upper - 1
         
-    Wend
+    Loop
     
 End Sub
 '
@@ -114,17 +114,17 @@ Private Function Partition(ByRef sequence() As Variant, ByVal lower As Long, _
         
         While sequence(lower) < pivot And lower < upper
             lower = lower + 1
-        Wend
+        Loop
         
         ' right claims pivot as it is at the end
         While sequence(upper) >= pivot And lower < upper
             upper = upper - 1
-        Wend
+        Loop
         
         ' don't swap if they are the same
         If lower <> upper Then Swap sequence(lower), sequence(upper)
         
-    Wend
+    Loop
     Partition = lower
     
 End Function
