@@ -110,14 +110,14 @@ End Sub
 Private Function Partition(ByRef sequence() As Variant, ByVal lower As Long, _
         ByVal upper As Long, ByVal pivot As Variant) As Long
         
-    While lower < upper
+    Do While lower < upper
         
-        While sequence(lower) < pivot And lower < upper
+        Do While sequence(lower) < pivot And lower < upper
             lower = lower + 1
         Loop
         
         ' right claims pivot as it is at the end
-        While sequence(upper) >= pivot And lower < upper
+        Do While sequence(upper) >= pivot And lower < upper
             upper = upper - 1
         Loop
         
