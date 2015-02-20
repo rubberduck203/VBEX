@@ -98,7 +98,7 @@ Public Function BinarySearch(ByVal value As Variant, ByRef sortedSequence As Var
             lower = middle + 1
         End If
         
-    Wend
+    Loop
     
     BinarySearch = IIf(sortedSequence(upper) = value Or nearest, upper, -1)
     
