@@ -87,7 +87,7 @@ Public Function BinarySearch(ByVal value As Variant, ByRef sortedSequence As Var
         ByVal lower As Long, ByVal upper As Long, _
         Optional ByVal nearest As Boolean = False) As Long
     
-    While lower < upper
+    Do While lower < upper
         
         Dim middle As Long
         middle = seq.MiddleInt(lower, upper)
@@ -98,7 +98,7 @@ Public Function BinarySearch(ByVal value As Variant, ByRef sortedSequence As Var
             lower = middle + 1
         End If
         
-    Wend
+    Loop
     
     BinarySearch = IIf(sortedSequence(upper) = value Or nearest, upper, -1)
     

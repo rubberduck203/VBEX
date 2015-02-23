@@ -10,10 +10,6 @@ Option Explicit
 '
 
 ''
-' Sweet jesus everyone uses this everywhere!
-
-
-''
 ' Can easily be extracted to use Floor(Average(a,b)) but I would like one
 ' way dependence.
 Public Function MiddleInt(ByVal a As Variant, ByVal b As Variant) As Variant
