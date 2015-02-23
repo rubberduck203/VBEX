@@ -62,12 +62,12 @@ Public Function SubItems(ByVal root As String, Optional ByVal pat As String = AL
     Dim sub_item As String
     sub_item = Dir$(JoinPath(root, pat), vbType)
     
-    While sub_item <> vbNullString
+    Do While sub_item <> vbNullString
     
         SubItems.Append JoinPath(root, sub_item)
         sub_item = Dir$()
         
-    Wend
+    Loop
     
 End Function
 Public Function SubFiles(ByVal root As String, _
