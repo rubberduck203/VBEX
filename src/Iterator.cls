@@ -13,7 +13,7 @@ Option Explicit
 ' Iterator
 ' ========
 '
-' Basic Mutable iterator class. 
+' Basic Mutable iterator class.
 Implements IMutableIterator
 Implements ICountable
 Implements IPrintable
@@ -30,10 +30,10 @@ Private pTarget As Object
 '
 Private Sub Class_Initialize()
 
-    pIndex = 1
+    pIndex = 0
 
 End Sub
-Public Function Create(ByVal target As ICountable) As Iterator
+Public Function Create(ByVal target As Variant) As Iterator
 
     Dim result As New Iterator
     result.Assign target
@@ -43,7 +43,7 @@ End Function
 '
 ' ### Friend Properties
 '
-Friend Sub Assign(ByVal aTarget As ICountable)
+Friend Sub Assign(ByVal aTarget As Variant)
     
     Set pTarget = aTarget
     
@@ -56,8 +56,7 @@ End Sub
 '
 Public Property Get DeRef() As Variant
 
-    Dim result As Variant
-    cast.Assign result, cast.Clone(pTarget(pIndex))
+    cast.Assign DeRef, cast.Clone(pTarget(pIndex))
 
 End Property
 Public Property Get IMutableIterator_DeRef() As Variant
@@ -88,31 +87,31 @@ End Property
 Public Function Inc(Optional ByVal i As Long = 1) As Boolean
 
     pIndex = pIndex + i
-    Inc = (pIndex < pTarget.Count)
+    Inc = (pIndex < cast.Count(pTarget))
     
-End Property
+End Function
 Public Function IMutableIterator_Inc(Optional ByVal i As Long = 1) As Boolean
     
     IMutableIterator_Inc = Inc
     
-End Property
+End Function
 Public Function Dec(Optional ByVal i As Long = 1) As Boolean
 
     pIndex = pIndex - i
     Dec = (pIndex > 1)
     
-End Property
+End Function
 Public Function IMutableIterator_Dec(Optional ByVal i As Long = 1) As Boolean
     
     IMutableIterator_Dec = Dec
     
-End Property
+End Function
 '
 ' ### ICountable
 '
 Public Property Get Count() As Long
     
-    Count = pTarget.Count
+    Count = cast.Count(pTarget)
   
 End Property
 Public Property Get ICountable_Count() As Long
@@ -123,16 +122,16 @@ End Property
 '
 ' ### ICloneable
 '
-Public Property Get Clone() As Iterator
+Public Function Clone() As Iterator
       
     Set Clone = Create(pTarget)
     
-End Property
-Public Property Get ICloneable_Clone() As Object
+End Function
+Public Function ICloneable_Clone() As Object
       
     Set ICloneable_Clone = Clone
     
-End Property
+End Function
 '
 ' ### IPrintable
 '

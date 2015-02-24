@@ -104,9 +104,9 @@ Public Function Copy(ByVal sequence As Variant) As SortedSet
     Set Copy = result
     
 End Function
-Public Function create(ParamArray args() As Variant) As SortedSet
+Public Function Create(ParamArray args() As Variant) As SortedSet
     
-    Set create = Copy(args)
+    Set Create = Copy(args)
     
 End Function
 '

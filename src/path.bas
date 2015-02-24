@@ -33,7 +33,7 @@ Public Function BaseName(ByVal filePath As String, _
     Dim pathSplit As Variant
     pathSplit = Split(filePath, SEP)
     
-    BaseName = pathSplit(UBound(filePath))
+    BaseName = pathSplit(UBound(pathSplit))
     
     If suffix <> vbNullString Then
     
@@ -59,7 +59,7 @@ Public Function ParentDir(ByVal somePath As String, _
         ByVal parentHeight As Integer) As String
     
     Dim splitPath As Variant
-    splitPath = Split(path, SEP)
+    splitPath = Split(somePath, SEP)
     
     Dim parentCount As Integer
     parentCount = UBound(splitPath) - parentHeight
@@ -179,7 +179,7 @@ Public Function LongestRoot(ByVal pattern As String) As String
     ElseIf charPos < 0 Then
         firstPatternPos = wildPos
     Else
-        firstPatternPos =  srch.Min(wildPos, charPos)
+        firstPatternPos = srch.Min(wildPos, charPos)
     End If
     
     LongestRoot = RootName(Left$(pattern, firstPatternPos))

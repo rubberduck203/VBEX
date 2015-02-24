@@ -32,15 +32,35 @@ End Function
 '
 Public Function Clone(ByVal x As Variant) As Variant
 
-    If IsObject(x) Then
-        If TypeOf x Is ICloneable Then
-            Set Clone = x.Clone
-        Else
-            Err.Raise 438, "cast.Clone", "Clone: " & TypeName(x) & " is not a cloneable object"
-        End If
+    Dim result As Variant
+    If Not IsObject(x) Then
+        result = x
+    ElseIf TypeOf x Is ICloneable Then
+        Set result = x.Clone
     Else
-        Clone = x
+        Err.Raise 438, "cast.Clone", "Clone: " & TypeName(x) & " is not a cloneable object"
     End If
+    
+    Assign Clone, result
+
+End Function
+'
+' ICountable
+' ----------
+'
+Public Function Count(ByVal x As Variant) As Long
+
+    Dim result As Long
+
+    If Not IsObject(x) Then
+        Err.Raise 13, "cast.Clone", "Clone: " & TypeName(x) & " is not an object"
+    ElseIf TypeOf x Is ICloneable Then
+        result = x.Count
+    Else
+        Err.Raise 438, "cast.Clone", "Clone: " & TypeName(x) & " is not a countable object"
+    End If
+    
+    Count = result
 
 End Function
 '

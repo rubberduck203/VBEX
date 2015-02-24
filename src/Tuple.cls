@@ -119,7 +119,7 @@ End Function
 Public Function Zip(ByVal xs As List, ByVal ys As List) As List
     
     Dim result As List
-    Set result = List.create
+    Set result = List.Create
 
     Dim i As Long
     For i = 1 To srch.Min(xs.Count, ys.Count)

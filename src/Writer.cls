@@ -59,7 +59,7 @@ End Function
 '
 ' ### Friend Methods
 '
-Friend Sub SetFile(ByVal filePath As String, ByVal create As Boolean, _
+Friend Sub SetFile(ByVal filePath As String, ByVal Create As Boolean, _
         ByVal overwrite As Boolean)
     
 On Error GoTo ErrHandler
@@ -69,18 +69,18 @@ On Error GoTo ErrHandler
     End If
     
     Dim filePathExists As Boolean
-    filePathExists = fsview.fileExists(filePath)
+    filePathExists = fsview.FileExists(filePath)
     
-    If create And filePathExists Then
+    If Create And filePathExists Then
         OnFileAlreadyExistsError "SetFile", filePath
-    ElseIf Not (create Or filePathExists) Then
+    ElseIf Not (Create Or filePathExists) Then
         OnFileDoesNotExistError "SetFile", filePath
     End If
     
     pFileNumber = FreeFile
     pFilePath = filePath
 
-    If overwrite Or create Then
+    If overwrite Or Create Then
         Open filePath For Output As #pFileNumber
     Else
         Open filePath For Append As #pFileNumber

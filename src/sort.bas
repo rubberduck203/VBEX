@@ -36,7 +36,7 @@ End Sub
 Public Sub Reverse(ByRef sequence() As Variant, _
         ByVal lower As Long, ByVal upper As Long)
     
-    While lower < upper
+    Do While lower < upper
         
         Swap sequence(lower), sequence(upper)
         

@@ -20,7 +20,7 @@ Public Property Set DeRef(ByVal x As Variant)
 End Property
 
 Public Function Inc(Optional ByVal i As Long = 1) As Boolean
-End Property
+End Function
 
 Public Function Dec(Optional ByVal i As Long = 1) As Boolean
-End Property
+End Function

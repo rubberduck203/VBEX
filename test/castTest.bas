@@ -67,11 +67,27 @@ End Sub
 '
 ' ### IPrintable
 '
-
-
 '
 ' ### ICloneable
 '
+'@TestMethod
+Public Sub CastClonePrimatives()
+
+    Dim y As Variant
+
+    y = cast.Clone(12)
+    Assert.AreEqual 12, y
+    
+    y = cast.Clone("hello")
+    Assert.AreEqual "hello", y
+    
+    Dim t As Date
+    t = Now
+    
+    y = cast.Clone(t)
+    Assert.AreEqual t, y
+
+End Sub
 '
 ' ### IEquatable
 '
@@ -118,6 +134,20 @@ End Sub
 '
 ' ### ICountable
 '
+'@TestMethod
+Public Sub CastCountList()
+
+    Dim el As List
+    Set el = List.Create()
+    
+    Assert.AreEqual CLng(0), cast.Count(el)
+    
+    Dim nel As List
+    Set nel = List.Create(1, 2, 3)
+    
+    Assert.AreEqual CLng(3), cast.Count(nel)
+
+End Sub
 '
 ' ### ISequence
 '

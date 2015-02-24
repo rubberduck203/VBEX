@@ -40,7 +40,7 @@ Private Sub Class_Terminate()
 End Sub
 
 ' TODO: determine func datatype
-Public Function create(ByVal func As Variant) As Delegate
+Public Function Create(ByVal func As Variant) As Delegate
     
 End Function
 

@@ -71,9 +71,9 @@ Public Function Copy(ByVal sequence As Variant) As List
     Set Copy = result
     
 End Function
-Public Function create(ParamArray args() As Variant) As List
+Public Function Create(ParamArray args() As Variant) As List
 
-    Set create = Copy(CVar(args))
+    Set Create = Copy(CVar(args))
     
 End Function
 '

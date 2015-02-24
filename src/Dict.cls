@@ -33,9 +33,9 @@ Private pDict As Scripting.Dictionary
 Private Sub Class_Initialize()
     Set pDict = New Scripting.Dictionary
 End Sub
-Public Function create(ParamArray tuples() As Variant) As Dict
+Public Function Create(ParamArray tuples() As Variant) As Dict
 
-    Set create = FromTuples(List.Copy(tuples))
+    Set Create = FromTuples(List.Copy(tuples))
     
 End Function
 Public Function FromLists(ByVal keyList As List, ByVal valueList As List) As Dict

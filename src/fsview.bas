@@ -39,7 +39,7 @@ End Function
 ' Will not return true if a folder exists of the same name
 Public Function FileExists(ByVal filePath As String)
 
-    fileExists = Exists(filePath, vbNormal)
+    FileExists = Exists(filePath, vbNormal)
     
 End Function
 ''
@@ -57,16 +57,12 @@ End Function
 Public Function SubItems(ByVal root As String, Optional ByVal pat As String = ALLPAT, _
         Optional ByVal vbType As Integer = vbDirectory) As List
                   
-    Set SubItems = List.create
+    Set SubItems = List.Create
     
     Dim subItem As String
     subItem = Dir$(JoinPath(root, pat), vbType)
-    
-<<<<<<< HEAD
-    Do While sub_item <> vbNullString
-=======
-    While subItem <> vbNullString
->>>>>>> origin/camelCase
+
+    Do While subItem <> vbNullString
     
         SubItems.Append JoinPath(root, subItem)
         subItem = Dir$()
