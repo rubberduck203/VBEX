@@ -8,9 +8,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
-Implements IApplicable
-'
-'
 
 ''
 ' CopyMemory: We plan to copy the actual bits of the compiled function
@@ -18,71 +15,48 @@ Implements IApplicable
 Private Declare PtrSafe Sub CopyMemory Lib "kernel32" _
     Alias "RtlMoveMemory" (destination As Any, source As Any, ByVal Length As Long)
 
-''
-' FillMemory: For safety we will fill the `Run` function with zero when
-' the instance is destroyed.
-Private Declare PtrSafe Sub FillMemory Lib "kernel32" _
-    Alias "RtlFillMemory" (destination As Any, ByVal Length As Long, ByVal Fill As Byte)
-
-
 ' http://www.codeproject.com/Articles/19239/Compilers-Demystified-Function-Pointers-in-Visual
 Private Const OFFSET_TO_VFT = &H1C
-Private Const FUNC_ADDRESS_SIZE As Long = 666 '???
-Private Const VFT_SIZE As Integer = 4
-Private Const MEMORY_FILLER As Byte = 0
-Private pFuncPtr As Long
+Private Const VFT_ELEM_SIZE As Integer = 4
 
 
-Private Sub Class_Terminate()
+Private pVFT As Long ' location of
+Private pProcAddress As Long ' address to copy to pRunVFT
+Private pRunVFT As Long ' address of `Run` on VFT table
+'Private pBlankProcAddress As Long ' address at pRunVFT on VFT table
 
-    FillMemory pFuncPtr, FUNC_ADDRESS_SIZE, MEMORY_FILLER
+Private Sub Class_Initialize()
+    
+    ' get VFT table
+    CopyMemory pVFT, ByVal ObjPtr(Me), VFT_ELEM_SIZE
+    
+    ' calculate `Run` location on VFT table
+    pRunVFT = pVFT + OFFSET_TO_VFT + VFT_ELEM_SIZE
+    
+    ' store Address of `Run` from VFT table
+    ' CopyMemory pBlankProcAddress, ByVal pRunVFT, VFT_ELEM_SIZE
 
 End Sub
-
 ' TODO: determine func datatype
-Public Function Create(ByVal func As Variant) As Delegate
+Public Function Create(ByVal procAddr As Long) As Delegate
+
+    Dim result As New Delegate
+    result.ProcedureAddress = procAddr
+    Set Create = result
     
 End Function
-
-Public Function Copy(ByVal other As Delegate) As Delegate
-
-End Function
-
-Private Function Run() As Variant
-End Function
-
-Public Function Apply(ByRef args() As Variant) As Variant
-
-  cast.Assign Apply, Run
-
-End Function
-
-Public Function Exec(ParamArray args() As Variant) As Variant
-
-    cast.Assign Exec, Apply(cast.CArray(args))
-
-End Function
-'
-' Private Properties
-' ------------------
-'
-Private Property Get VFTAddress() As Long
-
-    CopyMemory VFTAddress, (ObjPtr(Me)), VFT_SIZE
-
+Friend Property Let ProcedureAddress(ByVal procAddr As Long)
+    
+    pProcAddress = procAddr
+    
 End Property
-'
-'
-' ### Interfaces
-'
-Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
-
-    IApplicable_Apply = Apply(args)
-
-End Function
-
-Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
-
-    IApplicable_Exec = Apply(cast.CArray(args))
-
-End Function
+Public Sub BlankProc()
+    Err.Raise 1
+End Sub
+Public Sub Run()
+    
+    CopyMemory ByVal pRunVFT, pProcAddress, VFT_ELEM_SIZE
+    BlankProc
+    'CopyMemory ByVal pRunVFT, pBlankProcAddress, VFT_ELEM_SIZE
+    
+End Sub
