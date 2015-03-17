@@ -1,4 +1,4 @@
-Attribute VB_Name = "DictTest"
+Attribute VB_Name = "TestDelegate"
 Option Explicit
 Option Private Module
 
@@ -26,8 +26,8 @@ Public Sub TestHelloWorld()
     globalVar = GOODBYE_WORLD
     Assert.AreEqual GOODBYE_WORLD, globalVar, "Initialization"
 
-    Dim thunk As DelegateProj.Delegate
-    Set thunk = DelegateProj.Delegate.Create(AddressOf HelloWorld)
+    Dim thunk As Delegate
+    Set thunk = Delegate.Create(AddressOf HelloWorld)
     thunk.Run
     
     Assert.AreEqual HELLO_WORLD, globalVar, "Value changed"
@@ -38,11 +38,11 @@ Public Sub TestMultipleInstances()
 
     globalVar = ""
 
-    Dim thunk1 As DelegateProj.Delegate
-    Set thunk1 = DelegateProj.Delegate.Create(AddressOf HelloWorld)
+    Dim thunk1 As Delegate
+    Set thunk1 = Delegate.Create(AddressOf HelloWorld)
     
-    Dim thunk2 As DelegateProj.Delegate
-    Set thunk2 = DelegateProj.Delegate.Create(AddressOf GoodByeWorld)
+    Dim thunk2 As Delegate
+    Set thunk2 = Delegate.Create(AddressOf GoodByeWorld)
     
     Assert.AreEqual "", globalVar, "Check initialization"
     thunk1.Run
