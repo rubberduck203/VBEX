@@ -26,21 +26,19 @@ Attribute VB_Exposed = True
 ' RESTRICTIONS
 ' ------------
 '
-'   Lambdas currently must be completely independent
-' of external definitions.  One cannot reference
-' external varaibles or functions from a lambda.  This
-' is because Lambda simple translates the strings to
-' a proper function defintion that are written to an
-' external blank module.  That module is reference by
-' the client code but not visa versa.
+'   Lambdas currently must be completely independent of external definitions.  
+ ' One cannot reference external varaibles or functions from a lambda.  This
+' is because Lambda simple translates the strings to a proper function defintion 
+' that are written to an external blank module.  That module is reference by the 
+' client code but not visa versa.
 '
-' _eg_ both of these are invalid
+' _eg_ both of these are invalid:
 '
 '     Public Function Intersect(ByVal other As SortedSet) As SortedSet
 '        Set Intersect = Filter(Lambda.FromString("(x) => other.Exists(x)")
 '     End Function
 '
-' `other` is not decalared in the scope of the created lambda function
+' `Other` is not decalared in the scope of the created lambda function.
 '
 '     Public Function Foo() As Integer
 '         Foo = 12
@@ -51,9 +49,8 @@ Attribute VB_Exposed = True
 '
 ' `Foo` is not declared in the scope of the lambda.
 '
-'  Currently, the external module is located inside of
-' the VBEX project.  So it should be able to reference
-' VBEX methods.  So this is valid.
+'  Currently, the external module is located inside of the VBEX project.  
+' So it should be able to reference VBEX methods.  Ergo, this is valid.
 '
 '    Private Function BaseNames(ByVal filepaths As List) As List
 '        Set BaseNames = filepaths.Map(Lambda.FromString("(f) => path.BaseName(f)"))
