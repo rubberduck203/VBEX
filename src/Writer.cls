@@ -156,7 +156,7 @@ Private Function GetErrorSource(ByVal method As String) As String
 End Function
 Private Sub OnUnHandledError(ByVal method As String)
 
-    Err.Raise Err.Number, GetErrorSource(method), Err.Description, _
+    Err.Raise Err.Number, GetErrorSource(method), Err.description, _
         Err.HelpFile, Err.HelpContext
         
 End Sub
@@ -196,7 +196,7 @@ End Sub
 '
 Public Sub Prints(ByVal data As Variant)
 
-    AppendData Printable.ToString(data), method:="Prints"
+    AppendData defShow.Show(data), method:="Prints"
     
 End Sub
 Public Sub IOutput_Prints(ByVal data As Variant)
@@ -209,7 +209,7 @@ End Sub
 '
 Public Sub PrintLine(ByVal line As Variant)
     
-    AppendData Printable.ToString(line), method:="PrintLine"
+    AppendData defShow.Show(line), method:="PrintLine"
     AppendData vbNewLine, method:="PrintLine"
     
 End Sub

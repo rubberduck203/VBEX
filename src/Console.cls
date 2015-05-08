@@ -23,11 +23,9 @@ Implements IOutput
 '
 ' #### Prints
 '
-Public Sub Prints(Optional ByVal x As Variant)
+Public Sub Prints(ByVal x As Variant)
 
-    If Not IsMissing(x) Then
-        Debug.Print Printable.ToString(x);
-    End If
+    Debug.Print defShow.Show(x);
     
 End Sub
 Private Sub IOutput_Prints(ByVal x As Variant)
@@ -38,7 +36,7 @@ End Sub
 '
 ' #### PrintLine
 '
-Public Sub PrintLine(Optional ByVal x As Variant)
+Public Sub PrintLine(ByVal x As Variant)
 
     Prints x
     Debug.Print
@@ -60,7 +58,7 @@ Public Sub PrintLines(ByRef xs() As Variant)
     Next x
 
 End Sub
-Public Sub IOutput_PrintLines(ByRef xs() As Variant)
+Private Sub IOutput_PrintLines(ByRef xs() As Variant)
 
     PrintLines xs
 

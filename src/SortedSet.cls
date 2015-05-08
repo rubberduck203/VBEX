@@ -25,11 +25,9 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Implements IEquatable
-Implements ICountable
-Implements IPrintable
-Implements ISequence
-Implements ICloneable
-
+Implements IShowable
+Implements ISetLike
+Implements IBuildable
 '
 ' Public Members
 ' --------------
@@ -45,29 +43,29 @@ Private pList As List
 '
 ''
 ' IndexOf: Finds where an item is or where it should be
-Private Function IndexOf(ByVal element As Variant) As Long
-On Error GoTo ErrHandler
+Private Function IndexOf(ByVal element) As Long
 
     If pList.Count > 0 Then
-        IndexOf = srch.BinarySearch(element, pList, 1, pList.Count, nearest:=True)
+        On Error GoTo ErrHandler
+        IndexOf = srch.BinarySearch(element, pList, nearest:=True).GetItem
+        On Error GoTo 0
     Else
         IndexOf = 1
     End If
-    
 Exit Function
 ErrHandler:
-    Debug.Assert Err.Number = 438
-    RaiseObjectWithNoDefaultPropertyError
-    
+    Select Case Err.Number
+    Case Else
+        Exceptions.BubbleError Me, "IndexOf", Err
+    End Select
 End Function
-Private Sub RaiseObjectWithNoDefaultPropertyError()
-
-    Err.Raise 438, "SortedSet.IndexOf", _
-        "Object does not have a default property and cannot be compared"
-        
-End Sub
 ''
 ' Destructor, might be unnecessary
+Private Sub Class_Initialize()
+
+    Set pList = New List
+    
+End Sub
 Private Sub Class_Terminate()
 
     Set pList = Nothing
@@ -89,66 +87,16 @@ End Property
 ' Constructors
 ' ------------
 '
-Private Sub Class_Initialize()
-
-    Set pList = New List
-    
-End Sub
-'
-' ### Initializers
-'
-Public Function Copy(ByVal sequence As Variant) As SortedSet
-    
-    Dim result As New SortedSet
-    result.Extend sequence
-    Set Copy = result
-    
-End Function
 Public Function Create(ParamArray args() As Variant) As SortedSet
     
     Set Create = Copy(args)
     
 End Function
-'
-' Immutable Constructors
-' ----------------------
-'
-Public Function Union(ByVal other As SortedSet) As SortedSet
-
-    Dim result As New SortedSet
-    result.Extend other
-    result.Extend Me
-    
-    Set Union = result
-    
-End Function
-Public Function Intersect(ByVal other As SortedSet) As SortedSet
-    Dim result As New SortedSet
-    
-    Dim element As Variant
-    For Each element In pList
-        If other.Exists(element) Then result.Add element
-    Next element
-    
-    Set Intersect = result
-    
-    
-End Function
-Public Function Difference(ByVal other As SortedSet) As SortedSet
+Public Function Copy(ByVal sequence) As SortedSet
     
     Dim result As New SortedSet
-    
-    Dim element As Variant
-    For Each element In pList
-        If Not other.Exists(element) Then result.Add element
-    Next element
-    
-    Set Difference = result
-    
-End Function
-Public Function SymmetricDifference(ByVal other As SortedSet) As SortedSet
-
-    Set SymmetricDifference = Difference(other).Union(other.Difference(Me))
+    result.Extend sequence
+    Set Copy = result
     
 End Function
 '
@@ -156,69 +104,22 @@ End Function
 '
 Public Function Map(ByVal op As IApplicable) As SortedSet
     
-    Set Map = Copy(pList.Map(op))
+    Set Map = defMap.Map(SortedSet, op, pList)
     
 End Function
-Public Function Filter(ByVal pred As IApplicable, _
-        Optional ByVal opposite As Boolean = False) As SortedSet
+Public Function FlatMap(ByVal op As IApplicable) As SortedSet
     
-    Set Filter = Copy(pList.Filter(pred, opposite))
-    
-End Function
-Public Function ForAll(ByVal pred As IApplicable, _
-        Optional ByVal opposite As Boolean = False) As Boolean
-
-    ForAll = pList.ForAll(pred, opposite)
-
-End Function
-'
-'
-'
-' Comparision
-' -----------
-'
-''
-' Exists: Use Binary Search for faster results.
-Public Function Exists(ByVal sought As Variant) As Boolean
-
-    If pList.Count > 0 Then
-        Exists = (pList(IndexOf(sought)) = sought)
-    Else
-        Exists = False
-    End If
+    Set FlatMap = defMap.FlatMap(SortedSet, op, pList)
     
 End Function
-Public Function IsDisJoint(ByVal other As SortedSet) As Boolean
-
-    IsDisJoint = (Intersect(other).Count = 0)
+Public Function Filter(ByVal pred As IApplicable) As SortedSet
+    
+    Set Filter = defFilter.Filter(SortedSet, pred, pList)
     
 End Function
-Public Function IsSubSetOf(ByVal other As SortedSet) As Boolean
+Public Function FilterNot(ByVal pred As IApplicable) As SortedSet
     
-    Dim element As Variant
-    For Each element In pList
-        If Not other.Exists(element) Then
-            IsSubSetOf = False
-            Exit Function
-        End If
-    Next element
-    
-    IsSubSetOf = True
-    
-End Function
-Public Function IsProperSubSetOf(ByVal other As SortedSet) As Boolean
-
-    IsProperSubSetOf = (IsSubSetOf(other) And (Count < other.Count))
-    
-End Function
-Public Function IsSuperSetOf(ByVal other As SortedSet) As Boolean
-
-    IsSuperSetOf = other.IsSubSetOf(Me)
-    
-End Function
-Public Function IsProperSuperSetOf(ByVal other As SortedSet) As Boolean
-
-    IsProperSuperSetOf = other.IsProperSubSetOf(Me)
+    Set FilterNot = defFilter.FilterNot(SortedSet, pred, pList)
     
 End Function
 '
@@ -236,38 +137,43 @@ End Property
 ' Mutability
 ' ----------
 '
-' ### Overridden Methods
-'
 ' #### Extension
 ''
 ' Add: Instead of Insert, Emplace, or Append
-Public Sub Add(ByVal element As Variant)
+Public Sub Add(ByVal element)
     
     If pList.Count = 0 Then
+    
         pList.Append element
         Exit Sub
+        
     End If
     
     Dim index As Long
     index = IndexOf(element)
     
-    If pList(index) = element Then Exit Sub
+    Dim curVal
+    Assign curVal, pList(index)
     
-    If pList(index) < element Then ' ONLY HAPPENS AT END?
-        pList.Append (element)
-    Else
-        pList.Emplace index, element
+    If Not defEquals.Equals(curVal, element) Then
+    
+        If defCompare.LessThan(curVal, element) Then  ' ONLY HAPPENS AT END?
+            pList.Append element
+        Else
+            pList.Emplace index, element
+        End If
+        
     End If
     
 End Sub
 ''
 ' Extend: routed through our `Add`
-Public Sub Extend(ByVal sequence As Variant)
+Public Sub Extend(ByVal sequence)
     
-    Dim element As Variant
+    Dim element
     For Each element In sequence
         Add element
-    Next element
+    Next
     
 End Sub
 '
@@ -275,7 +181,7 @@ End Sub
 '
 ''
 ' Removal is by element not by index
-Public Sub Remove(ByVal element As Variant)
+Public Sub Remove(ByVal element)
     
     Dim index As Long
     index = IndexOf(element)
@@ -283,7 +189,11 @@ Public Sub Remove(ByVal element As Variant)
     If pList(index) = element Then
         pList.Remove index
     Else
-        Err.Raise 9, TypeName(Me) & ".Remove", "Element does not exist."
+    
+        Dim msg As String
+        msg = defShow.Show(element) & " does not exist."
+        IndexError Me, "Remove", msg
+        
     End If
     
 End Sub
@@ -292,7 +202,9 @@ Public Sub Discard(ByVal element As Variant)
     Dim index As Long
     index = IndexOf(element)
     
-    If pList(index) = element Then pList.Remove index
+    If defEquals.Equals(pList(index), element) Then
+        pList.Remove index
+    End If
     
 End Sub
 Public Sub Clear()
@@ -300,77 +212,172 @@ Public Sub Clear()
     pList.Clear 1, pList.Count
     
 End Sub
-Public Function Pop() As Variant
-
-    cast.Assign Pop, pList(1)
-    pList.Remove 1
-    
-End Function
 '
 ' Interfaces
 ' ----------
 '
-' ### ICloneable
 '
-Public Function Clone() As SortedSet
-    
-    Set Clone = SortedSet.Copy(Me)
-    
-End Function
-Public Function ICloneable_Clone() As Object
-    
-    Set ICloneable_Clone = Clone()
-    
-End Function
+' ### IBuildable
 '
-' ### ISequence
-'
-Public Function ToArray() As Variant()
+Private Function IBuildable_MakeEmpty() As IBuildable
 
-    ToArray = pList.ToArray()
+    Set IBuildable_MakeEmpty = Create()
+
+End Function
+Private Sub IBuildable_AddItem(ByVal element)
+
+    Add element
+
+End Sub
+Private Sub IBuildable_AddItems(ByVal sequence)
+
+    Extend sequence
+    
+End Sub
+'
+' ### ISetLike
+'
+Public Function Contains(ByVal sought) As Boolean
+
+    If pList.Count > 0 Then
+    
+        Dim index As Long
+        index = IndexOf(sought)
+        
+        Contains = defEquals.Equals(pList.Item(index), sought)
+    Else
+        Contains = False
+    End If
     
 End Function
-Public Function ISequence_ToArray() As Variant()
-  
-    ISequence_ToArray = ToArray()
-  
+Public Function Count() As Long
+
+    Count = pList.Count
+
+End Function
+Public Function IsDisJoint(ByVal other As ISetLike) As Boolean
+
+    IsDisJoint = defSetLike.IsDisJoint(Me, other)
+    
+End Function
+Public Function IsSubSetOf(ByVal other As ISetLike) As Boolean
+    
+    IsSubSetOf = defSetLike.IsSubSetOf(Me, other)
+    
+End Function
+Public Function IsProperSubSetOf(ByVal other As ISetLike) As Boolean
+
+    IsProperSubSetOf = defSetLike.IsProperSubSetOf(Me, other)
+    
+End Function
+Public Function IsSuperSetOf(ByVal other As ISetLike) As Boolean
+
+    IsSuperSetOf = defSetLike.IsSuperSetOf(Me, other)
+    
+End Function
+Public Function IsProperSuperSetOf(ByVal other As ISetLike) As Boolean
+
+    IsProperSuperSetOf = defSetLike.IsProperSuperSetOf(Me, other)
+    
+End Function
+Public Function Union(ByVal other As ISetLike) As SortedSet
+
+    Set Union = defSetLike.Union(SortedSet, Me, other)
+    
+End Function
+Public Function Intersect(ByVal other As ISetLike) As SortedSet
+
+    Set Intersect = defSetLike.Intersect(SortedSet, Me, other)
+
+End Function
+Public Function Difference(ByVal other As ISetLike) As SortedSet
+    
+    Set Difference = defSetLike.Difference(SortedSet, Me, other)
+    
+End Function
+Public Function SymmetricDifference(ByVal other As SortedSet) As SortedSet
+
+    Set SymmetricDifference = defSetLike.SymmetricDifference(SortedSet, Me, other)
+    
+End Function
+Private Function ISetLike_Contains(ByVal sought) As Boolean
+
+    ISetLike_Contains = Contains(sought)
+
+End Function
+Private Function ISetLike_Count() As Long
+
+    ISetLike_Count = Count
+
+End Function
+Private Function ISetLike_IsDisJoint(ByVal other As ISetLike) As Boolean
+
+    ISetLike_IsDisJoint = IsDisJoint(other)
+
+End Function
+Private Function ISetLike_IsSubSetOf(ByVal other As ISetLike) As Boolean
+
+    ISetLike_IsSubSetOf = IsSubSetOf(other)
+
+End Function
+Private Function ISetLike_IsProperSubSetOf(ByVal other As ISetLike) As Boolean
+
+    ISetLike_IsProperSubSetOf = IsProperSubSetOf(other)
+
+End Function
+Private Function ISetLike_IsSuperSetOf(ByVal other As ISetLike) As Boolean
+
+    ISetLike_IsSuperSetOf = IsSuperSetOf(other)
+
+End Function
+Private Function ISetLike_IsProperSuperSetOf(ByVal other As ISetLike) As Boolean
+
+    ISetLike_IsProperSuperSetOf = IsProperSuperSetOf(other)
+
+End Function
+Private Function ISetLike_Union(ByVal other As ISetLike) As ISetLike
+    
+    Set ISetLike_Union = Union(other)
+
+End Function
+Private Function ISetLike_Intersect(ByVal other As ISetLike) As ISetLike
+
+    Set ISetLike_Intersect = Intersect(other)
+
+End Function
+Private Function ISetLike_Difference(ByVal other As ISetLike) As ISetLike
+
+    Set ISetLike_Difference = Difference(other)
+
+End Function
+Private Function ISetLike_SymmetricDifference(ByVal other As ISetLike) As ISetLike
+
+    Set ISetLike_SymmetricDifference = SymmetricDifference(other)
+
 End Function
 '
 ' ### IEquatable
 '
-Public Function Equals(ByVal other As Variant) As Boolean
+Public Function Equals(ByVal other) As Boolean
 
     Equals = pList.Equals(other)
     
 End Function
-Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+Private Function IEquatable_Equals(ByVal other) As Boolean
 
     IEquatable_Equals = Equals(other)
     
 End Function
 '
-' ### ICountable
+' ### IShowable
 '
-Public Property Get Count() As Long
+Public Function Show() As String
 
-    Count = pList.Count()
+    Show = defShow.ShowableObject(Me, pList.ToArray)
     
-End Property
-Public Property Get ICountable_Count() As Long
+End Function
+Private Function IShowable_Show() As String
 
-    ICountable_Count = Count()
+    IShowable_Show = Show
     
-End Property
-'
-' ### IPrintable
-'
-Public Property Get ToString(Optional delim As String = ", ") As String
-
-    ToString = Printable.ObjectToString(Me, ToArray, delim)
-    
-End Property
-Public Property Get IPrintable_ToString() As String
-
-    IPrintable_ToString = ToString
-    
-End Property
+End Function

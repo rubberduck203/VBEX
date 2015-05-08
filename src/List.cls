@@ -7,6 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
+Option Explicit
 '
 ' List Class
 ' ==========
@@ -16,13 +17,10 @@ Attribute VB_Exposed = True
 ' This file (List.cls) is distributed under the MIT license
 ' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
-'
-Option Explicit
 Implements IEquatable
-Implements ICountable
-Implements IPrintable
-Implements ISequence
-Implements ICloneable
+Implements IIterable
+Implements IBuildable
+Implements IShowable
 '
 ' Private Members
 ' ---------------
@@ -57,7 +55,10 @@ Private Sub Replace(ByVal index As Long, ByVal element As Variant)
 End Sub
 Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Variant)
 
-    Err.Raise 13, TypeName(Me) & "." & method, """" & TypeName(scalar) & """ is not an iterable type."
+    Dim msg As String
+    msg = """" & TypeName(scalar) & """ is not an iterable type."
+    
+    TypeError Me, method, msg
     
 End Sub
 '
@@ -81,72 +82,33 @@ End Function
 '
 Public Function Map(ByVal op As IApplicable) As List
 
-    Dim result As New List
-    
-    Dim element As Variant
-    For Each element In pCollec
-        result.Append op.Exec(element)
-    Next element
-    
-    Set Map = result
+    Set Map = defMap.Map(List, op, Me)
 
 End Function
 Public Function FlatMap(ByVal op As IApplicable) As List
 
-    Dim result As New List
-    
-    Dim element As Variant
-    For Each element In pCollec
-        result.Extend op.Exec(element)
-    Next element
-    
-    Set FlatMap = result
+    Set FlatMap = defMap.FlatMap(List, op, Me)
 
 End Function
-Public Function Filter(ByVal pred As IApplicable, _
-        Optional ByVal opposite As Boolean = False) As List
+Public Function Filter(ByVal pred As IApplicable) As List
     
-    Dim result As New List
+    Set Filter = defFilter.Filter(List, pred, Me)
     
-    Dim element As Variant
-    For Each element In pCollec
-        If pred.Exec(element) Xor opposite Then
-            result.Append element
-        End If
-    Next element
+End Function
+Public Function FilterNot(ByVal pred As IApplicable) As List
     
-    Set Filter = result
+    Set FilterNot = defFilter.FilterNot(List, pred, Me)
     
 End Function
 Public Function Fold(ByVal init As Variant, ByVal binaryOp As IApplicable) As Variant
     
-    Dim element As Variant
-    For Each element In pCollec
-        init = binaryOp.Exec(init, element)
-    Next element
-    
-     cast.Assign Fold, init
+    Assign Fold, defFold.Fold(binaryOp, init, Me)
     
 End Function
 Public Function Reduce(ByVal binaryOp As IApplicable) As Variant
     
     cast.Assign Reduce, Slice(2, -1).Fold(pCollec(1), binaryOp)
     
-End Function
-Public Function ForAll(ByVal pred As IApplicable, _
-        Optional ByVal opposite As Boolean = False) As Boolean
-
-    ' TODO: fix Lambda so I can use Fold(True, "(x, y) => x And pred(y)")
-    Dim element As Variant
-    For Each element In pCollec
-        If Not (pred.Exec(element) Xor opposite) Then
-            ForAll = False
-            Exit For
-        End If
-    Next element
-    
-    ForAll = True
-
 End Function
 Private Sub Class_Initialize()
     Set pCollec = New Collection
@@ -207,7 +169,10 @@ Public Property Get Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     
     Set Slice = New List
     
-    If s < 1 Then Err.Raise 9, TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
+    If s < 1 Then
+        ValueError Me, "Slice", "Step " & s & " is not a natural number."
+    End If
+    
     s = IIf(a < b, s, -s)
     
     Dim i As Long
@@ -221,7 +186,9 @@ Public Property Let Slice(ByVal a As Long, ByVal b As Long, Optional ByVal s As 
     TransformIndex a
     TransformIndex b
     
-    If s < 1 Then Err.Raise 9, TypeName(Me) & ".Slice", "Step " & s & " is not a natural number."
+    If s < 1 Then
+        ValueError Me, "Slice", "Step " & s & " is not a natural number."
+    End If
     s = IIf(a < b, s, -s)
     
     Dim other As List
@@ -333,39 +300,6 @@ End Sub
 '
 ' ### Auxillary
 '
-''
-' Exists: Linear search for `sought`.
-Public Function Exists(ByVal sought As Variant) As Boolean
-    
-    Exists = True
-    
-    Dim element As Variant
-    For Each element In pCollec
-        If element = sought Then Exit Function
-    Next element
-    
-    Exists = False
-    
-End Function
-'
-' Interfaces
-' ----------
-'
-' ### ICloneable
-'
-Public Function Clone() As List
-    
-    Set Clone = List.Copy(Me)
-    
-End Function
-Public Function ICloneable_Clone() As Object
-    
-    Set ICloneable_Clone = Clone()
-    
-End Function
-'
-' ### ISequence
-'
 Public Function ToArray() As Variant()
 
     If pCollec.Count = 0 Then
@@ -384,78 +318,97 @@ Public Function ToArray() As Variant()
     ToArray = a
     
 End Function
-Public Function ISequence_ToArray() As Variant()
-  
-    ISequence_ToArray = ToArray
-  
-End Function
-'
-' ### IReversible???
-'
-Public Property Get Reverse() As List
+Public Function Reverse() As List
     
     Set Reverse = Slice(-1, 1)
     
-End Property
+End Function
+Public Function Count() As Long
+
+    Count = pCollec.Count
+    
+End Function
+'
+' Interfaces
+' ----------
+'
+' ### IBuildable
+'
+Private Function IBuildable_MakeEmpty() As IBuildable
+
+    Set IBuildable_MakeEmpty = List.Create()
+
+End Function
+Private Sub IBuildable_AddItem(ByVal element)
+
+    Append element
+
+End Sub
+Private Sub IBuildable_AddItems(ByVal sequence)
+
+    Extend sequence
+
+End Sub
+'
+' ### IIterable
+'
+Private Function IIterable_Item(ByVal index As Long) As Variant
+
+    Assign IIterable_Item, Item(index)
+
+End Function
+Private Function IIterable_LowerBound() As Long
+
+    IIterable_LowerBound = 1
+
+End Function
+Private Function IIterable_UpperBound() As Long
+
+    IIterable_UpperBound = Count
+
+End Function
 '
 ' ### IEquatable
 '
-Public Function Equals(ByVal other As Variant) As Boolean
-    On Error GoTo Nope
-    
+Public Function Equals(ByVal x) As Boolean
+
     Equals = False
+    
+    If TypeName(Me) <> TypeName(x) Then Exit Function
+    
+    Dim other As List
+    Set other = x
     
     If other.Count <> Count Then Exit Function
     
     Dim i As Long
     For i = 1 To Count
-        If Not cast.Equals(pCollec(i), other(i)) Then
-            Exit Function
-        End If
-    Next i
+    
+        Dim a, b
+        Assign a, Item(i)
+        Assign b, other.Item(i)
+        
+        If Not defEquals.Equals(a, b) Then Exit Function
+    Next
     
     Equals = True
     
-CleanExit:
-Exit Function
-Nope:
-
-    Equals = False
-    Resume CleanExit
-    
 End Function
-Public Function IEquatable_Equals(ByVal other As Variant) As Boolean
+Private Function IEquatable_Equals(ByVal other) As Boolean
 
     IEquatable_Equals = Equals(other)
     
 End Function
 '
-' ### ICountable
+'  ### IShowable
 '
-Public Property Get Count() As Long
+Public Function Show() As String
 
-    Count = pCollec.Count
+    Show = defShow.ShowableObject(Me, ToArray)
     
-End Property
-Public Property Get ICountable_Count() As Long
+End Function
+Private Function IShowable_Show() As String
 
-    ICountable_Count = Count
+    IShowable_Show = Show()
     
-End Property
-'
-'  ### IPrintable
-'
-''
-' ToString: Represent instance as String.
-' Usefull for debugging only.  Doesn't work with nested
-' lists.
-Public Property Get ToString(Optional delim As String = ", ") As String
-
-    ToString = Printable.ObjectToString(Me, ToArray, delim)
-    
-End Property
-Public Property Get IPrintable_ToString() As String
-
-    IPrintable_ToString = ToString()
-    
-End Property
+End Function

@@ -15,10 +15,8 @@ Option Explicit
 '
 ' Implementation of Tuple in VB
 '
-'Implements IEquatable ' but only against other tuples...
-Implements ICountable
-Implements IPrintable
-Implements ISequence
+Implements IShowable
+Implements IEquatable
 '
 ' Private Members
 ' ---------------
@@ -31,7 +29,12 @@ Private pArray() As Variant
 ' Private Methods
 ' ---------------
 '
-Private Sub CopyArray(ByRef dest() As Variant, ByRef src() As Variant)
+Private Sub Class_Initialize()
+
+    pArray = Array()
+
+End Sub
+Private Sub CopyArray(ByRef dest(), ByRef src())
     
     Dim lower As Long
     lower = LBound(src)
@@ -48,13 +51,15 @@ Private Sub CopyArray(ByRef dest() As Variant, ByRef src() As Variant)
     Next i
     
 End Sub
-Private Sub RaiseIndexError(ByVal method As String, ByRef offending() As Variant)
+Private Sub TupleSizeError(ByVal method As String, ByRef offending())
 
-    Err.Raise 9, TypeName(Me) & "." & method, _
-        "Offending sequence is of size: " & ArraySize(offending) + 1 & " not " & ArraySize(pArray) + 1
+    Dim msg As String
+    msg = "Offending sequence is of size: " & ArraySize(offending) + 1 & " not " & ArraySize(pArray) + 1
+
+    IndexError Me, method, msg
         
 End Sub
-Private Function ArraySize(ByRef a() As Variant) As Long
+Private Function ArraySize(ByRef a()) As Long
     
     ArraySize = UBound(a) - LBound(a)
     
@@ -63,11 +68,9 @@ End Function
 ' Friend Methods
 ' --------------
 '
-''
-'
-Friend Sub Contain(ByVal Values As Variant)
+Friend Sub Contain(ByVal vs)
 
-    pArray = Values
+    pArray = vs
     
 End Sub
 '
@@ -78,9 +81,9 @@ End Sub
 ' Pack: create a tuple from a parameter array
 '
 '    Tuple.Pack(1, 2, "A") ' (1, 2, A)
-Public Function Pack(ParamArray Values() As Variant) As Tuple
+Public Function Pack(ParamArray vals()) As Tuple
 
-   Set Pack = Implode(cast.CArray(Values))
+   Set Pack = Implode(cast.CArray(vals))
    
 End Function
 ''
@@ -88,11 +91,11 @@ End Function
 ' offsetting required for indexes
 '
 '     Tuple.Implode(Array(1, 2, "A")) ' (1, 2, A)
-Public Function Implode(ByRef arr As Variant) As Tuple
+Public Function Implode(ByRef arr) As Tuple
 
     Dim result As New Tuple
     
-    Dim a() As Variant
+    Dim a()
     a = cast.CArray(arr)
     
     Dim size As Long
@@ -100,8 +103,8 @@ Public Function Implode(ByRef arr As Variant) As Tuple
     
     If Not ((IsEmpty(arr)) Or (size = -1)) Then
         
-        Dim newArray() As Variant
-        ReDim newArray(0 To size) As Variant
+        Dim newArray()
+        ReDim newArray(0 To size)
         
         CopyArray newArray, a
         result.Contain newArray
@@ -116,24 +119,31 @@ End Function
 ''
 ' Zip, create a list of tuples...
 ' TODO: use param array instead of just 2
-Public Function Zip(ByVal xs As List, ByVal ys As List) As List
-    
-    Dim result As List
-    Set result = List.Create
+Public Function Zip(ByVal seed As IBuildable, ByVal xs As IIterable, _
+        ByVal ys As IIterable) As IBuildable
 
+    Dim result As IBuildable
+    Set result = seed.MakeEmpty
+
+    Dim lower As Long
+    lower = srch.Max(xs.LowerBound, ys.LowerBound)
+    
+    Dim upper As Long
+    upper = srch.Min(xs.UpperBound, ys.UpperBound)
+    
     Dim i As Long
-    For i = 1 To srch.Min(xs.Count, ys.Count)
-        result.Append Pack(xs(i), ys(i))
+    For i = 1 To upper
+        result.AddItem Pack(xs.Item(i), ys.Item(i))
     Next i
-    
+
     Set Zip = result
-    
+
 End Function
 '
 ' Public Methods
 ' --------------
 '
-Public Property Get Item(ByVal index As Variant)
+Public Property Get Item(ByVal index)
 
     cast.Assign Item, pArray(index - 1)
     
@@ -148,7 +158,7 @@ End Property
 '
 '     x, y, z = t
 '
-Public Sub Unpack(ParamArray elements() As Variant)
+Public Sub Unpack(ParamArray elements())
 
     If ArraySize(pArray) = ArraySize(cast.CArray(elements)) Then
         Dim i As Long
@@ -156,7 +166,7 @@ Public Sub Unpack(ParamArray elements() As Variant)
             cast.Assign elements(i), pArray(i)
         Next i
     Else
-        RaiseIndexError "Unpack", cast.CArray(elements)
+        TupleSizeError "Unpack", cast.CArray(elements)
     End If
     
 End Sub
@@ -164,77 +174,59 @@ End Sub
 ' Explode: Load elements into array `arr`
 ' arr must be an array
 '
-Public Sub Explode(ByRef elements() As Variant)
+Public Sub Explode(ByRef elements())
     
     If ArraySize(pArray) = ArraySize(elements) Then
         CopyArray elements, pArray
     Else
-        RaiseIndexError "Explode", elements
+        TupleSizeError "Explode", elements
     End If
     
 End Sub
-'
-'Public Function Equals(ByVal other As Tuple) As Boolean
-'    Equals = False
-'    If Count <> other.Count Then Exit Function
-'    Dim i As Long
-'    For i = 0 To UBound(pArray)
-'        If pArray(i) <> other.Encapsulated(i) Then Exit Function
-'    Next i
-'    Equals = True
-'End Function
-'
-' Interfaces
-' ----------
-'
-'
-' ### ISequence
-'
-Public Function ToArray() As Variant()
-     
-    Dim size As Long
-    size = ArraySize(pArray)
-    
-    If size <> -1 Then
-    
-        Dim result() As Variant
-        ReDim result(0 To size)
-        CopyArray result, pArray
-        ToArray = result
-        
-    Else
-        ToArray = Array()
-    End If
-
-End Function
-Public Function ISequence_ToArray() As Variant()
-
-    ISequence_ToArray = ToArray
-
-End Function
-'
-' ### ICountable
-'
 Public Property Get Count() As Long
 
     Count = ArraySize(pArray) + 1
     
 End Property
-Public Property Get ICountable_Count() As Long
-
-    ICountable_Count = Count
-    
-End Property
 '
-' ### IPrintable
+' ### IEquatable
 '
-Public Property Get ToString(Optional delim As String = ", ") As String
+Public Function Equals(ByVal other) As Boolean
 
-    ToString = Printable.ObjectToString(Me, ToArray, delim)
+    Equals = False
     
-End Property
-Public Property Get IPrintable_ToString() As String
+    If TypeName(other) <> TypeName(Me) Then
+        Exit Function
+    ElseIf Count <> other.Count Then
+        Exit Function
+    End If
+    
+    Dim i As Long
+    For i = 0 To UBound(pArray)
+        If Not defEquals.Equals(pArray(i), other.Item(i + 1)) Then
+            Exit Function
+        End If
+    Next i
+    
+    Equals = True
+    
+End Function
+Private Function IEquatable_Equals(ByVal other) As Boolean
 
-    IPrintable_ToString = ToString
+    IEquatable_Equals = Equals(other)
     
-End Property
+End Function
+'
+'
+' ### IShowable
+'
+Public Function Show() As String
+
+    Show = defShow.ShowableObject(Me, pArray)
+    
+End Function
+Public Function IShowable_Show() As String
+
+    IShowable_Show = Show
+    
+End Function

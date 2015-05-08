@@ -23,10 +23,10 @@ Option Explicit
 '
 Private Sub Swap(ByRef x As Variant, ByRef y As Variant)
     
-    Dim t As Variant
-    cast.Assign t, x
-    cast.Assign x, y
-    cast.Assign y, t
+    Dim t
+    Assign t, x
+    Assign x, y
+    Assign y, t
     
 End Sub
 '
@@ -87,7 +87,7 @@ Public Sub QuickSort(ByRef sequence() As Variant, ByVal lower As Long, ByVal upp
     If lower >= upper Then Exit Sub
     
     ' no special pivot selection used
-    Swap sequence(seq.MiddleInt(lower, upper)), sequence(upper)
+    Swap sequence((lower + upper) / 2), sequence(upper)
     
     ' pivot is at the end
     Dim pivot As Variant

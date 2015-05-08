@@ -6,93 +6,110 @@ Option Explicit
 '
 ' ### Max|Min
 '
+Private Function GenericExtremum(ByVal lg As CompareResult, _
+        ByVal sequence As IIterable) As Long
+
+    Dim result As Long
+    result = sequence.LowerBound
+    
+    Dim curVal
+    Assign curVal, sequence.Item(result)
+    
+    Dim i As Long
+    For i = sequence.LowerBound To sequence.UpperBound
+    
+        If Not (defCompare.Compare(curVal, sequence.Item(i)) = lg) Then
+        
+            result = i
+            Assign curVal, sequence.Item(result)
+            
+        End If
+        
+    Next
+    
+    GenericExtremum = result
+
+End Function
 ''
 ' MaxIndex: Returns the index of `sequence` that has the maximum value
-Public Function MaxIndex(ByVal sequence As Variant, _
-        ByVal lower As Long, ByVal upper As Long) As Long
+Public Function MaxIndex(ByVal sequence As IIterable) As Long
     
-    MaxIndex = lower
-    Dim i As Long
-    For i = lower To upper
-        If sequence(MaxIndex) < sequence(i) Then MaxIndex = i
-    Next i
+    MaxIndex = GenericExtremum(gt, sequence)
     
 End Function
 ''
 ' MaxValue: Returns the value of `sequence` that is the Maximum
 ' Uses `MaxIndex`
-Public Function MaxValue(ByVal sequence As Variant, _
-        ByVal lower As Long, ByVal upper As Long) As Variant
+Public Function MaxValue(ByVal sequence As IIterable) As Variant
     
-    cast.Assign MaxValue, sequence(MaxIndex(sequence, lower, upper))
-    
-End Function
-Public Function Max(ParamArray Values() As Variant) As Variant
-
-    cast.Assign Max, MaxValue(CVar(Values), LBound(Values), UBound(Values))
+    Assign MaxValue, sequence.Item(MaxIndex(sequence))
     
 End Function
+Public Function Max(ParamArray vals() As Variant) As Variant
 
+    Assign Max, MaxValue(List.Copy(vals))
+    
+End Function
 ''
 ' MinIndex
-Public Function MinIndex(ByVal sequence As Variant, _
-        ByVal lower As Long, ByVal upper As Long) As Long
+Public Function MinIndex(ByVal sequence As IIterable) As Long
     
-    MinIndex = lower
-    Dim i As Long
-    For i = lower To upper
-        If sequence(MinIndex) > sequence(i) Then MinIndex = i
-    Next i
+    MinIndex = GenericExtremum(lt, sequence)
     
 End Function
 ''
 ' MinValue
-Public Function MinValue(ByVal sequence As Variant, _
-        ByVal lower As Long, ByVal upper As Long) As Variant
+Public Function MinValue(ByVal sequence As IIterable) As Variant
     
-    cast.Assign MinValue, sequence(MinIndex(sequence, lower, upper))
-    
-End Function
-Public Function Min(ParamArray Values() As Variant) As Variant
-
-    cast.Assign Min, MinValue(CVar(Values), LBound(Values), UBound(Values))
+    Assign MinValue, sequence.Item(MinIndex(sequence))
     
 End Function
+Public Function Min(ParamArray vals() As Variant) As Variant
 
+    Assign Min, MinValue(List.Copy(vals))
+    
+End Function
 '
 ' ### Value Specific
 '
 ''
 ' LinearSearch:
-Public Function LinearSearch(ByVal value As Variant, ByVal sequence As Variant, _
-        ByVal lower As Long, ByVal upper As Long) As Long
+Public Function LinearSearch(ByVal sought, ByVal sequence As IIterable) As Maybe
     
     Dim i As Long
-    For i = lower To upper
+    For i = sequence.LowerBound To sequence.UpperBound
         
-        If sequence(i) = value Then
-            LinearSearch = i
+        If defEquals.Equals(sequence.Item(i), sought) Then
+            Set LinearSearch = Maybe.Some(i)
             Exit Function
         End If
         
     Next i
     
-    LinearSearch = -1
+    Set LinearSearch = Maybe.None
     
 End Function
 ''
 ' Binary Search: Sequence must be sorted.  Has the option of returning where the
 ' value should be instead of not found.
-Public Function BinarySearch(ByVal value As Variant, ByRef sortedSequence As Variant, _
-        ByVal lower As Long, ByVal upper As Long, _
-        Optional ByVal nearest As Boolean = False) As Long
+Public Function BinarySearch(ByVal sought, ByVal sortedSequence As IIterable, _
+        Optional ByVal nearest As Boolean = False) As Maybe
+    
+    Dim lower As Long
+    lower = sortedSequence.LowerBound
+    
+    Dim upper As Long
+    upper = sortedSequence.UpperBound
     
     Do While lower < upper
         
         Dim middle As Long
-        middle = seq.MiddleInt(lower, upper)
+        middle = (lower + upper) \ 2
         
-        If sortedSequence(middle) >= value Then
+        Dim curVal
+        Assign curVal, sortedSequence.Item(middle)
+        
+        If defCompare.GreaterThanOrEqualTo(curVal, sought) Then
             upper = middle
         Else
             lower = middle + 1
@@ -100,6 +117,9 @@ Public Function BinarySearch(ByVal value As Variant, ByRef sortedSequence As Var
         
     Loop
     
-    BinarySearch = IIf(sortedSequence(upper) = value Or nearest, upper, -1)
+    Dim found As Boolean
+    found = defEquals.Equals(sortedSequence.Item(upper), sought)
+    
+    Set BinarySearch = Maybe.MakeIf(found Or nearest, upper)
     
 End Function
