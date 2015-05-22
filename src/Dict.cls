@@ -18,6 +18,7 @@ Option Explicit
 ' This file (Dict.cls) is distributed under the MIT license
 ' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
+Implements IShowable
 ' Public Members
 ' --------------
 ' None
@@ -31,44 +32,47 @@ Private pDict As Scripting.Dictionary
 ' ------------
 '
 Private Sub Class_Initialize()
-    Set pDict = New Scripting.Dictionary
-End Sub
-Public Function Create(ParamArray tuples() As Variant) As Dict
 
-    Set Create = FromTuples(List.Copy(tuples))
+    Set pDict = New Scripting.Dictionary
+    
+End Sub
+Public Function Create(ParamArray assocs()) As Dict
+
+    Set Create = FromAssocs(List.Copy(assocs))
     
 End Function
-Public Function FromLists(ByVal keyList As List, ByVal valueList As List) As Dict
-    Debug.Assert (keyList.Count = valueList.Count) ' TODO: raise error
+Public Function FromLists(ByVal ks As IIterable, ByVal vs As IIterable) As Dict
+    Debug.Assert (ks.UpperBound = vs.UpperBound And _
+        ks.LowerBound = vs.LowerBound) ' TODO: raise error
     
     Dim result As New Dict
     
-    ' TODO: use Zip. then expect users to use `FromTuples`?
+    ' TODO: use Zip. then expect users to use `FromAssocs`?
     Dim i As Long
-    For i = 1 To keyList.Count
-        result.Add keyList(i), valueList(i)
+    For i = ks.LowerBound To ks.UpperBound
+        result.Add ks.Item(i), vs.Item(i)
     Next i
     
     Set FromLists = result
     
 End Function
 ' TODO: use a defined type not a tuple but the type must be public....
-Public Function FromTuples(ByVal tuples As List) As Dict
+Public Function FromAssocs(ByVal assocs) As Dict
     
     Dim result As New Dict
-    Dim keyValueTuple As Variant
-    For Each keyValueTuple In tuples
-        
-        result.Add keyValueTuple.Item(1), keyValueTuple.Item(2)
-        
-    Next keyValueTuple
     
-    Set FromTuples = result
+    Dim kv
+    For Each kv In assocs
+        result.Add kv.Key, kv.Value
+    Next
+    
+    Set FromAssocs = result
     
 End Function
-
 Public Function Copy(ByVal thatD As Dict) As Dict
-    Set Copy = FromTuples(thatD.Pairs)
+
+    Set Copy = FromAssocs(thatD.Pairs)
+    
 End Function
 '
 ' Public Properties
@@ -78,112 +82,124 @@ End Function
 '
 ''
 ' `Item`: same as usual
-' TODO: how does pDict do this?
-Public Property Get Item(ByVal key As Variant) As Variant
+' TODO: how does pDict do this -> hashtables
+Public Property Get Item(ByVal k) As Variant
 Attribute Item.VB_UserMemId = 0
-    cast.Assign Item, pDict(key)
+
+    If pDict.Exists(k) Then
+        Assign Item, pDict(k)
+    Else
+        KeyError Me, "Item", defShow.Show(k) & " is not an entry"
+    End If
+    
 End Property
-Public Property Let Item(ByVal key As Variant, ByVal value As Variant)
+Public Property Let Item(ByVal k, ByVal v)
 Attribute Item.VB_UserMemId = 0
-    pDict(key) = value
+
+    pDict(k) = v
+    
 End Property
-Public Property Set Item(ByVal key As Variant, ByVal value As Variant)
+Public Property Set Item(ByVal k, ByVal v)
 Attribute Item.VB_UserMemId = 0
-    Set pDict(key) = value
+
+    Set pDict(k) = v
+    
 End Property
 ''
 ' GetItem: Return default value if `key` does not exist
-Public Property Get GetItem(ByVal key As Variant, _
-        Optional ByVal default As Variant = Empty) As Variant
-    If pDict.Exists(key) Then
-        cast.Assign GetItem, pDict(key)
+Public Function GetItem(ByVal k, Optional ByVal default = Empty) As Variant
+        
+    If pDict.Exists(k) Then
+        Assign GetItem, pDict(k)
     Else
-        cast.Assign GetItem, default
+        Assign GetItem, default
     End If
-End Property
-''
-' Pop: return value, and remove value, has default implementation
-Public Property Get Pop(ByVal key As Variant, _
-        Optional ByVal default As Variant = Empty) As Variant
-    If pDict.Exists(key) Then
-        cast.Assign Pop, pDict(key)
-        pDict.Remove key
-    Else
-        cast.Assign Pop, default
-    End If
-End Property
+    
+End Function
 ''
 ' Pair: return a `Tuple` of (key, value)
-Public Property Get Pair(ByVal key As Variant) As Tuple
-    Set Pair = Tuple.Pack(key, pDict(key))
-End Property
-''
-' PopPair: return Pair and remove them.
-Public Property Get PopPair(ByVal key As Variant, _
-        Optional ByVal default As Variant = Empty) As Tuple
-    If pDict.Exists(key) Then
-        Set PopPair = Pair(key)
-        pDict.Remove key
-    Else
-        Set PopPair = Tuple.Pack(key, default)
-    End If
-End Property
+Public Function Pair(ByVal k) As Assoc
+
+    Set Pair = Assoc.Make(k, pDict(k))
+    
+End Function
 '
 ' Produce Lists
 ' -------------
 '
-Public Property Get Keys() As List
+Public Function Keys() As List
+
     Set Keys = List.Copy(pDict.Keys)
-End Property
-Public Property Get Values() As List
+    
+End Function
+Public Function Values() As List
+
     Set Values = List.Copy(pDict.Items)
-End Property
-Public Property Get Pairs() As List
-    Set Pairs = Tuple.Zip(Keys(), Values())
-End Property
-Public Property Get Count() As Long
-    Count = pDict.Count
-End Property
+    
+End Function
+Public Function Pairs() As List
+
+    Dim result As List
+    Set result = List.Create
+    
+    Dim k
+    For Each k In Keys
+        result.Append Pair(k)
+    Next
+    
+    Set Pairs = result
+    
+End Function
 '
 ' Public Methods
 ' --------------
 '
-''
-' `Add`: add item to dictionary TODO: Raise error if already exists
-Public Sub Add(ByVal key As Variant, ByVal value As Variant)
-    pDict.Add key, value
+Public Function Count() As Long
+
+    Count = pDict.Count
+    
+End Function
+Public Sub Add(ByVal k, ByVal v)
+
+    pDict.Add k, v
+    
 End Sub
 ''
 ' Remove: Remove entry
-Public Sub Remove(ByVal key As Variant)
-    pDict.Remove key
+Public Sub Remove(ByVal k)
+
+    pDict.Remove k
+    
 End Sub
-Public Function Exists(ByVal key As Variant) As Boolean
-    Exists = pDict.Exists(key)
+Public Function Exists(ByVal k) As Boolean
+
+    Exists = pDict.Exists(k)
+    
 End Function
-'
-''
-' Update: add another `Dict` to this `Dict` overwriting when
-' a key alread exists
 Public Sub Update(ByVal other As Dict)
-    Dim key As Variant
-    For Each key In other.Keys
-        pDict(key) = other(key)
-    Next key
+
+    Dim k
+    For Each k In other.Keys
+        pDict(k) = other(k)
+    Next
+    
 End Sub
-Public Sub Clear(ByVal key As Variant)
+Public Sub Clear()
+
     pDict.RemoveAll
+    
 End Sub
+'
+' IShowable
+' ---------
+'
+Public Function Show() As String
 
-Public Property Get ToString(Optional ByVal delim As String = ", ") As String
+    Show = defShow.ShowableObject(Me, Pairs.ToArray)
+    
+End Function
+Private Function IShowable_Show() As String
 
-    Dim result As String
-    
-    Dim key As Variant
-    For Each key In pDict.Keys()
-        result = result & delim & key & ": " & pDict.Item(key)
-    Next key
-    
-    ToString = "{" & Mid(result, Len(delim) + 1) & "}"
-    
-End Property
+    IShowable_Show = Show
+
+End Function

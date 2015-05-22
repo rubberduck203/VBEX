@@ -9,10 +9,16 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Public Function Apply(ByRef args() As Variant) As Variant
+Public Function Apply(ParamArray args() As Variant) As Variant
+
+End Function
+Public Function ApplyOnArray(ByRef args() As Variant) As Variant
+
+End Function
+Public Function Compose(ByVal f As IApplicable) As IApplicable
+
+End Function
+Public Function AndThen(ByVal g As IApplicable) As IApplicable
 
 End Function
 
-Public Function Exec(ParamArray args() As Variant) As Variant
-
-End Function

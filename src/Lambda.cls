@@ -17,7 +17,7 @@ Attribute VB_Exposed = True
 '
 '       "(x, y, z) => x * y + z"
 '
-' Or Scala short hand
+' Or Scala-ish short hand
 '
 '      "( _ * _ ) + _"
 '
@@ -44,7 +44,7 @@ Attribute VB_Exposed = True
 '         Foo = 12
 '     End Function
 '     Public Sub Bar()
-'         Debug.Print List.Create(1,2,3).Map(Lambda.FromShortHand("_ + Foo()")).ToString
+'         Debug.Print List.Create(1,2,3).Map(Lambda.FromShort("_ + Foo()")).Show
 '     End Sub
 '
 ' `Foo` is not declared in the scope of the lambda.
@@ -53,259 +53,190 @@ Attribute VB_Exposed = True
 ' So it should be able to reference VBEX methods.  Ergo, this is valid.
 '
 '    Private Function BaseNames(ByVal filepaths As List) As List
-'        Set BaseNames = filepaths.Map(Lambda.FromString("(f) => path.BaseName(f)"))
+'        Set BaseNames = filepaths.Map(Lambda.FromProper("(f) => path.BaseName(f)"))
 '    End Function
 '
 '
 ' TODO:
 ' -----
 '
-'  - Generate code on class init and delete on destruction
-'    + Don't delete other lambdas
 '  - Delegate as just reference to client code procedure
 '  - pass local variables to the lambda.
 '
 Option Explicit
-Implements IPrintable
+Implements IShowable
 Implements IApplicable
 '
 ' Constants
 ' ---------
 '
-Private Const DEFAULT_LAMBDA_ID As String = "LambdaFunction"
 Private Const CANNOT_FIND_MACRO As Integer = 1004
 Private Const INVALID_LAMBDA_EXPRESSION As Integer = 666 ' TODO:
-'Private Const LAMBDA_PROJECT As String = "LambdasProject" 'Naming convention?
-Private Const LAMBDA_MODULE As String = "LambdasModule" '?
 Private Const SHORT_HAND_CHAR As String = "_" ' TODO: it's acutal name
 '
 ' Private Members
 ' ---------------
 '
 Private pId As String ' name of the lamda
-Private pExpression As String ' expression
-Private pParameters() As String ' name of the args
+'
+' Class
+' -----
+Private Sub Class_Terminate()
+    
+    LambdaTable.RemoveLambda pId
+    
+End Sub
 '
 ' Constructors
 ' ------------
 '
 ''
 ' Create an Lambda Function
-Public Function Create(ByRef params() As String, ByVal expr As String) As Lambda
+Public Function Make(ByRef args() As String, ByVal expr As String) As Lambda
     
     Dim result As New Lambda
-    result.Assign DEFAULT_LAMBDA_ID, params, expr
-    Set Create = result
+    result.SendToLambdaTable args, expr
+    Set Make = result
     
 End Function
-''
-' Initializtion wrapper.  Everything is needed at once,  we cannot do them individually
-Friend Sub Assign(ByVal id As String, ByRef params() As String, ByVal expr As String)
-    
-    pExpression = expr
-    pId = id ' TODO: Autogenerate so we can have multiple lambdas in registry.
-    pParameters = params 'TODO: VALIDATE these, All alpha characters, and trim them
-    
-End Sub
-Public Function FromString(ByVal lambdaExpression As String) As Lambda
-    
-    Set FromString = FromProper(lambdaExpression)
-     
-End Function
-Private Function FromProper(ByVal proper As String) As Lambda
+'
+' "(args) => expr"
+' Public Function func(args) As Variant
+' cast.Assign func, expr
+' End Function
+Public Function FromProper(ByVal proper As String) As Lambda
 
     Dim splitExpr() As String
     splitExpr = Split(proper, ") => ")
     
-    Dim args As String
-    args = Mid$(splitExpr(0), 2) ' skip "("
+    Dim params As String
+    params = Mid$(splitExpr(0), 2) ' skip "("
     
     Dim expr As String
     expr = splitExpr(1)
     
-    Dim params() As String
-    params = Split(Replace$(args, " ", ""), ",")
-    Set FromProper = Lambda.Create(params, expr)
+    Dim args() As String
+    args = Split(Replace$(params, " ", ""), ",")
+    
+    Set FromProper = Make(args, expr)
     
 End Function
-Public Function FromShortHand(ByVal shorthand As String) As Lambda
+Public Function FromShort(ByVal shorthand As String) As Lambda
 
-    Dim aCode As Integer
-    aCode = Asc("a")
+    Const ACODE As Integer = 97 ' Asc("a")
     
     Dim expr As String
     expr = shorthand
     
-    Dim paramSize As Integer
-    paramSize = UBound(Split(expr, SHORT_HAND_CHAR)) - 1
+    Dim argsize As Integer
+    argsize = UBound(Split(expr, SHORT_HAND_CHAR)) - 1
     
-    Dim params() As String
-    ReDim params(0 To paramSize)
+    Dim args() As String
+    ReDim args(0 To argsize)
     
     Dim i As Integer
-    For i = 0 To paramSize
+    For i = 0 To argsize
     
         Dim paramChar As String
-        paramChar = Chr(aCode + i)
+        paramChar = Chr(ACODE + i)
         
         expr = Replace(expr, SHORT_HAND_CHAR, paramChar, Count:=1)
         
-        params(i) = paramChar
+        args(i) = paramChar
         
     Next i
     
-    Set FromShortHand = Create(params, expr)
+    Set FromShort = Make(args, expr)
     
 End Function
 '
-' Usage
-' -----
+' Friend Methods
+' --------------
 '
-Public Function Exec(ParamArray params() As Variant) As Variant
-Attribute Exec.VB_UserMemId = 0
+Friend Sub SendToLambdaTable(ByRef args() As String, ByVal expr As String)
     
-    cast.Assign Exec, Apply(cast.CArray(params))
+    pId = LambdaTable.AddLambda(args, expr)
+    
+End Sub
+'
+' IApplicable
+' -----------
+'
+Public Function Apply(ParamArray args()) As Variant
+
+    Assign Apply, IApplicable_ApplyOnArray(CArray(args))
+
+End Function
+Private Function IApplicable_Apply(ParamArray args()) As Variant
+
+    Assign IApplicable_Apply, IApplicable_ApplyOnArray(CArray(args))
     
 End Function
-Public Function Apply(ByRef args() As Variant) As Variant
+Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
     
-    Dim result As Variant
-    On Error GoTo ErrHandler
-    GenerateFunction
+    Dim result
     Select Case UBound(args) + 1
         Case 0
-            cast.Assign result, Application.Run(pId)
+            Assign result, Application.Run(pId)
         Case 1
-            cast.Assign result, Application.Run(pId, args(0))
+            Assign result, Application.Run(pId, args(0))
         Case 2
-            cast.Assign result, Application.Run(pId, args(0), args(1))
+            Assign result, Application.Run(pId, args(0), args(1))
         Case 3
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2))
+            Assign result, Application.Run(pId, args(0), args(1), args(2))
         Case 4
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3))
         Case 5
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4))
         Case 6
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5))
         Case 7
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6))
         Case 8
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7))
         Case 9
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7), args(8))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7), args(8))
         Case 10
-            cast.Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7), args(8), args(9))
+            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7), args(8), args(9))
         Case Else
-            Err.Raise 5, TypeName(Me) & ".Apply", "Too many parameters. Max is 10" ' too many parameters errors
+            NotImplementedError Me, "IApplicable_ApplyOnArray"
     End Select
 
-    cast.Assign Apply, result
-    
-CleanExit:
-    DeleteFunction
-    Exit Function
-    
-ErrHandler:
-    
-    If Err.Number = CANNOT_FIND_MACRO Then ' more descriptive later
-        Err.Raise Err.Number, Err.source, Err.Description, Err.HelpFile, Err.HelpContext
-    End If
-    Resume CleanExit
+    Assign IApplicable_ApplyOnArray, result
     
 End Function
-'
-' Public Properties
-' -----------------
-'
-'
-' Private Methods
-' ---------------
-'
-' ### Code Manipulation
-'
-Private Sub GenerateFunction()
-    
-    With LambdaCodeModule
-        .DeleteLines 1, .CountOfLines
-        .AddFromString Content
-    End With
-    
-End Sub
-Private Sub DeleteFunction()
-    
-    With LambdaCodeModule
-        .DeleteLines 1, .CountOfLines
-    End With
-    
-End Sub
-'
-' ### Private Properties
-'
-Private Property Get ParameterCount() As String
-    
-    ParameterCount = UBound(pParameters) - LBound(pParameters) + 1
-    
-End Property
-Private Property Get Parameters() As String
-    
-    Parameters = Join(pParameters, ", ")
-    
-End Property
-Private Property Get Signature() As String
-    
-    Signature = "Public Function " & pId & "(" & Parameters & ") As Variant"
-    
-End Property
-Private Property Get Content() As String
+Public Function Compose(ByVal f As IApplicable) As IApplicable
 
-    Content = Join(Array("", Signature, Body, "End Function", ""), vbNewLine)
-    
-End Property
-Private Property Get Expression() As String
-    
-    Expression = pExpression
-    
-End Property
-Private Property Get Body() As String
-    
-    Body = vbTab & pId & " = " & pExpression
-    
-End Property
-Private Property Get LambdaCodeModule() As CodeModule
-    
-     Set LambdaCodeModule = ThisWorkbook.VBProject.VBComponents(LAMBDA_MODULE).CodeModule
-     
-End Property
-'
-' Error Raising
-' -------------
-'
-'
-' Interfaces
-' ----------
-'
-' ### IApplicable
-'
-Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
-
-    cast.Assign IApplicable_Apply, Apply(args)
+    Set Compose = defApply.Compose(Me, f)
 
 End Function
-Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
+Public Function AndThen(ByVal g As IApplicable) As IApplicable
 
-    cast.Assign IApplicable_Exec, Apply(cast.CArray(args))
+    Set AndThen = defApply.AndThen(Me, g)
 
 End Function
-'
-' ### IPrintable
-'
-Public Property Get ToString() As String
-    
-    ToString = TypeName(Me) & "[(" & Parameters & ") => " & Expression & "]"
-    
-End Property
-Public Property Get IPrintable_ToString() As String
+Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
 
-    IPrintable_ToString = ToString()
+    Set IApplicable_Compose = Compose(f)
+
+End Function
+Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
+
+    Set IApplicable_AndThen = AndThen(g)
+
+End Function
+
+'
+' IShowable
+' ---------
+'
+Public Function Show() As String
+
+    Show = defShow.ParamShowableObject(Me, pId)
+
+End Function
+Private Function IShowable_Show() As String
+
+    IShowable_Show = Show
     
-End Property
+End Function

@@ -170,7 +170,7 @@ End Sub
 '
 Private Sub ReRaiseError(ByRef e As ErrObject)
 
-    Err.Raise e.Number, e.source, e.Description, e.HelpFile, e.HelpContext
+    Err.Raise e.Number, e.source, e.description, e.HelpFile, e.HelpContext
     
 End Sub
 Private Sub OnFailedCreateError(ByVal method As String, ByVal operation As String)
