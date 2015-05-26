@@ -36,7 +36,7 @@ End Enum
 ' -------------
 '
 Public Sub BuildVBEX(ByVal sourceDir As String, ByVal buildDir As String)
-
+	
     Dim buildPath As String
     buildPath = buildDir & "VBEX.xlam"
 
@@ -72,7 +72,7 @@ Public Sub BuildVBEX(ByVal sourceDir As String, ByVal buildDir As String)
     
 End Sub
 Public Sub ExportVBEX(ByVal exportDir As String)
-
+	
     Dim vbexPrj As Object
     Set vbexPrj = Workbooks("VBEX.xlam").VBProject
     
