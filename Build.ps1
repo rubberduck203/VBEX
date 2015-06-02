@@ -1,14 +1,13 @@
-﻿# Build.ps1
+# Build.ps1
 #
 # Collects VBEX files into an office add-in file
 #
 # Copywrite (C) 2015 Philip Wales
 #
 Param(
-    [ValidateSet("Excel")]
-        [String]$officeApp = "Excel",
-    [String]$sourceDir = "$PWD",
-    [String]$buildDir = "$PWD"
+	[String]$buildPath,
+	[System.Array]$refs,
+    [String]$sourceDir
 )
 
 # locations of required libraries change according to OS arch.
@@ -19,42 +18,28 @@ $programFiles = if ([Environment]::Is64BitOperatingSystem) {
 	"Program Files"
 }
 
-# constants are illegible in powershell
-$VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
-$VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
-$RUBBERDUCK_LIB = "C:\$programFiles\Rubberduck\Rubberduck\Rubberduck.tlb"
-
 function main {
 
-    $ext = "xlam" # switch on EXCEL/ACCESS
-    $addinFormat = 55 # switch on EXCEL/ACCESS
-    $officeCOM = GetOfficeCOM($officeApp)
-    
-    $buildPath = (Join-Path $buildDir "VBEX.$ext") 
-    $testPath = (Join-Path $buildDir "VBEX-Testing.$ext") 
-
-    $srcs = (Get-ChildItem (Join-Path $sourceDir "src")).FullName
-    $tests = (Get-ChildItem (Join-Path $sourceDir "test")).FullName
-    
+	$fileExt = [System.IO.Path]::GetExtension($buildPath)
+	$officeCOM = switch -wildcard ($fileExt.ToLower()) {
+        ".xl*" {New-Object -ComObject Excel.Application; break}
+        ".ac*" {throw "Access is not yet supported"; break} #{New-Object -ComObject Acces.Application; break}
+        default {throw "$fileName is not a supported office file."}
+    } 
+    $srcs = (Get-ChildItem $sourceDir).FullName
     dosEOLFolder $srcs
-    dosEOLFolder $tests
-    
-    $srcRefs = @($VBA_EXTENSIBILITY_LIB, $VBA_SCRIPTING_LIB)
-    $testRefs = $srcRefs + @($RUBBERDUCK_LIB)
-    
-    $srcAddin = BuildAddin $officeCOM $srcs $srcRefs $buildPath "VBEX"
-    $testAddin = BuildAddin $officeCOM $tests $testRefs $testPath "VBEXTesting"
-    
+    $srcAddin = (BuildAddin $officeCOM $srcs $refs $buildPath)
     $officeCOM.Quit()
 }
 function BuildAddin($officeCOM, 
                     [System.Array] $moduleFiles, 
                     [System.Array] $references,
-                    [String] $outputPath,
-                    [String] $projectName) {
+                    [String] $outputPath) {
 
     $newFile = $officeCOM.Workbooks.Add()
     $prj = $newFile.VBProject
+	
+	$projectName = [System.IO.Path]::GetFileNameWithoutExtension($outputPath)
     $prj.Name = $projectName
 	
 	$moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
@@ -63,14 +48,6 @@ function BuildAddin($officeCOM,
     #save as addin
     $newFile.SaveAs($outputPath, $addinFormat)
     return $newFile
-}
-function GetOfficeCom([String] $officeAppName) {
-    $officeCOM = switch ($officeApp.ToUpper()) {
-        "EXCEL" {New-Object -ComObject Excel.Application; break}
-        #"ACCESS" {New-Object -ComObject Acces.Application; break}
-        default {throw "$officeApp is not a supported office application."}
-    }
-    return $officeCOM
 }
 function dosEOLFolder([System.Array] $textFiles) {
     $textFiles | ForEach-Object { dosEOL $_ }
@@ -81,5 +58,4 @@ function dosEOL([String] $textFile) {
     Remove-Item $textFile
     Move-Item $tempOut $textFile
 }
-# Entry
-main
+main # entry point
