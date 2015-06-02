@@ -29,6 +29,8 @@ Public Function Show(ByVal x) As String
         result = UnShowableObject(x)
     ElseIf cast.IsArray(x) Then
         result = ShowArray(x)
+    ElseIf IsNull(x) Then
+        x = vbNullString
     Else
         result = x
     End If

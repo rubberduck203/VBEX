@@ -9,8 +9,8 @@ Public Sub OnArgsGetTest()
     Dim xs As List
     Set xs = List.Create("a", "b")
 
-    Dim nc As NameCall
-    Set nc = NameCall.OnArgs("Item", VbGet, xs)
+    Dim nc As OnArgs
+    Set nc = OnArgs.Make("Item", VbGet, xs)
 
     BatteryApplicable.Battery nc, 2, "b"
 
@@ -21,8 +21,8 @@ Public Sub OnArgsMethodTest()
     Dim xs As SortedSet
     Set xs = SortedSet.Create(1, 2, 3)
 
-    Dim nc As NameCall
-    Set nc = NameCall.OnArgs("Contains", VbMethod, xs)
+    Dim nc As OnArgs
+    Set nc = OnArgs.Make("Contains", VbMethod, xs)
 
     BatteryApplicable.Battery nc, 2, True
     BatteryApplicable.Battery nc, 4, False
@@ -37,8 +37,8 @@ Public Sub OnObjectTest()
     Dim s2 As SortedSet
     Set s2 = SortedSet.Create("a", "b", "c")
 
-    Dim nc As NameCall
-    Set nc = NameCall.OnObject("Contains", VbMethod, 2)
+    Dim nc As OnObject
+    Set nc = OnObject.Make("Contains", VbMethod, 2)
 
     BatteryApplicable.Battery nc, s1, True
     BatteryApplicable.Battery nc, s2, False

@@ -39,14 +39,14 @@ Friend Sub AssignKeyVal(ByVal k, ByVal v)
     Set pPair = Tuple.Pack(k, v)
     
 End Sub
-Public Property Get Key() As Variant
+Public Property Get key() As Variant
     
-    Assign Key, pPair.Item(1)
+    Assign key, pPair.Item(1)
     
 End Property
-Public Property Get Value() As Variant
+Public Property Get value() As Variant
     
-    Assign Value, pPair.Item(2)
+    Assign value, pPair.Item(2)
     
 End Property
 '
@@ -54,7 +54,7 @@ End Property
 '
 Public Function Show() As String
 
-    Show = defShow.Show(Key) & " -> " & defShow.Show(Value)
+    Show = defShow.Show(key) & " -> " & defShow.Show(value)
 
 End Function
 Private Function IShowable_Show() As String

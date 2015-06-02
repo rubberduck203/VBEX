@@ -33,17 +33,17 @@ Public Function Make(ByVal outerOp As IApplicable, _
         ByVal innerOp As IApplicable) As Composed
 
     Dim result As New Composed
-    Set result.Inner = innerOp
-    Set result.Outer = outerOp
+    Set result.inner = innerOp
+    Set result.outer = outerOp
     Set Make = result
 
 End Function
-Friend Property Set Inner(ByVal innerOp As IApplicable)
+Friend Property Set inner(ByVal innerOp As IApplicable)
 
     Set pInnerOp = innerOp
 
 End Property
-Friend Property Set Outer(ByVal outerOp As IApplicable)
+Friend Property Set outer(ByVal outerOp As IApplicable)
 
     Set pOuterOp = outerOp
 
