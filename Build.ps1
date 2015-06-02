@@ -13,26 +13,16 @@ Param(
 
 # locations of required libraries change according to OS arch.
 # Our libs are 32 bit.
-if ([Environment]::Is64BitOperatingSystem) {
-    $programFiles = "Program Files (x86)"
-} else {
-    $programFiles = "Program Files"
+$programFiles = if ([Environment]::Is64BitOperatingSystem) { 
+	"Program Files (x86)"
+} else { 
+	"Program Files"
 }
 
 # constants are illegible in powershell
 $VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
-$VBA_EXTENSIBILITY_NAME = "VBIDE"
 $VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
-$VBA_SCRIPTING_NAME = "Scripting"
 $RUBBERDUCK_LIB = "C:\$programFiles\Rubberduck\Rubberduck\Rubberduck.tlb"
-$RUBBERDUCK_NAME = "Rubberduck"
-
-# enums are also equally illegible
-$COMPTYPE_stdModule = 1
-$COMPTYPE_classModule = 2
-$COMPTYPE_msForm = 3
-$COMPTYPE_activeXDesigner = 11
-$COMPTYPE_document = 100
 
 function main {
 
@@ -66,35 +56,24 @@ function BuildAddin($officeCOM,
     $newFile = $officeCOM.Workbooks.Add()
     $prj = $newFile.VBProject
     $prj.Name = $projectName
-
-    #add modules
-    ForEach ($moduleFile in $moduleFiles) {
-        $prj.VBComponents.Import($moduleFile)
-    }
-
-    #add references
-    ForEach ($reference in $references) {
-        $prj.References.AddFromFile($reference)
-    }
+	
+	$moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
+	$references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
     
     #save as addin
     $newFile.SaveAs($outputPath, $addinFormat)
     return $newFile
 }
 function GetOfficeCom([String] $officeAppName) {
-
     $officeCOM = switch ($officeApp.ToUpper()) {
         "EXCEL" {New-Object -ComObject Excel.Application; break}
         #"ACCESS" {New-Object -ComObject Acces.Application; break}
         default {throw "$officeApp is not a supported office application."}
     }
-    
     return $officeCOM
 }
 function dosEOLFolder([System.Array] $textFiles) {
-    ForEach ($textFile in $textFiles) {
-        dosEOL $textFile
-    }
+    $textFiles | ForEach-Object { dosEOL $_ }
 }
 function dosEOL([String] $textFile) {
     $tempOut = "$textFile-CRLF"
