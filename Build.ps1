@@ -10,14 +10,6 @@ Param(
     [String]$sourceDir
 )
 
-# locations of required libraries change according to OS arch.
-# Our libs are 32 bit.
-$programFiles = if ([Environment]::Is64BitOperatingSystem) { 
-	"Program Files (x86)"
-} else { 
-	"Program Files"
-}
-
 function main {
 
 	$fileExt = [System.IO.Path]::GetExtension($buildPath)
@@ -46,7 +38,7 @@ function BuildAddin($officeCOM,
 	$references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
     
     #save as addin
-    $newFile.SaveAs($outputPath, $addinFormat)
+    $newFile.SaveAs($outputPath)
     return $newFile
 }
 function dosEOLFolder([System.Array] $textFiles) {
