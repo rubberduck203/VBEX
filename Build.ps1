@@ -6,8 +6,8 @@
 #
 Param(
 	[String]$buildPath,
-	[System.Array]$refs,
-    [String]$sourceDir
+	[System.Array]$sourceFiles,
+	[System.Array]$references
 )
 
 function main {
@@ -18,9 +18,8 @@ function main {
         ".ac*" {throw "Access is not yet supported"; break} #{New-Object -ComObject Acces.Application; break}
         default {throw "$fileName is not a supported office file."}
     } 
-    $srcs = (Get-ChildItem $sourceDir).FullName
-    dosEOLFolder $srcs
-    $srcAddin = (BuildAddin $officeCOM $srcs $refs $buildPath)
+    dosEOLFolder $sourceFiles
+    $srcAddin = (BuildAddin $officeCOM $sourceFiles $references $buildPath)
     $officeCOM.Quit()
 }
 function BuildAddin($officeCOM, 
@@ -32,13 +31,14 @@ function BuildAddin($officeCOM,
     $prj = $newFile.VBProject
 	
 	$projectName = [System.IO.Path]::GetFileNameWithoutExtension($outputPath)
+	
     $prj.Name = $projectName
 	
 	$moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
 	$references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
     
     #save as addin
-    $newFile.SaveAs($outputPath)
+    $newFile.SaveAs($outputPath, 55)
     return $newFile
 }
 function dosEOLFolder([System.Array] $textFiles) {
