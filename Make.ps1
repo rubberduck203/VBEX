@@ -21,15 +21,14 @@ $programFiles = if ([Environment]::Is64BitOperatingSystem) {
 $VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
 $VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
 $RUBBERDUCK_LIB = "C:\$programFiles\Rubberduck\Rubberduck\Rubberduck.tlb"
+$buildScript = (Join-Path $PSScriptRoot "Build.ps1")
 
 $srcPath = (Join-Path $PSScriptRoot "VBEX.xlam")
-$testPath = (Join-Path $PSScriptRoot "VBEXTesting.xlam")
-
 $srcFiles = (Get-ChildItem (Join-Path $PSScriptRoot "src")).FullName
+$srcRefs = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB")
+& "$buildScript" "$srcPath" $srcFiles $srcRefs
+
+$testPath = (Join-Path $PSScriptRoot "VBEXTesting.xlam")
 $testFiles = (Get-ChildItem (Join-Path $PSScriptRoot "test")).FullName
-
-$srcRefs = @($VBA_EXTENSIBILITY_LIB, $VBA_SCRIPTING_LIB)
-$srcRefs = @($RUBBERDUCK_LIB)
-
-$buildScript = (Join-Path $PSScriptRoot "Build.ps1")
-#$buildScript $srcPath $srcFiles $srcRefs
+$testRefs = @("$RUBBERDUCK_LIB")
+& "$buildScript" "$testPath" $testFiles $testRefs
