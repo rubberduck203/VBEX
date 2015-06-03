@@ -20,7 +20,6 @@ $programFiles = if ([Environment]::Is64BitOperatingSystem) {
 # constants are illegible in powershell
 $VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
 $VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
-$RUBBERDUCK_LIB = "C:\$programFiles\Rubberduck\Rubberduck\Rubberduck.tlb"
 $buildScript = (Join-Path $PSScriptRoot "Build.ps1")
 
 $srcPath = (Join-Path $PSScriptRoot "VBEX.xlam")
@@ -30,5 +29,5 @@ $srcRefs = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB")
 
 $testPath = (Join-Path $PSScriptRoot "VBEXTesting.xlam")
 $testFiles = (Get-ChildItem (Join-Path $PSScriptRoot "test")).FullName
-$testRefs = @("$RUBBERDUCK_LIB")
+$testRefs = @()
 & "$buildScript" "$testPath" $testFiles $testRefs
