@@ -35,7 +35,6 @@ function BuildAddin($officeCOM,
     $prj.Name = $projectName
 	
 	$moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
-	$references | ForEach-Object { Write-Host $_  }
 	$references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
     
     #save as addin
