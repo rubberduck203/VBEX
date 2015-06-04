@@ -22,12 +22,16 @@ $VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA
 $VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
 $buildScript = (Join-Path $PSScriptRoot "Build.ps1")
 
-$srcPath = (Join-Path $PSScriptRoot "VBEX.xlam")
-$srcFiles = (Get-ChildItem (Join-Path $PSScriptRoot "src")).FullName
-$srcRefs = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB")
-& "$buildScript" "$srcPath" $srcFiles $srcRefs
+$buildRefs = @{
+    "src" = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB");
+    "test" = @()
+}
 
-$testPath = (Join-Path $PSScriptRoot "VBEXTesting.xlam")
-$testFiles = (Get-ChildItem (Join-Path $PSScriptRoot "test")).FullName
-$testRefs = @()
-& "$buildScript" "$testPath" $testFiles $testRefs
+ForEach ($build In $buildRefs.Keys) {
+    $path = (Join-Path $PSScriptRoot "VBEX$build.xlam")
+    $files = (Get-ChildItem (Join-Path $PSScriptRoot $build)).FullName
+    $refs = $buildRefs[$build]
+    & "$buildScript" "$path" $files $refs
+}
+
+Write-Host "VBEXtest must reference VBEXsrc and Rubberduck if prior to v1.3"
