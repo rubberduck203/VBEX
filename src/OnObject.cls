@@ -102,7 +102,7 @@ Private Function IApplicable_ApplyOnArray(ByRef params() As Variant) As Variant
         InvalidArguementsError params
     End If
     
-    Assign IApplicable_ApplyOnArray, defApply.CallByNameWithArray(Callee, pMethod, pCallType, pArgs)
+    Assign IApplicable_ApplyOnArray, defApply.CallByNameOnArray(Callee, pMethod, pCallType, pArgs)
 
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable

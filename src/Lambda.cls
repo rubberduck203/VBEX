@@ -174,35 +174,7 @@ Private Function IApplicable_Apply(ParamArray args()) As Variant
 End Function
 Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
     
-    Dim result
-    Select Case UBound(args) + 1
-        Case 0
-            Assign result, Application.Run(pId)
-        Case 1
-            Assign result, Application.Run(pId, args(0))
-        Case 2
-            Assign result, Application.Run(pId, args(0), args(1))
-        Case 3
-            Assign result, Application.Run(pId, args(0), args(1), args(2))
-        Case 4
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3))
-        Case 5
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4))
-        Case 6
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5))
-        Case 7
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6))
-        Case 8
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7))
-        Case 9
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7), args(8))
-        Case 10
-            Assign result, Application.Run(pId, args(0), args(1), args(2), args(3), args(4), args(5), args(6), args(7), args(8), args(9))
-        Case Else
-            NotImplementedError Me, "IApplicable_ApplyOnArray"
-    End Select
-
-    Assign IApplicable_ApplyOnArray, result
+    Assign IApplicable_ApplyOnArray, defApply.ApplicationRunOnArray(pId, args)
     
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable

@@ -78,7 +78,7 @@ Private Function IApplicable_Apply(ParamArray args() As Variant) As Variant
 End Function
 Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
 
-    Assign IApplicable_ApplyOnArray, defApply.CallByNameWithArray(pObj, pMethod, pCallType, args)
+    Assign IApplicable_ApplyOnArray, defApply.CallByNameOnArray(pObj, pMethod, pCallType, args)
 
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable
