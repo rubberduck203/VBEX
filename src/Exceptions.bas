@@ -7,6 +7,7 @@ End Enum
 Public Enum exErrorNums
     TYPE_ERROR = 13
     UNIMPLEMENTED = 1
+    VALUE_ERROR = 666
 End Enum
 '
 ' Exceptions
@@ -59,7 +60,7 @@ End Sub
 Public Sub ValueError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
         
-    NotImplementedError "Exceptions", "ValueError"
+    Err.Raise exErrorNums.VALUE_ERROR, description:=MakeDescription(raiser, method, msg)
     
 End Sub
 '
