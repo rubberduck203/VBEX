@@ -32,7 +32,7 @@ Public Sub ComposeRecurseTest()
     Set comp = Composed.Make(secondOp, firstOp)
     
     Dim thirdOp As Lambda
-    Set thirdOp = Lambda.FromShort("_ / 2")
+    Set thirdOp = Lambda.FromShort("_ \ 2")
 
     BatteryApplicable.Battery Composed.Make(thirdOp, comp), 5, 85
 

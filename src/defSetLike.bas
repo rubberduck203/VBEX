@@ -9,7 +9,7 @@ Public Function IsDisJoint(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolea
     IsDisJoint = (xs.Intersect(ys).Count = 0)
     
 End Function
-Public Function IsSubSetOf(ByVal xs, ByVal ys As ISetLike) As Boolean
+Public Function IsSubSetOf(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
     
     Dim x
     For Each x In xs

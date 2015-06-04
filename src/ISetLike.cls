@@ -12,6 +12,10 @@ Option Explicit
 Public Function Contains(ByVal sought) As Boolean
 
 End Function
+Public Property Get Elements() As IUnknown
+Attribute Elements.VB_UserMemId = -4
+
+End Property
 Public Function Count() As Long
 
 End Function

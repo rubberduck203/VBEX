@@ -300,6 +300,11 @@ Public Function SymmetricDifference(ByVal other As SortedSet) As SortedSet
     Set SymmetricDifference = defSetLike.SymmetricDifference(SortedSet, Me, other)
     
 End Function
+Private Property Get ISetLike_Elements() As IUnknown
+    
+    Set ISetLike_Elements = Me.NewEnum
+    
+End Property
 Private Function ISetLike_Contains(ByVal sought) As Boolean
 
     ISetLike_Contains = Contains(sought)

@@ -245,8 +245,8 @@ End Sub
 '
 ''
 ' Append: Vanilla `Add`
-Public Sub Append(ParamArray elements() As Variant)
-    Extend CVar(elements)
+Public Sub Append(ParamArray Elements() As Variant)
+    Extend CVar(Elements)
 End Sub
 ''
 ' Extend: Append sequence

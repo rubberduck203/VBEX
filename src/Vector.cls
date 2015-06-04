@@ -104,9 +104,9 @@ Public Function Copy(ByVal sequence) As Vector
     
 End Function
 
-Public Sub Append(ParamArray elements())
+Public Sub Append(ParamArray Elements())
 
-    Extend CVar(elements)
+    Extend CVar(Elements)
     
 End Sub
 Public Sub Extend(ByVal sequence)
@@ -131,9 +131,9 @@ Private Function IBuildable_MakeEmpty() As IBuildable
     Set IBuildable_MakeEmpty = Vector.Create
     
 End Function
-Private Sub IBuildable_AddItem(ByVal elements)
+Private Sub IBuildable_AddItem(ByVal Elements)
 
-    Extend CVar(elements)
+    Extend CVar(Elements)
     
 End Sub
 Private Sub IBuildable_AddItems(ByVal sequence)

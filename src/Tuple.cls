@@ -158,15 +158,15 @@ End Property
 '
 '     x, y, z = t
 '
-Public Sub Unpack(ParamArray elements())
+Public Sub Unpack(ParamArray Elements())
 
-    If ArraySize(pArray) = ArraySize(cast.CArray(elements)) Then
+    If ArraySize(pArray) = ArraySize(cast.CArray(Elements)) Then
         Dim i As Long
         For i = 0 To ArraySize(pArray)
-            cast.Assign elements(i), pArray(i)
+            cast.Assign Elements(i), pArray(i)
         Next i
     Else
-        TupleSizeError "Unpack", cast.CArray(elements)
+        TupleSizeError "Unpack", cast.CArray(Elements)
     End If
     
 End Sub
@@ -174,12 +174,12 @@ End Sub
 ' Explode: Load elements into array `arr`
 ' arr must be an array
 '
-Public Sub Explode(ByRef elements())
+Public Sub Explode(ByRef Elements())
     
-    If ArraySize(pArray) = ArraySize(elements) Then
-        CopyArray elements, pArray
+    If ArraySize(pArray) = ArraySize(Elements) Then
+        CopyArray Elements, pArray
     Else
-        TupleSizeError "Explode", elements
+        TupleSizeError "Explode", Elements
     End If
     
 End Sub
