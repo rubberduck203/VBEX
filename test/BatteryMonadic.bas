@@ -1,5 +1,7 @@
 Attribute VB_Name = "BatteryMonadic"
+'@TestModule
 Option Explicit
+Option Private Module
 Private Assert As New Rubberduck.AssertClass
 '
 ' Monadic Battery
@@ -17,7 +19,7 @@ Public Sub Battery(ByVal monad As IMonadic)
     Set g = Lambda.FromShort("_ + 13")
     
     Dim u As IApplicable
-    Set u = NameCall.OnArgs("Unit", VbMethod, monad)
+    Set u = OnArgs.Make("Unit", VbMethod, monad)
     
     Dim uf As IApplicable
     Set uf = Composed.Make(u, f)
@@ -47,7 +49,7 @@ Private Sub Associativity(ByVal m As IMonadic, ByVal f As IApplicable, _
     Set leftSide = m.bind(f).bind(g)
 
     Dim nc As IApplicable ' .Bind(g)
-    Set nc = NameCall.OnObject("Bind", VbMethod, g)
+    Set nc = OnObject.Make("Bind", VbMethod, g)
     
     Dim h As IApplicable ' nc.Apply(f(x)) ==  f(x).Bind(g)
     Set h = Composed.Make(nc, f)
@@ -79,7 +81,7 @@ Private Sub RightUnit(ByVal m As IMonadic)
     ' m.Bind(unit) = m
     
     Dim u As IApplicable
-    Set u = NameCall.OnArgs("Unit", VbMethod, m)
+    Set u = OnArgs.Make("Unit", VbMethod, m)
     
     Dim leftSide As IEquatable
     Set leftSide = m.bind(u)

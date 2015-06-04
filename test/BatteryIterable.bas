@@ -1,5 +1,7 @@
 Attribute VB_Name = "BatteryIterable"
+'@TestModule
 Option Explicit
+Option Private Module
 Private Assert As New Rubberduck.AssertClass
 '
 ' Iterable Battery

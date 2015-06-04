@@ -1,7 +1,8 @@
 Attribute VB_Name = "TestTuple"
 '@TestModule
-Private Assert As New Rubberduck.AssertClass
 Option Explicit
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
 
 Private Sub TupleTestEmpty(ByVal t As Tuple)
     Assert.IsNotNothing t, "Empty Tuple is not nothing"

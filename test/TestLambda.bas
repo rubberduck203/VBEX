@@ -1,9 +1,8 @@
 Attribute VB_Name = "TestLambda"
 '@TestModule
 Option Explicit
+Option Private Module
 Private Assert As New Rubberduck.AssertClass
-
-
 
 '@TestMethod
 Public Sub LambdaFromProper()

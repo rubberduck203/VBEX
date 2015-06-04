@@ -1,7 +1,8 @@
 Attribute VB_Name = "TestSortedSet"
 '@TestModule
-Private Assert As New Rubberduck.AssertClass
 Option Explicit
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
 
 Private Sub SetEmptyConstructorTest(ByVal emptyset As SortedSet)
     

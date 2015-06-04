@@ -2,6 +2,7 @@ Attribute VB_Name = "TestNameCall"
 '@TestModule
 Option Explicit
 Option Private Module
+Private Assert As New Rubberduck.AssertClass
 
 '@TestMethod
 Public Sub OnArgsGetTest()

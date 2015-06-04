@@ -1,8 +1,8 @@
 Attribute VB_Name = "TestList"
 '@TestModule
-Private Assert As New Rubberduck.AssertClass
 Option Explicit
-
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
 '
 '
 ' Constructors

@@ -1,19 +1,20 @@
 Attribute VB_Name = "TestDict"
 '@TestModule
-Private Assert As New Rubberduck.AssertClass
 Option Explicit
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
 
 '
 ' Constructors
 ' ------------
 '
-Public Sub DictTestEmpty(ByVal d As Dict)
+Private Sub DictTestEmpty(ByVal d As Dict)
     Assert.IsNotNothing d, "Empty Dict is not nothing"
     Assert.AreEqual CLng(0), d.Count, "Empty Dict count = 3"
     Assert.AreEqual "Dict()", d.Show, "Empty Dict Show"
 End Sub
 
-Public Sub DictTestNonEmpty(ByVal d As Dict)
+Private Sub DictTestNonEmpty(ByVal d As Dict)
     Assert.IsNotNothing d, "NonEmpty Dict is not nothing"
     Assert.AreEqual CLng(3), d.Count, "NonEmpty Dict count = 3"
     Assert.AreEqual "Dict(1 -> 2, 3 -> 4, 5 -> 6)", d.Show, "NonEmpty Dict Show"
