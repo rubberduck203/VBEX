@@ -18,7 +18,7 @@ Private Function GenericExtremum(ByVal lg As CompareResult, _
     Dim i As Long
     For i = sequence.LowerBound To sequence.UpperBound
     
-        If Not (defCompare.Compare(curVal, sequence.Item(i)) = lg) Then
+        If Not (Compare(curVal, sequence.Item(i)) = lg) Then
         
             result = i
             Assign curVal, sequence.Item(result)
@@ -79,7 +79,7 @@ Public Function LinearSearch(ByVal sought, ByVal sequence As IIterable) As Maybe
     Dim i As Long
     For i = sequence.LowerBound To sequence.UpperBound
         
-        If defEquals.Equals(sequence.Item(i), sought) Then
+        If Equals(sequence.Item(i), sought) Then
             Set LinearSearch = Maybe.Some(i)
             Exit Function
         End If
@@ -109,7 +109,7 @@ Public Function BinarySearch(ByVal sought, ByVal sortedSequence As IIterable, _
         Dim curVal
         Assign curVal, sortedSequence.Item(middle)
         
-        If defCompare.GreaterThanOrEqualTo(curVal, sought) Then
+        If GreaterThanOrEqualTo(curVal, sought) Then
             upper = middle
         Else
             lower = middle + 1
@@ -118,7 +118,7 @@ Public Function BinarySearch(ByVal sought, ByVal sortedSequence As IIterable, _
     Loop
     
     Dim found As Boolean
-    found = defEquals.Equals(sortedSequence.Item(upper), sought)
+    found = Equals(sortedSequence.Item(upper), sought)
     
     Set BinarySearch = Maybe.MakeIf(found Or nearest, upper)
     
