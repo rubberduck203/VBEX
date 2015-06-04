@@ -21,6 +21,7 @@ Implements IEquatable
 Implements IIterable
 Implements IBuildable
 Implements IShowable
+Implements IMonadic
 '
 ' Private Members
 ' ---------------
@@ -400,6 +401,24 @@ Private Function IEquatable_Equals(ByVal other) As Boolean
     
 End Function
 '
+' ### IMonadic
+'
+Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
+
+    Set IMonadic_Bind = FlatMap(op)
+
+End Function
+Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
+
+    Set IMonadic_Map = Map(op)
+
+End Function
+Private Function IMonadic_Unit(ByVal x) As IMonadic
+
+    Set IMonadic_Unit = List.Create(x)
+
+End Function
+'
 '  ### IShowable
 '
 Public Function Show() As String
@@ -407,6 +426,9 @@ Public Function Show() As String
     Show = defShow.ShowableObject(Me, ToArray)
     
 End Function
+
+
+
 Private Function IShowable_Show() As String
 
     IShowable_Show = Show()

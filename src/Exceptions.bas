@@ -1,5 +1,13 @@
 Attribute VB_Name = "Exceptions"
 Option Explicit
+Public Enum vbErrorNums
+    TYPE_ERROR = 13
+    OBJECT_REQUIRED = 424
+End Enum
+Public Enum exErrorNums
+    TYPE_ERROR = 13
+    UNIMPLEMENTED = 1
+End Enum
 '
 ' Exceptions
 ' ==========
@@ -33,7 +41,7 @@ Public Sub NotImplementedError(ByVal raiser, ByVal method As String)
     Dim msg As String
     msg = source & " Not implemented."
 
-    Err.Raise 1, description:=MakeDescription(raiser, method, msg)
+    Err.Raise exErrorNums.UNIMPLEMENTED, description:=MakeDescription(raiser, method, msg)
     
 End Sub
 Public Sub OSError(ByVal raiser, ByVal method As String, _
@@ -45,7 +53,7 @@ End Sub
 Public Sub TypeError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
         
-    Err.Raise 13, description:=MakeDescription(raiser, method, msg)
+    Err.Raise exErrorNums.TYPE_ERROR, description:=MakeDescription(raiser, method, msg)
     
 End Sub
 Public Sub ValueError(ByVal raiser, ByVal method As String, _

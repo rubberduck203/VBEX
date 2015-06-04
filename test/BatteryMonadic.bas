@@ -19,7 +19,7 @@ Public Sub Battery(ByVal monad As IMonadic)
     Set g = Lambda.FromShort("_ + 13")
     
     Dim u As IApplicable
-    Set u = OnArgs.Make("Unit", VbMethod, monad)
+    Set u = ApplyUnit(monad)
     
     Dim uf As IApplicable
     Set uf = Composed.Make(u, f)

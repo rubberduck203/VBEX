@@ -126,21 +126,52 @@ End Function
 ' IMonadic
 ' --------
 '
-Public Function Bind(ByVal f As IApplicable) As Maybe
+Public Function Bind(ByVal op As IApplicable) As Maybe
 
     Dim result As Maybe
     If IsSome Then
-        Set result = f.Apply(pVar)
+    
+        On Error GoTo ErrHandler
+        Dim opResult
+        Assign opResult, op.Apply(pVar)
+        Set result = opResult
+        On Error GoTo 0
+        
     Else
         Set result = None
     End If
     
     Set Bind = result
+Exit Function
+ErrHandler:
+    Dim msg As String
+    Select Case Err.Number
+        Case vbErrorNums.TYPE_ERROR, vbErrorNums.OBJECT_REQUIRED
+            msg = defShow.Show(op) & " did not return a Maybe object"
+            Exceptions.TypeError Me, "Bind", msg
+        Case Else
+            Exceptions.BubbleError Me, "Bind", Err
+    End Select
+End Function
+Public Function Map(ByVal op As IApplicable) As Maybe
+
+    Dim result As Maybe
+    If IsSome Then
+        Set result = Some(op.Apply(pVar))
+    Else
+        Set result = None
+    End If
+    Set Map = result
+    
+End Function
+Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
+
+    Set IMonadic_Bind = Bind(op)
 
 End Function
-Private Function IMonadic_Bind(ByVal f As IApplicable) As IMonadic
+Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
 
-    Set IMonadic_Bind = Bind(f)
+    Set IMonadic_Map = Map(op)
 
 End Function
 Private Function IMonadic_Unit(ByVal x) As IMonadic

@@ -295,7 +295,7 @@ Public Function Difference(ByVal other As ISetLike) As SortedSet
     Set Difference = defSetLike.Difference(SortedSet, Me, other)
     
 End Function
-Public Function SymmetricDifference(ByVal other As SortedSet) As SortedSet
+Public Function SymmetricDifference(ByVal other As ISetLike) As SortedSet
 
     Set SymmetricDifference = defSetLike.SymmetricDifference(SortedSet, Me, other)
     

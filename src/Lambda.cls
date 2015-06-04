@@ -77,7 +77,8 @@ Private Const SHORT_HAND_CHAR As String = "_" ' TODO: it's acutal name
 ' Private Members
 ' ---------------
 '
-Private pId As String ' name of the lamda
+Private pId As String ' name of the lamda in LambdaTable
+Private pExpression As String ' Only for the `Show` method
 '
 ' Class
 ' -----
@@ -123,7 +124,7 @@ Public Function FromProper(ByVal proper As String) As Lambda
 End Function
 Public Function FromShort(ByVal shorthand As String) As Lambda
 
-    Const ACODE As Integer = 97 ' Asc("a")
+    Const ASCaCODE As Integer = 97 ' Asc("a")
     
     Dim expr As String
     expr = shorthand
@@ -138,7 +139,7 @@ Public Function FromShort(ByVal shorthand As String) As Lambda
     For i = 0 To argsize
     
         Dim paramChar As String
-        paramChar = Chr(ACODE + i)
+        paramChar = Chr(ASCaCODE + i)
         
         expr = Replace(expr, SHORT_HAND_CHAR, paramChar, Count:=1)
         
@@ -155,6 +156,7 @@ End Function
 '
 Friend Sub SendToLambdaTable(ByRef args() As String, ByVal expr As String)
     
+    pExpression = expr
     pId = LambdaTable.AddLambda(args, expr)
     
 End Sub
@@ -204,7 +206,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ParamShowableObject(Me, pId)
+    Show = defShow.ParamShowableObject(Me, pId, pExpression)
 
 End Function
 Private Function IShowable_Show() As String

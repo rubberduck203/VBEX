@@ -12,6 +12,9 @@ Option Explicit
 Public Function Bind(ByVal op As IApplicable) As IMonadic
 
 End Function
+Public Function Map(ByVal op As IApplicable) As IMonadic
+
+End Function
 Public Function Unit(ByVal x) As IMonadic
 
 End Function
