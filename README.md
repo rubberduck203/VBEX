@@ -22,6 +22,9 @@ Use in-lined constructors:
 
 Print meaningful debug messages
 
+    Debug.Print Show(List.Create(1, 2, 3))
+    List(1, 2, 3)
+
     Console.PrintLine xs
     List(1, a, Collection(&289234581))
     
@@ -30,7 +33,6 @@ Print meaningful debug messages
     
     Console.PrintLine d
     Dict(Parrot -> Dead, Spam -> Yum)
-    
 
 Create functional objects
 
