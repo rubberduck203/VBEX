@@ -59,7 +59,7 @@ End Function
 '
 ' ### Friend Methods
 '
-Friend Sub SetFile(ByVal filePath As String, ByVal create As Boolean, _
+Friend Sub SetFile(ByVal filePath As String, ByVal Create As Boolean, _
         ByVal overwrite As Boolean)
     
 On Error GoTo ErrHandler
@@ -69,18 +69,18 @@ On Error GoTo ErrHandler
     End If
     
     Dim filePathExists As Boolean
-    filePathExists = fsview.fileExists(filePath)
+    filePathExists = fsview.FileExists(filePath)
     
-    If create And filePathExists Then
+    If Create And filePathExists Then
         OnFileAlreadyExistsError "SetFile", filePath
-    ElseIf Not (create Or filePathExists) Then
+    ElseIf Not (Create Or filePathExists) Then
         OnFileDoesNotExistError "SetFile", filePath
     End If
     
     pFileNumber = FreeFile
     pFilePath = filePath
 
-    If overwrite Or create Then
+    If overwrite Or Create Then
         Open filePath For Output As #pFileNumber
     Else
         Open filePath For Append As #pFileNumber
@@ -156,7 +156,7 @@ Private Function GetErrorSource(ByVal method As String) As String
 End Function
 Private Sub OnUnHandledError(ByVal method As String)
 
-    Err.Raise Err.Number, GetErrorSource(method), Err.Description, _
+    Err.Raise Err.Number, GetErrorSource(method), Err.description, _
         Err.HelpFile, Err.HelpContext
         
 End Sub
@@ -196,7 +196,7 @@ End Sub
 '
 Public Sub Prints(ByVal data As Variant)
 
-    AppendData Printable.ToString(data), method:="Prints"
+    AppendData defShow.Show(data), method:="Prints"
     
 End Sub
 Public Sub IOutput_Prints(ByVal data As Variant)
@@ -209,7 +209,7 @@ End Sub
 '
 Public Sub PrintLine(ByVal line As Variant)
     
-    AppendData Printable.ToString(line), method:="PrintLine"
+    AppendData defShow.Show(line), method:="PrintLine"
     AppendData vbNewLine, method:="PrintLine"
     
 End Sub

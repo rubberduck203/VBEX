@@ -31,11 +31,11 @@ Public Sub Insert(ComponentType As vbext_ComponentType)
     'project.VBComponents.Add ComponentType
 End Sub
 
-Public Function create(codeMod As CodeModule) As vbeCodeModule
+Public Function Create(codeMod As CodeModule) As vbeCodeModule
 ' allows calls from other projects without breaking the exisiting API
 
-    Set create = New vbeCodeModule
-    create.Initialize codeMod
+    Set Create = New vbeCodeModule
+    Create.Initialize codeMod
 End Function
 
 Public Sub Initialize(codeMod As CodeModule)

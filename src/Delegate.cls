@@ -8,9 +8,11 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
-Implements IApplicable
 '
+' Delegate
+' ========
 '
+' Black Magic...
 
 ''
 ' CopyMemory: We plan to copy the actual bits of the compiled function
@@ -18,71 +20,69 @@ Implements IApplicable
 Private Declare PtrSafe Sub CopyMemory Lib "kernel32" _
     Alias "RtlMoveMemory" (destination As Any, source As Any, ByVal Length As Long)
 
-''
-' FillMemory: For safety we will fill the `Run` function with zero when
-' the instance is destroyed.
-Private Declare PtrSafe Sub FillMemory Lib "kernel32" _
-    Alias "RtlFillMemory" (destination As Any, ByVal Length As Long, ByVal Fill As Byte)
-
-
 ' http://www.codeproject.com/Articles/19239/Compilers-Demystified-Function-Pointers-in-Visual
+'
+' Private Members
+' ---------------
 Private Const OFFSET_TO_VFT = &H1C
-Private Const FUNC_ADDRESS_SIZE As Long = 666 '???
-Private Const VFT_SIZE As Integer = 4
-Private Const MEMORY_FILLER As Byte = 0
-Private pFuncPtr As Long
+Private Const VFT_ELEM_SIZE As Integer = 4
 
-
-Private Sub Class_Terminate()
-
-    FillMemory pFuncPtr, FUNC_ADDRESS_SIZE, MEMORY_FILLER
-
+Private pProcAddress As Long ' address to copy to pRunVFT
+Private pBlankProcVFTLoc As Long ' location _of_ `BlankProc` on VFTable
+Private pBlankProcAddress As Long ' address _at_ pBlankProcVFTLoc on VFTable
+'
+' BLANK PROC
+' ----------
+'
+' This procedure will be transfigured with black magic
+' it needs to be at the top ALWAYS!!!!!
+' casue black magic...
+Public Sub BlankProc()
+    Err.Raise 1
 End Sub
+'
+' Constructors
+' ------------
+'
+Private Sub Class_Initialize()
+    
+    ' get VFT table
+    Dim vft As Long ' location of vftable
+    CopyMemory vft, ByVal ObjPtr(Me), VFT_ELEM_SIZE
+    
+    ' calculate `BlankProc` location on VFT table
+    pBlankProcVFTLoc = vft + OFFSET_TO_VFT
+    
+    ' store Address of `BlankProc` from VFT table
+    CopyMemory pBlankProcAddress, ByVal pBlankProcVFTLoc, VFT_ELEM_SIZE
+    
+End Sub
+Public Function Create(ByVal procAddr As Long) As Delegate
 
-' TODO: determine func datatype
-Public Function create(ByVal func As Variant) As Delegate
+    Dim result As New Delegate
+    result.ProcedureAddress = procAddr
+    Set Create = result
     
 End Function
-
-Public Function Copy(ByVal other As Delegate) As Delegate
-
-End Function
-
-Private Function Run() As Variant
-End Function
-
-Public Function Apply(ByRef args() As Variant) As Variant
-
-  cast.Assign Apply, Run
-
-End Function
-
-Public Function Exec(ParamArray args() As Variant) As Variant
-
-    cast.Assign Exec, Apply(cast.CArray(args))
-
-End Function
-'
-' Private Properties
-' ------------------
-'
-Private Property Get VFTAddress() As Long
-
-    CopyMemory VFTAddress, (ObjPtr(Me)), VFT_SIZE
-
+Friend Property Let ProcedureAddress(ByVal procAddr As Long)
+    
+    pProcAddress = procAddr
+    
 End Property
-'
-'
-' ### Interfaces
-'
-Public Function IApplicable_Apply(ByRef args() As Variant) As Variant
+Public Sub Run()
+    
+    ' > One more important thing to remember when modifying vftables,
+    ' > is that they are shared by all instances of that class.
+    '
+    ' ergo we must modify the global definition before we run and
+    ' return it to normal afterwards.
+    CopyMemory ByVal pBlankProcVFTLoc, pProcAddress, VFT_ELEM_SIZE
+    BlankProc
+    CopyMemory ByVal pBlankProcVFTLoc, pBlankProcAddress, VFT_ELEM_SIZE
+    ' This is about as un-threadsafe as one can be...
+    
+End Sub
 
-    IApplicable_Apply = Apply(args)
 
-End Function
 
-Public Function IApplicable_Exec(ParamArray args() As Variant) As Variant
 
-    IApplicable_Exec = Apply(cast.CArray(args))
-
-End Function
