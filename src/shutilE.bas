@@ -126,14 +126,14 @@ Public Sub CopyFile(ByVal src As String, ByVal dest As String, _
     
     DestIsFolderFeature dest, src
     
-    If fsview.fileExists(dest) Then
+    If fsview.FileExists(dest) Then
         OnNoOverwriteError "CopyFile"
     End If
     
     If createParent Then CreateRootPath dest
     FileCopy src, dest
     
-    If Not fsview.fileExists(dest) Then
+    If Not fsview.FileExists(dest) Then
         OnFailedCreateError "CopyFile", "FileCopy"
     End If
 
@@ -170,7 +170,7 @@ End Sub
 '
 Private Sub ReRaiseError(ByRef e As ErrObject)
 
-    Err.Raise e.Number, e.source, e.Description, e.HelpFile, e.HelpContext
+    Err.Raise e.Number, e.source, e.description, e.HelpFile, e.HelpContext
     
 End Sub
 Private Sub OnFailedCreateError(ByVal method As String, ByVal operation As String)

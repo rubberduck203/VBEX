@@ -62,8 +62,8 @@ Public Property Get Collection() As Collection
 End Property
 
 'Constructor
-Public Function create() As Enumerable
-    Set create = New Enumerable
+Public Function Create() As Enumerable
+    Set Create = New Enumerable
 End Function
 
 ' Collection Wrappers
@@ -343,7 +343,7 @@ Private Sub HandleComparisonError(error As ErrObject)
 End Sub
 
 Private Sub ReRaiseError(error As ErrObject)
-    error.Raise error.Number, error.source, error.Description, error.HelpFile, error.HelpContext
+    error.Raise error.Number, error.source, error.description, error.HelpFile, error.HelpContext
 End Sub
 
 Private Sub Class_Initialize()

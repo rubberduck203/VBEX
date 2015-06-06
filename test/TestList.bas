@@ -1,8 +1,8 @@
-Attribute VB_Name = "ListTest"
+Attribute VB_Name = "TestList"
 '@TestModule
-Private Assert As New Rubberduck.AssertClass
 Option Explicit
-
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
 '
 '
 ' Constructors
@@ -11,8 +11,8 @@ Option Explicit
 '@TestMethod
 Public Sub ListCopy()
 
-    Assert.AreEqual "List(1, 2, 3)", List.Copy(Array(1, 2, 3)).ToString
-    Assert.AreEqual "List()", List.Copy(Array()).ToString
+    Assert.AreEqual "List(1, 2, 3)", List.Copy(Array(1, 2, 3)).Show
+    Assert.AreEqual "List()", List.Copy(Array()).Show
     
 End Sub
 '@TestMethod
@@ -38,7 +38,7 @@ Public Sub ListNested()
     Set nested = List.Create(flat)
     
     Dim nestedCopy As List
-    Set nestedCopy = List.Create(flat.Clone)
+    Set nestedCopy = List.Create(List.Copy(flat))
     
     flat.append 4
     
@@ -97,7 +97,7 @@ End Sub
 ' ### IPrintable
 '
 '@TestMethod
-Public Sub ListToString()
+Public Sub ListShow()
 
     Dim flatList As List
     Set flatList = List.Create(1, 2, 3)
@@ -106,9 +106,9 @@ Public Sub ListToString()
     Set nestList = List.Create(flatList, flatList)
     
     With Assert
-        .AreEqual "List()", List.Create().ToString
-        .AreEqual "List(1, 2, 3)", flatList.ToString
-        .AreEqual "List(List(1, 2, 3), List(1, 2, 3))", nestList.ToString
+        .AreEqual "List()", List.Create().Show
+        .AreEqual "List(1, 2, 3)", flatList.Show
+        .AreEqual "List(List(1, 2, 3), List(1, 2, 3))", nestList.Show
     End With
     
 End Sub
@@ -117,24 +117,17 @@ End Sub
 ' -------
 '
 '@TestMethod
-Public Sub ListReduce()
-
-    Assert.AreEqual "abc", List.Create("a", "b", "c") _
-        .Reduce(Lambda.FromString("(a, b) => a & b"))
-        
-End Sub
+'Public Sub ListReduce()
+'
+'    Assert.AreEqual "abc", List.Create("a", "b", "c") _
+'        .Reduce(Lambda.FromString("(a, b) => a & b"))
+'
+'End Sub
 '@TestMethod
 Public Sub ListFold()
 
     Assert.AreEqual "abc", List.Create("a", "b", "c") _
-        .Fold("", Lambda.FromString("(a, b) => a & b"))
+        .Fold("", Lambda.FromProper("(a, b) => a & b"))
         
 End Sub
-'@TestMethod
-Public Sub ListFilter()
 
-End Sub
-'@TestMethod
-Public Sub ListMap()
-
-End Sub

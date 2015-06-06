@@ -1,17 +1,18 @@
-Attribute VB_Name = "TupleTest"
+Attribute VB_Name = "TestTuple"
 '@TestModule
-Private Assert As New Rubberduck.AssertClass
 Option Explicit
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
 
 Private Sub TupleTestEmpty(ByVal t As Tuple)
     Assert.IsNotNothing t, "Empty Tuple is not nothing"
     Assert.AreEqual CLng(0), t.Count, "Empty Tuple count"
-    Assert.AreEqual "Tuple()", t.ToString, "Empty Tuple tostring"
+    Assert.AreEqual "Tuple()", t.Show, "Empty Tuple Show"
 End Sub
 Private Sub TupleTestNonEmpty(ByVal t As Tuple)
     Assert.IsNotNothing t, "NonEmpty Tuple is not nothing"
     Assert.AreEqual CLng(3), t.Count, "NonEmpty Tuple count"
-    Assert.AreEqual "Tuple(1, 2, 3)", t.ToString, "NonEmpty Tuple tostring"
+    Assert.AreEqual "Tuple(1, 2, 3)", t.Show, "NonEmpty Tuple Show"
 End Sub
 
 '@TestMethod

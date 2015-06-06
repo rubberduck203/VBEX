@@ -7,8 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-Option Explicit
-
-Public Function CompareTo(ByVal other As Variant) As Integer
+'
+' IComparable
+' -----------
+'
+Public Function Compare(ByVal x) As CompareResult
 
 End Function
