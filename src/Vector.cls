@@ -57,20 +57,6 @@ End Sub
 '
 ' ### Errors
 '
-Private Sub CheckIndexRange(ByVal method As String, ByVal index As Long)
-
-    If index < LowerBound Or index > UpperBound Then
-    
-        IndexOutOfRangeError method, index
-        
-    End If
-    
-End Sub
-Private Sub IndexOutOfRangeError(ByVal method As String, ByVal index As Long)
-
-    IndexError Me, method, "Index " & index & " is out of range"
-    
-End Sub
 '
 ' Public Methods
 ' --------------
@@ -163,19 +149,19 @@ End Sub
 '
 Public Property Get Item(ByVal index As Long) As Variant
 
-    CheckIndexRange "Item", index
+    CheckIndexRange Me, "Item", index
     Assign Item, pArray(index)
     
 End Property
 Public Property Let Item(ByVal index As Long, ByVal val)
 
-    CheckIndexRange "Item", index
+    CheckIndexRange Me, "Item", index
     pArray(index) = val
     
 End Property
 Public Property Set Item(ByVal index As Long, ByVal val)
 
-    CheckIndexRange "Item", index
+    CheckIndexRange Me, "Item", index
     Set pArray(index) = val
     
 End Property

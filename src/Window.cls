@@ -31,20 +31,6 @@ Private pUpper As Long
 '
 ' ### Errors
 '
-Private Sub CheckIndexRange(ByVal method As String, ByVal index As Long)
-
-    If index < LowerBound Or index > UpperBound Then
-    
-        IndexOutOfRangeError method, index
-        
-    End If
-    
-End Sub
-Private Sub IndexOutOfRangeError(ByVal method As String, ByVal index As Long)
-
-    IndexError Me, method, "Index " & index & " is out of range"
-    
-End Sub
 '
 ' Public Methods
 ' --------------
@@ -86,12 +72,14 @@ Public Function Make(ByVal iterable As IIterable, _
     Set Make = result
 
 End Function
-Public Function FromLeft(ByVal iterable As IIterable, ByVal upper As Long) As Window
+Public Function FromLeft(ByVal iterable As IIterable, _
+        ByVal upper As Long) As Window
 
     Set FromLeft = Make(iterable, iterable.LowerBound, upper)
 
 End Function
-Public Function FromRight(ByVal iterable As IIterable, ByVal lower As Long) As Window
+Public Function FromRight(ByVal iterable As IIterable, _
+        ByVal lower As Long) As Window
 
     Set FromRight = Make(iterable, lower, iterable.UpperBound)
 
@@ -103,17 +91,13 @@ Friend Property Set Target(ByVal iterable As IIterable)
 End Property
 Friend Sub SetLowerBound(ByVal lower As Long)
 
-    If lower < pIterable.LowerBound Then 
-        IndexOutOfRangeError "SetLowerBound", lower
-    End If
+    CheckIndexRange pIterable, "Item", lower
     pLowerBound = lower
 
 End Sub
 Friend Sub SetUpperBound(ByVal upper As Long)
 
-    If upper > pIterable.UpperBound Then 
-        IndexOutOfRangeError "SetUpperBound", upper
-    End If
+    CheckIndexRange pIterable, "Item", upper
     pUpperBound = upper
 
 End Property
@@ -123,7 +107,7 @@ End Property
 '
 Public Property Get Item(ByVal index As Long) As Variant
 
-    CheckIndexRange "Item", index
+    CheckIndexRange Me, "Item", index
     Assign Item, pIterable.Item(index + pLowerBound)
     
 End Property
@@ -161,7 +145,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ShowableObject(Me, ToArray)
+    Show = defShow.ParamShowableObject(Me, pIterable, pLowerBound, pUpperBound)
     
 End Function
 Private Function IShowable_Show() As String
