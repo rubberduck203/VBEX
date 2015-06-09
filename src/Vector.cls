@@ -55,6 +55,22 @@ End Sub
 '
 'End Sub
 '
+' ### Errors
+'
+Private Sub CheckIndexRange(ByVal method As String, ByVal index As Long)
+
+    If index < LowerBound Or index > UpperBound Then
+    
+        IndexOutOfRangeError method, index
+        
+    End If
+    
+End Sub
+Private Sub IndexOutOfRangeError(ByVal method As String, ByVal index As Long)
+
+    IndexError Me, method, "Index " & index & " is out of range"
+    
+End Sub
 '
 ' Public Methods
 ' --------------
@@ -202,21 +218,3 @@ Private Function IShowable_Show() As String
     IShowable_Show = Show
     
 End Function
-'
-'
-'
-'
-Private Sub CheckIndexRange(ByVal method As String, ByVal index As Long)
-
-    If index < LowerBound Or index > UpperBound Then
-    
-        IndexOutOfRangeError method, index
-        
-    End If
-    
-End Sub
-Private Sub IndexOutOfRangeError(ByVal method As String, ByVal index As Long)
-
-    IndexError Me, method, "Index " & index & " is out of range"
-    
-End Sub
