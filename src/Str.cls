@@ -23,18 +23,50 @@ Implements IShowable
 Implements IIterable
 '
 Private pString As String
-Public Function Create(ParamArray strings()) As Str
-    
-    Set Create = Copy(CVar(strings))
-
-End Function
-Public Function Copy(ByVal strings) As Str
+'
+' Constructors
+' ------------
+'
+Public Function Make(ByVal s As String) As Str
     
     Dim result As New Str
-    result.Concat strings
-    Set Copy = result
+    result.Encapsulated = s
+    Set Create = result
 
 End Function
+Public Function Join(ByVal strings, _
+        Optional ByVal delim As String = vbNullString) As Str
+
+    Dim strList As List
+    Set strList = List.Copy(str)
+
+    Set Join = Make(Join(strList.ToArray, delim))
+
+End Function
+Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
+  
+    Dim result As Str
+    Set result = Str.Make(fmt)
+
+    Dim index As Long
+    index = 0
+
+    Dim placeHolder As String
+    placeHolder =  "{0}"
+
+    Dim val
+    For Each val In vals 
+        fmt.Replace placeHolder, defShow.Show(val)
+        index = index + 1
+        Mid$(placeHolder, 2, 1) = index
+    Next
+
+End Function
+Friend Property Let Encapsulated(ByVal s As String)
+
+    pString = s
+
+End Property
 Public Property Get NewEnum() As IUnknown
 
     Static exploded As Collection
@@ -42,6 +74,10 @@ Public Property Get NewEnum() As IUnknown
     Set NewEnum = exploded.[_NewEnum]
     
 End Property
+'
+' Private Methods
+' ---------------
+'
 Private Function Explode() As Collection
 
     Dim length As Long
@@ -61,6 +97,10 @@ Private Function Explode() As Collection
     Set Explode = result
 
 End Function
+'
+' Public Methods
+' --------------
+'
 Public Sub Append(ParamArray strings())
     
     Concat CVar(strings)
@@ -74,6 +114,18 @@ Public Sub Concat(ByVal strings)
     Next
     
 End Sub
+Public Sub Replace(ByVal oldString As String, ByVal newString As String)
+
+    pString = Replace$(pString, oldString, newString)
+    'Alt
+    'Dim loc As Long
+    'loc = InStr(1, pString, oldString)
+    '
+    'If loc > 0 Then
+    '    Mid$(pString, loc, len(newString) = newString
+    'End If
+
+End Sub
 Public Function Count() As Long
     
     Count = Len(pString)
@@ -85,7 +137,7 @@ End Function
 '
 Private Function IBuildable_MakeEmpty() As IBuildable
     
-    Set IBuildable_MakeEmpty = Create()
+    Set IBuildable_MakeEmpty = Make(vbNullString)
     
 End Function
 Private Sub IBuildable_AddItem(ByVal element)
