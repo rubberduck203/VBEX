@@ -36,7 +36,7 @@ Private Sub Class_Initialize()
     Set pDict = New Scripting.Dictionary
     
 End Sub
-Public Function Create(ParamArray assocs() As Assoc) As Dict
+Public Function Create(ParamArray assocs()) As Dict
 
     Set Create = FromAssocs(List.Copy(assocs))
     

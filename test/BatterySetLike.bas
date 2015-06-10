@@ -17,7 +17,7 @@ Public Sub Battery(ByVal setA As ISetLike, _
 
 End Sub
 
-Private Sub IdentityLaw(ByVal setA As ISetLike,ByVal  super As ISetLike, ByVal emptySet As ISetLike)
+Private Sub IdentityLaw(ByVal setA As ISetLike, ByVal super As ISetLike, ByVal emptySet As ISetLike)
 
     ' A U 0 = A
     Assert.IsTrue Equals(setA.Union(emptySet), setA)
@@ -58,7 +58,7 @@ Private Sub AssociatveLaw(ByVal setA As ISetLike, ByVal setB As ISetLike, ByVal 
     Dim rhsLaw1 As IEquatable
     Set rhsLaw1 = setA.Union(setB.Union(setC))
 
-    Assert.IsTrue Equals(lhsLaw1, rhsLaw1) 
+    Assert.IsTrue Equals(lhsLaw1, rhsLaw1)
 
     ' (A n B) n C = A n (B n C)
     Dim lhsLaw2 As IEquatable
@@ -67,7 +67,7 @@ Private Sub AssociatveLaw(ByVal setA As ISetLike, ByVal setB As ISetLike, ByVal 
     Dim rhsLaw2 As IEquatable
     Set rhsLaw2 = setA.Intersect(setB.Intersect(setC))
 
-    Assert.IsTrue Equals(lhsLaw2, rhsLaw2) 
+    Assert.IsTrue Equals(lhsLaw2, rhsLaw2)
 
 End Sub
 Private Sub DistributiveLaw(ByVal setA As ISetLike, ByVal setB As ISetLike, ByVal setC As ISetLike)
@@ -77,18 +77,18 @@ Private Sub DistributiveLaw(ByVal setA As ISetLike, ByVal setB As ISetLike, ByVa
     Set lhsLaw1 = setA.Union(setB.Intersect(setC))
 
     Dim rhsLaw1 As IEquatable
-    Set rhsLaw1 = (setA.Union(setB)).Intersect(setA.Union(setC))
+    Set rhsLaw1 = setA.Union(setB).Intersect(setA.Union(setC))
 
-    Assert.IsTrue Equals(lhsLaw1, rhsLaw1) 
+    Assert.IsTrue Equals(lhsLaw1, rhsLaw1)
 
 
     ' A n (B u C) = (A n B) u (A n C)
     Dim lhsLaw2 As IEquatable
-    Set lhsLaw2 = setA.Intersect(setB.Uniont(setC))
+    Set lhsLaw2 = setA.Intersect(setB.Union(setC))
 
     Dim rhsLaw2 As IEquatable
-    Set rhsLaw2 = (setA.Intersect(setB)).Union(setA.Intersect(setC))
+    Set rhsLaw2 = setA.Intersect(setB).Union(setA.Intersect(setC))
 
-    Assert.IsTrue Equals(lhsLaw2, rhsLaw2) 
+    Assert.IsTrue Equals(lhsLaw2, rhsLaw2)
 
 End Sub

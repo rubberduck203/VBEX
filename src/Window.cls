@@ -92,15 +92,15 @@ End Property
 Friend Sub SetLowerBound(ByVal lower As Long)
 
     CheckIndexRange pIterable, "Item", lower
-    pLowerBound = lower
+    pLower = lower
 
 End Sub
 Friend Sub SetUpperBound(ByVal upper As Long)
 
     CheckIndexRange pIterable, "Item", upper
-    pUpperBound = upper
+    pUpper = upper
 
-End Property
+End Sub
 ''
 ' IIterable
 ' ---------
@@ -108,7 +108,7 @@ End Property
 Public Property Get Item(ByVal index As Long) As Variant
 
     CheckIndexRange Me, "Item", index
-    Assign Item, pIterable.Item(index + pLowerBound)
+    Assign Item, pIterable.Item(index + pLower)
     
 End Property
 Public Function LowerBound() As Long
@@ -121,7 +121,7 @@ End Function
 '     [ 0 | 1 ]
 Public Function UpperBound() As Long
 
-    UpperBound = pUpperBound - pLowerBound
+    UpperBound = pUpper - pLower
     
 End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
@@ -145,7 +145,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ParamShowableObject(Me, pIterable, pLowerBound, pUpperBound)
+    Show = defShow.ParamShowableObject(Me, pIterable, pLower, pUpper)
     
 End Function
 Private Function IShowable_Show() As String

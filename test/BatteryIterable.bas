@@ -29,14 +29,14 @@ Private Sub LowerLTEQUpper(ByVal itbl As IIterable)
     Dim upper As Long
     upper = itbl.UpperBound
 
-    Dim testPass As Boolean
-    testPass = (lower <= upper)
+    Dim TestPass As Boolean
+    TestPass = (lower <= upper)
     
     Dim msg As String
     msg = "Lower(" & lower & ") <= Upper(" & upper & ")" & _
     " For iterable(" & defshow.Show(itbl) & ")"
     
-    Assert.IsTrue testPass, msg
+    Assert.IsTrue TestPass, msg
 
 End Sub
 Private Sub ItemInRange(ByVal itbl As IIterable)
