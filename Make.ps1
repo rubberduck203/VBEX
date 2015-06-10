@@ -34,7 +34,7 @@ $buildRefs = @{
 
 ForEach ($build In $buildRefs.Keys) {
     $path = (Join-Path $scriptRoot "VBEX$build.xlam")
-    $files = (Get-ChildItem (Join-Path $scriptRoot $build)).FullName
+    $files = (Get-ChildItem (Join-Path $scriptRoot $build)) | % { $_.FullName } # v3 and greater this would be just .FullName
     $refs = $buildRefs[$build]
     & "$buildScript" "$path" $files $refs
 }
