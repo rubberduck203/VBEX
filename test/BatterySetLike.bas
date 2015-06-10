@@ -5,7 +5,7 @@ Private Assert As New Rubberduck.AssertClass
 Public Sub Battery(ByVal setA As ISetLike, _
         ByVal setB As ISetLike, _
         ByVal setC As ISetLike, _
-        ByVal emptySet As ISetLike
+        ByVal emptySet As ISetLike, _
         ByVal super As ISetLike)
 
     IdentityLaw setA, super, emptySet
