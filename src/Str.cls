@@ -31,14 +31,14 @@ Public Function Make(ByVal s As String) As Str
     
     Dim result As New Str
     result.Encapsulated = s
-    Set Create = result
+    Set Make = result
 
 End Function
 Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
     Dim strList As List
-    Set strList = List.Copy(str)
+    Set strList = List.Copy(Str)
 
     Set Join = Make(Join(strList.ToArray, delim))
 
@@ -52,11 +52,11 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
     index = 0
 
     Dim placeHolder As String
-    placeHolder =  "{0}"
+    placeHolder = "{0}"
 
     Dim val
-    For Each val In vals 
-        fmt.Replace placeHolder, defShow.Show(val)
+    For Each val In vals
+        result.Substitute placeHolder, defShow.Show(val)
         index = index + 1
         Mid$(placeHolder, 2, 1) = index
     Next
@@ -114,9 +114,9 @@ Public Sub Concat(ByVal strings)
     Next
     
 End Sub
-Public Sub Replace(ByVal oldString As String, ByVal newString As String)
+Public Sub Substitute(ByVal oldString As String, ByVal newString As String)
 
-    pString = Replace$(pString, oldString, newString)
+    pString = Replace(pString, oldString, newString)
     'Alt
     'Dim loc As Long
     'loc = InStr(1, pString, oldString)

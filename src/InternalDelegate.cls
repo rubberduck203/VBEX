@@ -50,7 +50,7 @@ End Property
 ' -----------
 '
 Public Function Apply(ParamArray args()) As Variant
-On Error Goto ErrHandler
+On Error GoTo ErrHandler
 
     Assign Apply, IApplicable_ApplyOnArray(CArray(args))
 
@@ -76,7 +76,7 @@ Private Function IApplicable_Apply(ParamArray args()) As Variant
 End Function
 Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
     
-    Assign IApplicable_ApplyOnArray, defApply.ApplicationRunOnArray(pId, args)
+    Assign IApplicable_ApplyOnArray, defApply.ApplicationRunOnArray(pFunctionName, args)
     
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable

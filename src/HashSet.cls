@@ -2,25 +2,14 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "SortedSet"
+Attribute VB_Name = "HashSet"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 '
-' SortedSet
-' =========
-'
-' Maintains a list of sorted unique items.
-' It is meant to be synonymous with Python's `set` but that is
-' a reserved keyword in VBA.  Instead of using an advanced data
-' structure, `SortedSet` keeps a sorted `List` and an external
-' binary search function to preserve unique elements.  This allows
-' _mutability_ and limits recursion (as VB is not tail recursive.)
-'
-' Copywrite (C) 2014 Philip Wales
-' This file (SortedSet.cls) is distributed under the MIT license
-' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
+' HashSet
+' =======
 '
 Option Explicit
 
@@ -36,41 +25,28 @@ Implements IBuildable
 ' Private Memebers
 ' ----------------
 '
-Private pList As List
+Private pDict As Scripting.Dictionary
 '
 ' Private Methods
 ' ---------------
 '
 ''
-' IndexOf: Finds where an item is or where it should be
-Private Function IndexOf(ByVal element) As Long
-
-    If pList.Count > 0 Then
-        On Error GoTo ErrHandler
-        IndexOf = srch.BinarySearch(element, pList, nearest:=True).GetItem
-        On Error GoTo 0
-    Else
-        IndexOf = 1
-    End If
-Exit Function
-ErrHandler:
-    Select Case Err.Number
-    Case Else
-        Exceptions.BubbleError Me, "IndexOf", Err
-    End Select
-End Function
-''
 ' Destructor, might be unnecessary
 Private Sub Class_Initialize()
 
-    Set pList = New List
+    Set pDict = New Scripting.Dictionary
     
 End Sub
 Private Sub Class_Terminate()
 
-    Set pList = Nothing
+    Set pDict = Nothing
     
 End Sub
+Private Function SetList() As List
+
+    Set SetList = List.Copy(pDict.Keys)
+
+End Function
 '
 ' Public Methods
 ' --------------
@@ -79,22 +55,24 @@ End Sub
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
-    
-    Set NewEnum = pList.NewEnum
-    
+
+    Static keyList As List
+    Set keyList = SetList
+    Set NewEnum = keyList.NewEnum
+
 End Property
 '
 ' Constructors
 ' ------------
 '
-Public Function Create(ParamArray args() As Variant) As SortedSet
+Public Function Create(ParamArray args() As Variant) As HashSet
     
     Set Create = Copy(args)
     
 End Function
-Public Function Copy(ByVal sequence) As SortedSet
+Public Function Copy(ByVal sequence) As HashSet
     
-    Dim result As New SortedSet
+    Dim result As New HashSet
     result.Extend sequence
     Set Copy = result
     
@@ -102,24 +80,24 @@ End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As IApplicable) As SortedSet
+Public Function Map(ByVal op As IApplicable) As HashSet
     
-    Set Map = defMap.Map(SortedSet, op, pList)
-    
-End Function
-Public Function FlatMap(ByVal op As IApplicable) As SortedSet
-    
-    Set FlatMap = defMap.FlatMap(SortedSet, op, pList)
+    Set Map = defMap.Map(HashSet, op, pDict)
     
 End Function
-Public Function Filter(ByVal pred As IApplicable) As SortedSet
+Public Function FlatMap(ByVal op As IApplicable) As HashSet
     
-    Set Filter = defFilter.Filter(SortedSet, pred, pList)
+    Set FlatMap = defMap.FlatMap(HashSet, op, pDict)
     
 End Function
-Public Function FilterNot(ByVal pred As IApplicable) As SortedSet
+Public Function Filter(ByVal pred As IApplicable) As HashSet
     
-    Set FilterNot = defFilter.FilterNot(SortedSet, pred, pList)
+    Set Filter = defFilter.Filter(HashSet, pred, pDict)
+    
+End Function
+Public Function FilterNot(ByVal pred As IApplicable) As HashSet
+    
+    Set FilterNot = defFilter.FilterNot(HashSet, pred, pDict)
     
 End Function
 '
@@ -130,7 +108,7 @@ End Function
 Public Property Get Item(ByVal index As Long) As Variant
 Attribute Item.VB_UserMemId = 0
     
-    cast.Assign Item, pList.Item(index)
+    cast.Assign Item, pDict.Item(index)
     
 End Property
 '
@@ -142,27 +120,8 @@ End Property
 ' Add: Instead of Insert, Emplace, or Append
 Public Sub Add(ByVal element)
     
-    If pList.Count = 0 Then
-    
-        pList.Append element
-        Exit Sub
-        
-    End If
-    
-    Dim index As Long
-    index = IndexOf(element)
-    
-    Dim curVal
-    Assign curVal, pList(index)
-    
-    If Not defEquals.Equals(curVal, element) Then
-    
-        If defCompare.LessThan(curVal, element) Then  ' ONLY HAPPENS AT END?
-            pList.Append element
-        Else
-            pList.Emplace index, element
-        End If
-        
+    If Not Contains(element) Then
+        pDict.Add element, Nothing
     End If
     
 End Sub
@@ -183,33 +142,25 @@ End Sub
 ' Removal is by element not by index
 Public Sub Remove(ByVal element)
     
-    Dim index As Long
-    index = IndexOf(element)
-    
-    If pList(index) = element Then
-        pList.Remove index
+    If Contains(element) Then
+        pDict.Remove element
     Else
     
         Dim msg As String
-        msg = defShow.Show(element) & " does not exist."
+        msg = defShow.Show(element) & ", does not exist."
         IndexError Me, "Remove", msg
         
     End If
     
 End Sub
-Public Sub Discard(ByVal element As Variant)
+Public Sub Discard(ByVal element)
 
-    Dim index As Long
-    index = IndexOf(element)
-    
-    If defEquals.Equals(pList(index), element) Then
-        pList.Remove index
-    End If
+    pDict.Remove element
     
 End Sub
 Public Sub Clear()
 
-    pList.Clear 1, pList.Count
+    pDict.Clear
     
 End Sub
 '
@@ -239,20 +190,12 @@ End Sub
 '
 Public Function Contains(ByVal sought) As Boolean
 
-    If pList.Count > 0 Then
-    
-        Dim index As Long
-        index = IndexOf(sought)
-        
-        Contains = defEquals.Equals(pList.Item(index), sought)
-    Else
-        Contains = False
-    End If
+    Contains = pDict.Exists(sought)
     
 End Function
 Public Function Count() As Long
 
-    Count = pList.Count
+    Count = pDict.Count
 
 End Function
 Public Function IsDisJoint(ByVal other As ISetLike) As Boolean
@@ -280,24 +223,24 @@ Public Function IsProperSuperSetOf(ByVal other As ISetLike) As Boolean
     IsProperSuperSetOf = defSetLike.IsProperSuperSetOf(Me, other)
     
 End Function
-Public Function Union(ByVal other As ISetLike) As SortedSet
+Public Function Union(ByVal other As ISetLike) As HashSet
 
-    Set Union = defSetLike.Union(SortedSet, Me, other)
+    Set Union = defSetLike.Union(HashSet, Me, other)
     
 End Function
-Public Function Intersect(ByVal other As ISetLike) As SortedSet
+Public Function Intersect(ByVal other As ISetLike) As HashSet
 
-    Set Intersect = defSetLike.Intersect(SortedSet, Me, other)
+    Set Intersect = defSetLike.Intersect(HashSet, Me, other)
 
 End Function
-Public Function Difference(ByVal other As ISetLike) As SortedSet
+Public Function Difference(ByVal other As ISetLike) As HashSet
     
-    Set Difference = defSetLike.Difference(SortedSet, Me, other)
+    Set Difference = defSetLike.Difference(HashSet, Me, other)
     
 End Function
-Public Function SymmetricDifference(ByVal other As ISetLike) As SortedSet
+Public Function SymmetricDifference(ByVal other As ISetLike) As HashSet
 
-    Set SymmetricDifference = defSetLike.SymmetricDifference(SortedSet, Me, other)
+    Set SymmetricDifference = defSetLike.SymmetricDifference(HashSet, Me, other)
     
 End Function
 Private Property Get ISetLike_Elements() As IUnknown
@@ -378,7 +321,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ShowableObject(Me, pList.ToArray)
+    Show = defShow.ShowableObject(Me, cast.CArray(pDict.Keys))
     
 End Function
 Private Function IShowable_Show() As String

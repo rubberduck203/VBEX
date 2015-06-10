@@ -29,7 +29,7 @@ $buildScript = (Join-Path $scriptRoot "Build.ps1")
 
 $buildRefs = @{
     "src" = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB");
-    "test" = @()
+    "test" = @((Join-Path $scriptRoot "VBEXsrc.xlam"))
 }
 
 ForEach ($build In $buildRefs.Keys) {
@@ -38,5 +38,3 @@ ForEach ($build In $buildRefs.Keys) {
     $refs = $buildRefs[$build]
     & "$buildScript" "$path" $files $refs
 }
-
-Write-Host "VBEXtest must reference VBEXsrc and Rubberduck if prior to v1.3"

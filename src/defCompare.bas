@@ -8,7 +8,7 @@ Public Enum CompareResult
     lt = -1
     eq = 0
     gt = 1
-    
+
 End Enum
 Private Sub CheckComparable(ByVal x)
     

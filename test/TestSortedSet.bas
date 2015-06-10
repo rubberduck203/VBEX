@@ -4,11 +4,11 @@ Option Explicit
 Option Private Module
 Private Assert As New Rubberduck.AssertClass
 
-Private Sub SetEmptyConstructorTest(ByVal emptyset As SortedSet)
+Private Sub SetEmptyConstructorTest(ByVal emptySet As SortedSet)
     
-    Assert.IsNotNothing emptyset, "Empty set is not nothing"
-    Assert.AreEqual "SortedSet()", emptyset.Show, "Emptyset repr SortedSet()"
-    Assert.AreEqual CLng(0), emptyset.Count, "emptyset count = 0"
+    Assert.IsNotNothing emptySet, "Empty set is not nothing"
+    Assert.AreEqual "SortedSet()", emptySet.Show, "Emptyset repr SortedSet()"
+    Assert.AreEqual CLng(0), emptySet.Count, "emptyset count = 0"
     
 End Sub
 Private Sub SetNonEmptyConstructorTest(ByVal nonempty As SortedSet)
