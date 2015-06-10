@@ -365,7 +365,7 @@ End Function
 '
 Public Function Equals(ByVal other) As Boolean
 
-    Equals = pList.Equals(other)
+    Equals = defSetLike.SetEquals(Me, other)
     
 End Function
 Private Function IEquatable_Equals(ByVal other) As Boolean

@@ -42,6 +42,11 @@ Private Sub Class_Terminate()
     Set pDict = Nothing
     
 End Sub
+Private Function SetList() As List
+
+    Set SetList = List.Copy(pDict.Keys)
+
+End Function
 '
 ' Public Methods
 ' --------------
@@ -50,22 +55,24 @@ End Sub
 ' Enumerator: How we all would love to create our own...
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
-    
-    Set NewEnum = pDict.Keys
-    
+
+    Static keyList As List
+    Set keyList = SetList
+    Set NewEnum = keyList.NewEnum
+
 End Property
 '
 ' Constructors
 ' ------------
 '
-Public Function Create(ParamArray args() As Variant) As SortedSet
+Public Function Create(ParamArray args() As Variant) As HashSet
     
     Set Create = Copy(args)
     
 End Function
-Public Function Copy(ByVal sequence) As SortedSet
+Public Function Copy(ByVal sequence) As HashSet
     
-    Dim result As New SortedSet
+    Dim result As New HashSet
     result.Extend sequence
     Set Copy = result
     
@@ -73,24 +80,24 @@ End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As IApplicable) As SortedSet
+Public Function Map(ByVal op As IApplicable) As HashSet
     
-    Set Map = defMap.Map(SortedSet, op, pDict)
-    
-End Function
-Public Function FlatMap(ByVal op As IApplicable) As SortedSet
-    
-    Set FlatMap = defMap.FlatMap(SortedSet, op, pDict)
+    Set Map = defMap.Map(HashSet, op, pDict)
     
 End Function
-Public Function Filter(ByVal pred As IApplicable) As SortedSet
+Public Function FlatMap(ByVal op As IApplicable) As HashSet
     
-    Set Filter = defFilter.Filter(SortedSet, pred, pDict)
+    Set FlatMap = defMap.FlatMap(HashSet, op, pDict)
     
 End Function
-Public Function FilterNot(ByVal pred As IApplicable) As SortedSet
+Public Function Filter(ByVal pred As IApplicable) As HashSet
     
-    Set FilterNot = defFilter.FilterNot(SortedSet, pred, pDict)
+    Set Filter = defFilter.Filter(HashSet, pred, pDict)
+    
+End Function
+Public Function FilterNot(ByVal pred As IApplicable) As HashSet
+    
+    Set FilterNot = defFilter.FilterNot(HashSet, pred, pDict)
     
 End Function
 '
@@ -113,7 +120,7 @@ End Property
 ' Add: Instead of Insert, Emplace, or Append
 Public Sub Add(ByVal element)
     
-    If Contains(element) Then
+    If Not Contains(element) Then
         pDict.Add element, Nothing
     End If
     
@@ -216,24 +223,24 @@ Public Function IsProperSuperSetOf(ByVal other As ISetLike) As Boolean
     IsProperSuperSetOf = defSetLike.IsProperSuperSetOf(Me, other)
     
 End Function
-Public Function Union(ByVal other As ISetLike) As SortedSet
+Public Function Union(ByVal other As ISetLike) As HashSet
 
-    Set Union = defSetLike.Union(SortedSet, Me, other)
+    Set Union = defSetLike.Union(HashSet, Me, other)
     
 End Function
-Public Function Intersect(ByVal other As ISetLike) As SortedSet
+Public Function Intersect(ByVal other As ISetLike) As HashSet
 
-    Set Intersect = defSetLike.Intersect(SortedSet, Me, other)
+    Set Intersect = defSetLike.Intersect(HashSet, Me, other)
 
 End Function
-Public Function Difference(ByVal other As ISetLike) As SortedSet
+Public Function Difference(ByVal other As ISetLike) As HashSet
     
-    Set Difference = defSetLike.Difference(SortedSet, Me, other)
+    Set Difference = defSetLike.Difference(HashSet, Me, other)
     
 End Function
-Public Function SymmetricDifference(ByVal other As ISetLike) As SortedSet
+Public Function SymmetricDifference(ByVal other As ISetLike) As HashSet
 
-    Set SymmetricDifference = defSetLike.SymmetricDifference(SortedSet, Me, other)
+    Set SymmetricDifference = defSetLike.SymmetricDifference(HashSet, Me, other)
     
 End Function
 Private Property Get ISetLike_Elements() As IUnknown
@@ -301,7 +308,7 @@ End Function
 '
 Public Function Equals(ByVal other) As Boolean
 
-    Equals = pDict.Equals(other)
+    Equals = defSetLike.SetEquals(Me, other)
     
 End Function
 Private Function IEquatable_Equals(ByVal other) As Boolean
@@ -314,7 +321,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ShowableObject(Me, List.Copy(pDict.Keys).ToArray)
+    Show = defShow.ShowableObject(Me, cast.CArray(pDict.Keys))
     
 End Function
 Private Function IShowable_Show() As String

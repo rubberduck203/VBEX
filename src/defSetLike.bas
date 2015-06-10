@@ -4,6 +4,22 @@ Option Explicit
 ' Comparison
 ' ----------
 '
+Public Function SetEquals(ByVal xs As ISetLike, ByVal ys) As Boolean
+
+    If TypeOf ys Is ISetLike Then
+        On Error GoTo Nope
+        SetEquals = (xs.Difference(ys).Count = 0)
+        On Error GoTo 0
+    Else
+    
+CleanExit:
+        SetEquals = False
+    End If
+Exit Function
+Nope:
+    Resume CleanExit:
+    
+End Function
 Public Function IsDisJoint(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
 
     IsDisJoint = (xs.Intersect(ys).Count = 0)

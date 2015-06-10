@@ -10,8 +10,8 @@ Public Sub TestPass()
     Dim idg As InternalDelegate
     Set idg = InternalDelegate.Make("MaxValue")
 
-    Dim arg
-    arg = Array(1, 2, 4, 2, 100, 2, 3, 20, 3)
+    Dim arg As List
+    Set arg = List.Create(1, 2, 4, 2, 100, 2, 3, 20, 3)
 
     Dim result As Integer
     result = 100
