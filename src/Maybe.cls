@@ -55,6 +55,23 @@ Public Function MakeIf(ByVal pred As Boolean, ByVal x) As Maybe
     End If
     
 End Function
+Public Function Try(ByVal attempt As IDelayed) As Maybe
+
+    Dim result As Maybe
+    On Error GoTo Fail
+    Set result = Some(attempt.Evaluate())
+    On Error GoTo 0
+
+CleanExit:
+    Set Try = result
+
+Exit Function
+
+Fail:
+    Set result = None()
+    Resume CleanExit
+
+End Function
 '
 ' ### Friend Methods
 '
