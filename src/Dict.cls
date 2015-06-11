@@ -19,6 +19,8 @@ Option Explicit
 ' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 Implements IShowable
+' Should implement more Interfaces but this is the only mapping type yet.
+'
 ' Public Members
 ' --------------
 ' None
