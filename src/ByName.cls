@@ -52,6 +52,7 @@ End Property
 ' --------
 '
 Public Function Evaluate() As Variant
+Attribute Evaluate.VB_UserMemId = 0
 
     Assign Evaluate, pApplicable.ApplyOnArray(pArgs)
 

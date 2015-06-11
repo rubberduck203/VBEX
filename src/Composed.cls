@@ -53,6 +53,7 @@ End Property
 ' -----------
 '
 Public Function Apply(ParamArray args() As Variant) As Variant
+Attribute Apply.VB_UserMemId = 0
 
     Assign Apply, IApplicable_ApplyOnArray(cast.CArray(args))
 

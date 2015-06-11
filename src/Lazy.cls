@@ -51,6 +51,7 @@ End Property
 ' --------
 '
 Public Function Evaluate() As Variant
+Attribute Evaluate.VB_UserMemId = 0
 
     If pValue.IsNone Then
         Set pValue = Maybe.Some(delayed.Evaluate)
