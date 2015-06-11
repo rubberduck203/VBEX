@@ -96,7 +96,8 @@ Public Function IsFailure() As Boolean
 
 End Function
 Public Function GetItem() As Variant
-    
+Attribute GetItem.Vb_UserMemId = 0
+
     If IsSuccess Then
         Assign GetItem, pResult
     Else
@@ -104,6 +105,20 @@ Public Function GetItem() As Variant
     End If
 
 End Function
+Public Function GetOrElse(ByVal default) As Variant
+
+    Dim result
+    If IsSuccess Then
+        Assign result, pResult
+    Else
+        Assign result, default
+    End If
+    Assign GetOrElse, result
+
+End Function
+'
+' Recover / RecoverWith?
+'
 '
 ' IEquatable
 ' ----------
