@@ -40,7 +40,7 @@ Public Sub ListNested()
     Dim nestedCopy As List
     Set nestedCopy = List.Create(List.Copy(flat))
     
-    flat.append 4
+    flat.Append 4
     
     Dim newNested As List
     Set newNested = List.Create(flat)
