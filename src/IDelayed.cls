@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Function Evaluate() As Variant
-Attribute Evaluate.Vb_UserMemId = 0
+Attribute Evaluate.VB_UserMemId = 0
 
 End Function
 

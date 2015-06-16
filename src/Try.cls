@@ -35,11 +35,11 @@ Private pSuccess As Boolean
 ' Constructor
 ' -----------
 '
-Public Function Make(ByVal attempt As IDelayed) As Try
+Public Function Make(ByVal Attempt As IDelayed) As Try
 
     Dim result As Try
     On Error GoTo Fail
-    Set result = Success(attempt.Evaluate())
+    Set result = Success(Attempt.Evaluate())
     On Error GoTo 0
 
 CleanExit:
@@ -96,7 +96,7 @@ Public Function IsFailure() As Boolean
 
 End Function
 Public Function GetItem() As Variant
-Attribute GetItem.Vb_UserMemId = 0
+Attribute GetItem.VB_UserMemId = 0
 
     If IsSuccess Then
         Assign GetItem, pResult

@@ -23,7 +23,7 @@ Implements IDelayed
 ' Private Members
 ' ---------------
 '
-Private pDelayed As IDelayed 
+Private pDelayed As IDelayed
 Private pValue As Maybe
 '
 ' Constructors
@@ -72,7 +72,7 @@ End Function
 Public Function Show() As String
 
     Dim repr As String
-    defShow.Show(pValue.GetOrElse(pDelayed))
+    defShow.Show (pValue.GetOrElse(pDelayed))
 
     Show = defShow.ParamShowableObject(Me, repr)
 
