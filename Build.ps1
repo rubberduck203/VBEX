@@ -15,31 +15,44 @@ function main {
 	$fileExt = [System.IO.Path]::GetExtension($buildPath)
 	$officeCOM = switch -wildcard ($fileExt.ToLower()) {
         ".xl*" {New-Object -ComObject Excel.Application; break}
-        ".ac*" {throw "Access is not yet supported"; break} #{New-Object -ComObject Acces.Application; break}
+        #".ac*" {New-Object -ComObject Acces.Application; break}
         default {throw "$fileName is not a supported office file."}
     } 
     dosEOLFolder $sourceFiles
-    $srcAddin = (BuildAddin $officeCOM $sourceFiles $references $buildPath)
+    $srcAddin = (BuildExcelAddin $officeCOM $sourceFiles $references $buildPath)
     $officeCOM.Quit()
 }
-function BuildAddin($officeCOM, 
+function BuildExcelAddin($officeCOM, 
                     [System.Array] $moduleFiles, 
                     [System.Array] $references,
                     [String] $outputPath) {
 
     $newFile = $officeCOM.Workbooks.Add()
     $prj = $newFile.VBProject
-	
-	$projectName = [System.IO.Path]::GetFileNameWithoutExtension($outputPath)
-	
-    $prj.Name = $projectName
-	
-	$moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
-	$references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
+    $projectName = [System.IO.Path]::GetFileNameWithoutExtension($outputPath)
+    BuildVBProject $prj $projectName $moduleFiles $references
     
     #save as addin
     $newFile.SaveAs($outputPath, 55)
     return $newFile
+}
+function BuildAccessAddin($officeCOM, [System.Array] $moduleFiles, 
+        [System.Array] $references, [String] $outputPath) {
+
+    $newDB = $officeCOM.DBEngine.CreateDatabase($outputPath)
+    $prj = $officeCOM.VBE.VBProjects(1)
+    $projectName = [System.IO.Path]::GetFileNameWithoutExtension($outputPath)
+    BuildVBProject $prj $projectName $moduleFiles $references
+    
+    return $newDB
+}
+function BuildVBProject($prj, [String] $name, [System.Array] $moduleFiles,
+        [System.Array] $references) {
+    
+    $prj.Name = $name
+    $moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
+    $references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
+    
 }
 function dosEOLFolder([System.Array] $textFiles) {
     $textFiles | ForEach-Object { dosEOL $_ }
