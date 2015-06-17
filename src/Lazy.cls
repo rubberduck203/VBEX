@@ -24,16 +24,11 @@ Implements IDelayed
 ' ---------------
 '
 Private pDelayed As IDelayed
-Private pValue As Maybe
+Private pValue As Variant
 '
 ' Constructors
 ' ------------
 '
-Private Sub Class_Initialize()
-
-    Set pValue = Maybe.None
-
-End Sub
 Public Function Make(ByVal delayed As IDelayed) As Lazy
 
     Dim result As New Lazy
@@ -47,17 +42,31 @@ Friend Property Set DelayedOp(ByVal delayed As IDelayed)
 
 End Property
 '
+' Public Functions
+' ----------------
+'
+Public Function IsDelayed() As Boolean
+
+    IsDelayed = IsEmpty(pValue)
+
+End Function
+Public Function IsEvaluated() As Boolean
+
+    IsEvaluated = Not IsDelayed
+
+End Function
+'
 ' IDelayed
 ' --------
 '
 Public Function Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
-    If pValue.IsNone Then
-        Set pValue = Maybe.Some(delayed.Evaluate)
+    If IsDelayed Then
+        Assign pValue, pDelayed.Evaluate
     End If
 
-    Assign Evaluate, pValue.GetItem
+    Assign Evaluate, pValue
 
 End Function
 Private Function IDelayed_Evaluate() As Variant
@@ -72,7 +81,11 @@ End Function
 Public Function Show() As String
 
     Dim repr As String
-    defShow.Show (pValue.GetOrElse(pDelayed))
+    If IsEvaluated Then
+        repr = defShow.Show(pValue)
+    Else
+        repr = defShow.Show(pDelayed)
+    End If
 
     Show = defShow.ParamShowableObject(Me, repr)
 

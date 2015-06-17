@@ -29,17 +29,29 @@ Private pArgs() As Variant
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal app As IApplicable, ParamArray args()) As ByName
+Public Function Create(ByVal op As IApplicable, ParamArray args()) As ByName
 
     Dim result As New ByName
-    Set result.Applicable = app
+    Set result.Applicable = op
     result.Arguements = cast.CArray(args)
+    Set Create = result
+
+End Function
+Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As ByName
+    
+    Dim arrArgs() As Variant
+    args.Explode arrArgs
+    
+    Dim result As New ByName
+    Set result.Applicable = op
+    result.Arguements = arrArgs
+    
     Set Make = result
 
 End Function
-Friend Property Set Applicable(ByVal app As IApplicable)
+Friend Property Set Applicable(ByVal op As IApplicable)
 
-    Set pApplicable = app
+    Set pApplicable = op
 
 End Property
 Friend Property Let Arguements(ByRef args())
