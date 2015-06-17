@@ -1,6 +1,6 @@
 Attribute VB_Name = "TestHashSet"
 Option Explicit
-Option Private Module
+'Option Public Module
 '@TestModule
 Private Assert As New Rubberduck.AssertClass
 

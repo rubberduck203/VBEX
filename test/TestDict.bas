@@ -22,12 +22,12 @@ End Sub
 
 '@TestMethod
 Public Sub DictEmptyFromAssocs()
-    DictTestEmpty Dict.Create(List.Create())
+    DictTestEmpty Dict.Create()
 End Sub
 
 '@TestMethod
 Public Sub DictNonEmptyFromAssocs()
-    DictTestNonEmpty Dict.Create(List.Create(Assoc.Make(1, 2), Assoc.Make(3, 4), Assoc.Make(5, 6)))
+    DictTestNonEmpty Dict.Create(Assoc.Make(1, 2), Assoc.Make(3, 4), Assoc.Make(5, 6))
 End Sub
 
 '@TestMethod

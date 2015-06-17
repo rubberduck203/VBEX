@@ -40,6 +40,7 @@ End Function
 Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As ByName
     
     Dim arrArgs() As Variant
+    ReDim arrArgs(0 To args.Count - 1)
     args.Explode arrArgs
     
     Dim result As New ByName
