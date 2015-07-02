@@ -56,13 +56,13 @@ Private Function Success(ByVal x) As Try
     
     Dim result As New Try
     result.AssignResult x
-    Set Some = result
+    Set Success = result
     
 End Function
 Private Function Failure(ByVal e As ErrObject) As Try
 
     Dim result As New Try
-    result.AssingError e
+    result.AssignError e
     Set Failure = result
 
 End Function
@@ -85,7 +85,7 @@ End Sub
 ' Public Methods
 ' --------------
 '
-Public Function IsSucces() As Boolean
+Public Function IsSuccess() As Boolean
     
     IsSuccess = pSuccess
     
@@ -148,7 +148,7 @@ Public Function Bind(ByVal op As IApplicable) As Try
     
         On Error GoTo ErrHandler
         Dim opResult
-        Assign opResult, op.Apply(pVar)
+        Assign opResult, op.Apply(pResult)
         Set result = opResult
         On Error GoTo 0
         

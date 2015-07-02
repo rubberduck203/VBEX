@@ -19,12 +19,13 @@ Option Explicit
 '
 Implements IShowable
 Implements IDelayed
+Implements IMonadic
 '
 ' Private Members
 ' ---------------
 '
 Private pDelayed As IDelayed
-Private pValue As Maybe
+Private pValue As Variant
 '
 ' Constructors
 ' ------------
@@ -47,14 +48,28 @@ Friend Property Set DelayedOp(ByVal delayed As IDelayed)
 
 End Property
 '
+' Public Methods
+' --------------
+'
+Public Function IsDelayed() As Boolean
+
+    IsDelayed = pValue.IsNone
+
+End Function
+Public Function IsEvaluated() As Boolean
+
+    IsEvaluated = pValue.IsSome
+
+End Function
+'
 ' IDelayed
 ' --------
 '
 Public Function Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
-    If pValue.IsNone Then
-        Set pValue = Maybe.Some(delayed.Evaluate)
+    If IsDelayed Then
+        Set pValue = Maybe.Some(pDelayed.Evaluate)
     End If
 
     Assign Evaluate, pValue.GetItem
@@ -66,13 +81,53 @@ Private Function IDelayed_Evaluate() As Variant
 
 End Function
 '
+' IMonadic
+' --------
+'
+Public Function Bind(ByVal op As IApplicable) As Lazy
+
+    Dim result As Lazy
+    Set result = op.Apply(pDelayed)
+    
+    Set Bind = result
+
+End Function
+Public Function Map(ByVal op As IApplicable) As Lazy
+
+    Dim x As Lazy
+    Set x = Me
+    
+    Set Map = Lazy.Make(ByName.Make(op, Tuple.Pack(x)))
+
+End Function
+Public Function Unit(ByVal x) As Lazy
+
+    Set Unit = Make(x)
+
+End Function
+Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
+
+    Set IMonadic_Bind = Bind(op)
+
+End Function
+Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
+
+    Set IMonadic_Map = Map(op)
+
+End Function
+Private Function IMonadic_Unit(ByVal x) As IMonadic
+
+    Set IMonadic_Unit = Unit(x)
+
+End Function
+'
 ' IShowable
 ' ---------
 '
 Public Function Show() As String
 
     Dim repr As String
-    defShow.Show (pValue.GetOrElse(pDelayed))
+    repr = defShow.Show(pValue.GetOrElse(pDelayed))
 
     Show = defShow.ParamShowableObject(Me, repr)
 
