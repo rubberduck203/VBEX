@@ -17,7 +17,8 @@ Option Explicit
 ' This file (Try.cls) is distributed under the MIT license
 ' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
-' An object that evaluates the delayed object to a value or an error.
+' An object that optionally contains an item.  It's use is an abstraction from
+' checking if a method returned a value or not.
 '
 '
 Implements IEquatable

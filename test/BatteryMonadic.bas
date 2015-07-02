@@ -46,7 +46,7 @@ Private Sub Associativity(ByVal m As IMonadic, ByVal f As IApplicable, _
 
     ' monad.Bind(f).Bind(g) == monad.Bind(x => f(x).Bind(g))
     Dim leftSide As IEquatable
-    Set leftSide = m.Bind(f).Bind(g)
+    Set leftSide = m.bind(f).bind(g)
 
     Dim nc As IApplicable ' .Bind(g)
     Set nc = OnObject.Make("Bind", VbMethod, g)
@@ -55,7 +55,7 @@ Private Sub Associativity(ByVal m As IMonadic, ByVal f As IApplicable, _
     Set h = Composed.Make(nc, f)
 
     Dim rightSide As IEquatable
-    Set rightSide = m.Bind(h)
+    Set rightSide = m.bind(h)
 
     Dim result As Boolean
     result = Equals(leftSide, rightSide)
@@ -67,7 +67,7 @@ Private Sub LeftUnit(ByVal m As IMonadic, ByVal x, ByVal f As IApplicable)
     ' unit(x).Bind(f) == f(x)
 
     Dim leftSide As IEquatable
-    Set leftSide = m.Unit(x).Bind(f)
+    Set leftSide = m.Unit(x).bind(f)
     
     Dim rightSide As IEquatable
     Set rightSide = f.Apply(x)
@@ -84,7 +84,7 @@ Private Sub RightUnit(ByVal m As IMonadic)
     Set u = OnArgs.Make("Unit", VbMethod, m)
     
     Dim leftSide As IEquatable
-    Set leftSide = m.Bind(u)
+    Set leftSide = m.bind(u)
     
     Dim result As Boolean
     result = Equals(leftSide, m)

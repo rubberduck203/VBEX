@@ -37,7 +37,3 @@ Public Function IsArray(ByVal x) As Boolean
 
 End Function
 
-Public Sub derp()
-    Dim x As List
-    Set x = Maybe.None
-End Sub

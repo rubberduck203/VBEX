@@ -68,7 +68,6 @@ Friend Property Let Encapsulated(ByVal s As String)
 
 End Property
 Public Property Get NewEnum() As IUnknown
-Attribute NewEnum.VB_UserMemId = -4
 
     Static exploded As Collection
     Set exploded = Explode
