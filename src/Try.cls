@@ -198,6 +198,7 @@ Private Function IMonadic_Unit(ByVal x) As IMonadic
     Set IMonadic_Unit = Make(x)
 
 End Function
+
 '
 ' IShowable
 ' ---------

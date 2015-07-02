@@ -20,35 +20,23 @@ Public Sub LazyMakeTest()
 
 End Sub
 '@TestMethod
-Public Sub LazyMonadicTest()
-' lazy is monadic?
-' set y = x.Map(op) evaluates x but not y
-' set y = x.Bind(op) evaluates neither x or y
+Public Sub LazyMapTest()
+
+    Dim lazyFour As Lazy
+    Set lazyFour = Lazy.Make(ByName.Create(Lambda.FromShort("_ + _"), 2, 2)) ' 2 + 2
+    Assert.IsTrue lazyFour.IsDelayed
     
-    Dim cont As OnArgs
-    Set cont = OnArgs.Make("Contains", VbMethod, SortedSet.Create(1, 2, 3))
+    Dim lazyFourty As Lazy
+    Set lazyFourty = lazyFour.Map(Lambda.FromShort("10 * _ "))
+    Assert.IsTrue lazyFourty.IsDelayed
+    Assert.IsTrue lazyFour.IsDelayed
     
-    Dim x As Lazy
-    Set x = Lazy.Make(ByName.Create(cont, 2))
+    Dim forty As Integer
+    forty = lazyFourty.Evaluate
+    Assert.AreEqual 40, forty, "(2 + 2) * 10 == 40"
     
-    Assert.IsTrue x.IsDelayed
-    
-    Dim negate As Lambda
-    Set negate = Lambda.FromShort("Not _ ")
-    
-    Dim y As Lazy
-    Set y = x.Bind(negate)
-    
-    Assert.IsTrue x.IsDelayed
-    Assert.IsTrue y.IsDelayed
-    
-    Dim z As Lazy
-    Set z = x.Map(negate)
-    
-    Assert.IsTrue x.IsEvaluated
-    Assert.IsTrue y.IsDelayed
-    Assert.IsTrue z.IsDelayed
-    
+    Assert.IsTrue lazyFourty.IsEvaluated ' Obviously I just called evaluate
+    Assert.IsTrue lazyFour.IsEvaluated ' Not obvious but optimal.
     
 End Sub
 

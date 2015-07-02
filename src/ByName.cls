@@ -75,6 +75,22 @@ Private Function IDelayed_Evaluate() As Variant
     Assign IDelayed_Evaluate, Evaluate
 
 End Function
+Public Function Map(ByVal op As IApplicable) As ByName
+
+    Dim opResult As IApplicable
+    Set opResult = op.Compose(pApplicable)
+    
+    Dim result As ByName
+    Set result = Make(opResult, Tuple.Implode(pArgs))
+    
+    Set Map = result
+
+End Function
+Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed
+
+    Set IDelayed_Map = Map(op)
+
+End Function
 '
 ' IShowable
 ' ---------

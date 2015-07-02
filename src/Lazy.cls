@@ -19,7 +19,6 @@ Option Explicit
 '
 Implements IShowable
 Implements IDelayed
-Implements IMonadic
 '
 ' Private Members
 ' ---------------
@@ -80,44 +79,21 @@ Private Function IDelayed_Evaluate() As Variant
     Assign IDelayed_Evaluate, Evaluate
 
 End Function
-'
-' IMonadic
-' --------
-'
-Public Function Bind(ByVal op As IApplicable) As Lazy
-
-    Dim result As Lazy
-    Set result = op.Apply(pDelayed)
-    
-    Set Bind = result
-
-End Function
 Public Function Map(ByVal op As IApplicable) As Lazy
 
-    Dim x As Lazy
-    Set x = Me
+    Dim result As IDelayed
+    If IsDelayed Then
+        Set result = pDelayed.Map(op)
+    Else
+        Set result = ByName.Create(op, pValue.GetItem)
+    End If
     
-    Set Map = Lazy.Make(ByName.Make(op, Tuple.Pack(x)))
+    Set Map = Lazy.Make(result)
 
 End Function
-Public Function Unit(ByVal x) As Lazy
+Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed
 
-    Set Unit = Make(x)
-
-End Function
-Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
-
-    Set IMonadic_Bind = Bind(op)
-
-End Function
-Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
-
-    Set IMonadic_Map = Map(op)
-
-End Function
-Private Function IMonadic_Unit(ByVal x) As IMonadic
-
-    Set IMonadic_Unit = Unit(x)
+    Set IDelayed_Map = Map(op)
 
 End Function
 '

@@ -13,4 +13,6 @@ Public Function Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
 End Function
+Public Function Map(ByVal op As IApplicable) As IDelayed
 
+End Function
