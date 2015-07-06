@@ -34,12 +34,25 @@ Private Sub Class_Initialize()
     Set pValue = Maybe.None
 
 End Sub
-Public Function Make(ByVal delayed As IDelayed) As Lazy
+Public Function Create(ByVal op As IApplicable, ParamArray args()) As Lazy
+
+    Set Create = Make(op, Tuple.Implode(CArray(args)))
+
+End Function
+Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As Lazy
+    
+    Dim delayed As ByName
+    Set delayed = ByName.Make(op, args)
+
+    Set Make = FromDelayed(delayed)
+
+End Function
+Public Function FromDelayed(ByVal delayed As IDelayed) As Lazy
 
     Dim result As New Lazy
     Set result.DelayedOp = delayed
-    Set Make = result
-
+    Set FromDelayed = result
+    
 End Function
 Friend Property Set DelayedOp(ByVal delayed As IDelayed)
 
@@ -64,7 +77,7 @@ End Function
 ' IDelayed
 ' --------
 '
-Public Function Evaluate() As Variant
+Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
     If IsDelayed Then
@@ -73,22 +86,28 @@ Attribute Evaluate.VB_UserMemId = 0
 
     Assign Evaluate, pValue.GetItem
 
-End Function
-Private Function IDelayed_Evaluate() As Variant
+End Property
+Private Property Get IDelayed_Evaluate() As Variant
 
     Assign IDelayed_Evaluate, Evaluate
 
-End Function
+End Property
 Public Function Map(ByVal op As IApplicable) As Lazy
 
     Dim result As IDelayed
     If IsDelayed Then
-        Set result = pDelayed.Map(op)
+        ' result will still need evaluation even after I am evaluated.
+        ' the result must have some reference to myself.
+        'Set result = pDelayed.Map(op)
+        Dim indirect As Lazy
+        Set indirect = Me
+        Set result = ByName.Create(op, indirect)
     Else
+        ' Correctly done
         Set result = ByName.Create(op, pValue.GetItem)
     End If
     
-    Set Map = Lazy.Make(result)
+    Set Map = Lazy.FromDelayed(result)
 
 End Function
 Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed

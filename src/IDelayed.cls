@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Public Function Evaluate() As Variant
+Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
-End Function
+End Property
 Public Function Map(ByVal op As IApplicable) As IDelayed
 
 End Function

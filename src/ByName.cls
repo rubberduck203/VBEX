@@ -31,10 +31,7 @@ Private pArgs() As Variant
 '
 Public Function Create(ByVal op As IApplicable, ParamArray args()) As ByName
 
-    Dim result As New ByName
-    Set result.Applicable = op
-    result.Arguements = cast.CArray(args)
-    Set Create = result
+    Set Create = Make(op, Tuple.Implode(CArray(args)))
 
 End Function
 Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As ByName
@@ -64,17 +61,17 @@ End Property
 ' IDelayed
 ' --------
 '
-Public Function Evaluate() As Variant
+Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
     Assign Evaluate, pApplicable.ApplyOnArray(pArgs)
 
-End Function
-Private Function IDelayed_Evaluate() As Variant
+End Property
+Private Property Get IDelayed_Evaluate() As Variant
 
     Assign IDelayed_Evaluate, Evaluate
 
-End Function
+End Property
 Public Function Map(ByVal op As IApplicable) As ByName
 
     Dim opResult As IApplicable
