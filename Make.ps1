@@ -16,24 +16,31 @@ $programFiles = if ([Environment]::Is64BitOperatingSystem) {
 } else { 
     "Program Files"
 }
+
+$VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
+$VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
+
 # Compatible with earlier powershell versions
 $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
     $PSScriptRoot
 } else {
     Split-Path $MyInvocation.MyCommand.Path -Parent
 }
-# constants are illegible in powershell
-$VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
-$VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
 $buildScript = (Join-Path $scriptRoot "Build.ps1")
+
+$ext = switch ($officeApp) {
+    "Excel" {"xlam"}
+    "Access" {"accde"}
+    default {throw "$officeApp is not a supported office application."}
+}
 
 $buildRefs = @{
     "src" = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB");
-    "test" = @((Join-Path $scriptRoot "VBEXsrc.xlam"))
+    "test" = @((Join-Path $scriptRoot "VBEXsrc.$ext"))
 }
 
 ForEach ($build In $buildRefs.Keys) {
-    $path = (Join-Path $scriptRoot "VBEX$build.xlam")
+    $path = (Join-Path $scriptRoot "VBEX$build.$ext")
     $files = (Get-ChildItem (Join-Path $scriptRoot $build)) | % { $_.FullName } # v3 and greater this would be just .FullName
     $refs = $buildRefs[$build]
     & "$buildScript" "$path" $files $refs
