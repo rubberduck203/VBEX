@@ -78,6 +78,7 @@ Public Function IsSome() As Boolean
 
 End Function
 Public Function GetItem() As Variant
+Attribute GetItem.VB_UserMemId = 0
 
     If IsSome Then
         Assign GetItem, pVar
