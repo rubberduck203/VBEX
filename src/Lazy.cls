@@ -29,11 +29,6 @@ Private pValue As Variant
 ' Constructors
 ' ------------
 '
-Private Sub Class_Initialize()
-
-    Set pValue = Maybe.None
-
-End Sub
 Public Function Create(ByVal op As IApplicable, ParamArray args()) As Lazy
 
     Set Create = Make(op, Tuple.Implode(CArray(args)))
@@ -65,12 +60,12 @@ End Property
 '
 Public Function IsDelayed() As Boolean
 
-    IsDelayed = pValue.IsNone
+    IsDelayed = IsEmpty(pValue)
 
 End Function
 Public Function IsEvaluated() As Boolean
 
-    IsEvaluated = pValue.IsSome
+    IsEvaluated = (Not IsDelayed)
 
 End Function
 '
@@ -81,10 +76,10 @@ Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
     If IsDelayed Then
-        Set pValue = Maybe.Some(pDelayed.Evaluate)
+        Assign pValue, pDelayed.Evaluate
     End If
 
-    Assign Evaluate, pValue.GetItem
+    Assign Evaluate, pValue
 
 End Property
 Private Property Get IDelayed_Evaluate() As Variant
@@ -96,15 +91,13 @@ Public Function Map(ByVal op As IApplicable) As Lazy
 
     Dim result As IDelayed
     If IsDelayed Then
-        ' result will still need evaluation even after I am evaluated.
-        ' the result must have some reference to myself.
-        'Set result = pDelayed.Map(op)
-        Dim indirect As Lazy
-        Set indirect = Me
-        Set result = ByName.Create(op, indirect)
+        'Set result = ByName.Create(op, Me) ' Evaluates `Me` before returning result
+        'Set result = ByName.Make(op, Tuple.Pack(Me)) ' Same result: Parameter Array + Me => default property evaluated.
+        'Set result = ByName.Make(op, Tuple.Implode(Array(Me))) ' Same result
+        Set result = ByName.Make(op, Tuple.SingleValue(Me)) ' Evaluating result does not evaluate `Me` when using a CallByName IApplicable.
+        Debug.Assert IsDelayed
     Else
-        ' Correctly done
-        Set result = ByName.Create(op, pValue.GetItem)
+        Set result = ByName.Create(op, pValue)
     End If
     
     Set Map = Lazy.FromDelayed(result)
@@ -122,8 +115,11 @@ End Function
 Public Function Show() As String
 
     Dim repr As String
-    repr = defShow.Show(pValue.GetOrElse(pDelayed))
-
+    If IsDelayed Then
+        repr = defShow.Show(pDelayed)
+    Else
+        repr = defShow.Show(pValue)
+    End If
     Show = defShow.ParamShowableObject(Me, repr)
 
 End Function
