@@ -28,9 +28,9 @@ Public Sub LazyTestWithHashSet()
     Dim hs As HashSet
     Set hs = HashSet.Create("World")
     
-    Debug.Assert hs.Contains(lz) ' WILL FAIL, but shouldn't
-    Debug.Assert hs.Contains(lz.Evaluate) ' doesn't fail
-    Debug.Assert hs.Contains(lz) ' still does...
+    Assert.IsTrue hs.Contains(lz) ' WILL FAIL, but shouldn't
+    Assert.IsTrue hs.Contains(lz.Evaluate) ' doesn't fail
+    Assert.IsTrue hs.Contains(lz) ' still does...
     
 End Sub
 '
@@ -68,10 +68,10 @@ Private Sub LazyMapTest(ByVal initialLazy As Lazy, ByVal toMapWith As IApplicabl
     Dim mapped As Lazy
     Set mapped = initialLazy.Map(toMapWith)
 
-    Debug.Assert initialLazy.IsDelayed
-    Debug.Assert mapped.IsDelayed
+    Assert.IsTrue initialLazy.IsDelayed
+    Assert.IsTrue mapped.IsDelayed
     
-    Debug.Assert Equals(mapped.Evaluate, mappedResult)
-    Debug.Assert initialLazy.IsEvaluated
+    Assert.IsTrue Equals(mapped.Evaluate, mappedResult)
+    Assert.IsTrue initialLazy.IsEvaluated
     
 End Sub
