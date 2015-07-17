@@ -10,26 +10,26 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Private Type TTree
-	Root As TreeNode
+        Root As TreeNode
 End Type
 
 Private this As TTree
 Public Function Create() As Tree
-	
-	Dim result As New Tree
-	Set result.Root = New TreeNode
-	Set Create = result
+        
+        Dim result As New Tree
+        Set result.Root = New TreeNode
+        Set Create = result
 
 End Function
 Friend Property Set Root(ByVal node As TreeNode)
-	
-	Set this.Root = node
-	
+        
+        Set this.Root = node
+        
 End Property
 Public Property Get Root() As TreeNode
 Attribute Root.VB_UserMemId = 0
-	
+        
     Set Root = this.Root
-	
+        
 End Property
 

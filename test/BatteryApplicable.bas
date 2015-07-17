@@ -18,6 +18,6 @@ End Sub
 '
 Private Sub TestApply(ByVal f As IApplicable, ByVal x, ByVal y)
 
-    Assert.AreEqual y, f.Apply(x)
+    Assert.areequal y, f.Apply(x)
 
 End Sub

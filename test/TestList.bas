@@ -11,8 +11,8 @@ Private Assert As New Rubberduck.AssertClass
 '@TestMethod
 Public Sub ListCopy()
 
-    Assert.AreEqual "List(1, 2, 3)", List.Copy(Array(1, 2, 3)).Show
-    Assert.AreEqual "List()", List.Copy(Array()).Show
+    Assert.areequal "List(1, 2, 3)", List.Copy(Array(1, 2, 3)).Show
+    Assert.areequal "List()", List.Copy(Array()).Show
     
 End Sub
 '@TestMethod
@@ -49,6 +49,20 @@ Public Sub ListNested()
     Assert.IsFalse nested.Equals(nestedCopy)
     
 End Sub
+'@TestMethod
+Public Sub ListRepeat()
+
+    Dim xs As List
+    Set xs = List.Repeat("x", 5)
+    
+    Assert.areequal CLng(5), xs.Count
+    
+    Dim x
+    For Each x In xs
+        Assert.areequal "x", x
+    Next
+    
+End Sub
 '
 ' Interfaces
 ' ----------
@@ -82,15 +96,15 @@ End Sub
 '
 '@TestMethod
 Public Sub ListCount()
-    Assert.AreEqual List.Create(1, 2, 3).Count, CLng(3), "NonEmpty"
-    Assert.AreEqual List.Create().Count, CLng(0), "empty"
+    Assert.areequal List.Create(1, 2, 3).Count, CLng(3), "NonEmpty"
+    Assert.areequal List.Create().Count, CLng(0), "empty"
 End Sub
 '
 ' ### ISequence
 '
 '@TestMethod
 Public Sub ListToArray()
-    Assert.AreEqual Join(Array(1, 2, 3)), Join(List.Create(1, 2, 3).ToArray), "multiple elements"
+    Assert.areequal Join(Array(1, 2, 3)), Join(List.Create(1, 2, 3).ToArray), "multiple elements"
     Assert.IsNothing Join(List.Create().ToArray)
 End Sub
 '
@@ -106,9 +120,9 @@ Public Sub ListShow()
     Set nestList = List.Create(flatList, flatList)
     
     With Assert
-        .AreEqual "List()", List.Create().Show
-        .AreEqual "List(1, 2, 3)", flatList.Show
-        .AreEqual "List(List(1, 2, 3), List(1, 2, 3))", nestList.Show
+        .areequal "List()", List.Create().Show
+        .areequal "List(1, 2, 3)", flatList.Show
+        .areequal "List(List(1, 2, 3), List(1, 2, 3))", nestList.Show
     End With
     
 End Sub
@@ -126,7 +140,7 @@ End Sub
 '@TestMethod
 Public Sub ListFold()
 
-    Assert.AreEqual "abc", List.Create("a", "b", "c") _
+    Assert.areequal "abc", List.Create("a", "b", "c") _
         .Fold("", Lambda.FromProper("(a, b) => a & b"))
         
 End Sub

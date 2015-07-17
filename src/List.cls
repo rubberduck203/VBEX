@@ -78,6 +78,11 @@ Public Function Create(ParamArray args() As Variant) As List
     Set Create = Copy(CVar(args))
     
 End Function
+Public Function Repeat(ByVal x, ByVal n As Long) As List
+
+    Set Repeat = defBuildable.Repeat(List, x, n)
+
+End Function
 '
 ' ### Functional Constructors
 '

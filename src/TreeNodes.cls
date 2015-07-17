@@ -13,30 +13,30 @@ Private this As Dictionary
 
 Public Sub Clear()
 Attribute Clear.VB_Description = "Removes all of the child nodes and frees the circular reference to their Parent."
-	this.Clear
+        this.Clear
 End Sub
 
 Public Sub Add(ByVal node As TreeNode)
-        this.Add node.Name, node.Value
+        this.Add node.name, node.Value
 End Sub
 
 Public Sub Remove(ByVal node As TreeNode)
 Attribute Remove.VB_Description = "Removes a TreeNode from the collection and frees its circular reference to its Parent."
-	Set Item.Parent = Nothing 'release circular reference
-	this.Remove node.Name
+        Set Item.Parent = Nothing 'release circular reference
+        this.Remove node.name
 End Sub
 
 Public Function Item(ByVal aName As String) As TreeNode
 Attribute Item.VB_UserMemId = 0
-	Set Item = this(aName)
+        Set Item = this(aName)
 End Function
 
 Public Function Count() As Long
-	Count = this.Count
+        Count = this.Count
 End Function
 
 Public Function Exists(ByVal aName As String) As Boolean
-	Exists = this.Exists(aName)
+        Exists = this.Exists(aName)
 End Function
 
 Public Function NewEnum() As IUnknown

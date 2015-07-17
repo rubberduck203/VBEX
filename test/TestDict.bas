@@ -10,14 +10,14 @@ Private Assert As New Rubberduck.AssertClass
 '
 Private Sub DictTestEmpty(ByVal d As Dict)
     Assert.IsNotNothing d, "Empty Dict is not nothing"
-    Assert.AreEqual CLng(0), d.Count, "Empty Dict count = 3"
-    Assert.AreEqual "Dict()", d.Show, "Empty Dict Show"
+    Assert.areequal CLng(0), d.Count, "Empty Dict count = 3"
+    Assert.areequal "Dict()", d.Show, "Empty Dict Show"
 End Sub
 
 Private Sub DictTestNonEmpty(ByVal d As Dict)
     Assert.IsNotNothing d, "NonEmpty Dict is not nothing"
-    Assert.AreEqual CLng(3), d.Count, "NonEmpty Dict count = 3"
-    Assert.AreEqual "Dict(1 -> 2, 3 -> 4, 5 -> 6)", d.Show, "NonEmpty Dict Show"
+    Assert.areequal CLng(3), d.Count, "NonEmpty Dict count = 3"
+    Assert.areequal "Dict(1 -> 2, 3 -> 4, 5 -> 6)", d.Show, "NonEmpty Dict Show"
 End Sub
 
 '@TestMethod

@@ -8,9 +8,9 @@ Private Assert As New Rubberduck.AssertClass
 Public Sub ShowPrimativeDataTest()
 
     With Assert
-        .AreEqual "x", defshow.Show("x")
-        .AreEqual "1", defshow.Show(CInt(1))
-        .AreEqual "1", defshow.Show(CDbl(1))
+        .areequal "x", defshow.Show("x")
+        .areequal "1", defshow.Show(CInt(1))
+        .areequal "1", defshow.Show(CDbl(1))
     End With
 
 End Sub
@@ -24,8 +24,8 @@ Public Sub ShowableTest()
     Set nestList = List.Create(flatList, flatList)
 
     With Assert
-        .AreEqual flatList.Show, defshow.Show(flatList)
-        .AreEqual nestList.Show, defshow.Show(nestList)
+        .areequal flatList.Show, defshow.Show(flatList)
+        .areequal nestList.Show, defshow.Show(nestList)
     End With
 
 End Sub

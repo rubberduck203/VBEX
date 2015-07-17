@@ -139,7 +139,7 @@ Public Function FromShort(ByVal shorthand As String) As Lambda
     For i = 0 To argsize
     
         Dim paramChar As String
-        paramChar = Chr(ASCaCODE + i)
+        paramChar = chr(ASCaCODE + i)
         
         expr = Replace(expr, SHORT_HAND_CHAR, paramChar, Count:=1)
         

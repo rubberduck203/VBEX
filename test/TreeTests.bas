@@ -82,10 +82,10 @@ Public Sub AddChildToChild()
                 child.Name = "username"
 
         'Assert:
-        Assert.AreEqual expected, t.Root.Children.Count
-        Assert.AreEqual expected, t.Root.Children(1).Children.Count
-        Assert.AreEqual "Users", t.Root.Children(1).Name
-        Assert.AreEqual "username", t.Root.Children(1).Children(1).Name
+        Assert.areequal expected, t.Root.Children.Count
+        Assert.areequal expected, t.Root.Children(1).Children.Count
+        Assert.areequal "Users", t.Root.Children(1).Name
+        Assert.areequal "username", t.Root.Children(1).Children(1).Name
 
 TestExit:
         Exit Sub
@@ -104,7 +104,7 @@ Public Sub ChildTracksParent()
                 child.Name = "Users"
                 
         'Assert:
-        Assert.AreEqual "C:", child.Parent.Name
+        Assert.areequal "C:", child.Parent.Name
 
 TestExit:
         Exit Sub
@@ -125,9 +125,9 @@ Public Sub ParentIsNotNothingAfterRemovingChild() 'TODO: Rename test
                 t.Root.RemoveChild child
         
         'Assert:
-        Assert.AreEqual expectedCount, t.Root.Children.Count
+        Assert.areequal expectedCount, t.Root.Children.Count
         Assert.IsNotNothing t.Root
-        Assert.AreEqual "C:", t.Root.Name
+        Assert.areequal "C:", t.Root.Name
 
 TestExit:
         Exit Sub
@@ -189,7 +189,7 @@ Public Sub LeafPathToString()
                 Dim actual As String
                 actual = child.Path
         'Assert:
-        Assert.AreEqual expected, actual
+        Assert.areequal expected, actual
 
 TestExit:
         Exit Sub
@@ -214,7 +214,7 @@ Public Sub NodePathToString()
                 Dim actual As String
                 actual = t.Root.Children(1).Path
         'Assert:
-        Assert.AreEqual expected, actual
+        Assert.areequal expected, actual
 
 TestExit:
         Exit Sub
@@ -243,7 +243,7 @@ Public Sub LeafPathToStringWithOptionalSeparator()
                 Dim actual As String
                 actual = child.Path("/")
         'Assert:
-        Assert.AreEqual expected, actual
+        Assert.areequal expected, actual
 
 TestExit:
         Exit Sub
@@ -268,7 +268,7 @@ Public Sub NodePathToStringWithOptionalSeparator()
                 Dim actual As String
                 actual = t.Root.Children(1).Path("/")
         'Assert:
-        Assert.AreEqual expected, actual
+        Assert.areequal expected, actual
 
 TestExit:
         Exit Sub
@@ -355,7 +355,7 @@ Public Sub CanAddValueToValue()
         'Act:
                 t.Root.Value = expected
         'Assert:
-        Assert.AreEqual expected, t.Root.Value
+        Assert.areequal expected, t.Root.Value
 
 TestExit:
         Exit Sub
@@ -385,7 +385,7 @@ Public Sub ShallowCopyOfValueValue()
                 
         'Assert:
         Assert.AreNotSame parent1.Children(1), parent2.Children(1)
-        Assert.AreEqual parent1.Children(1).Value, parent2.Children(1).Value
+        Assert.areequal parent1.Children(1).Value, parent2.Children(1).Value
 
 TestExit:
         Exit Sub

@@ -20,7 +20,7 @@ Public Sub TestHashSetGist()
     Dim hs As HashSet
     Set hs = HashSet.Create(x, x, y, y, z, z)
     
-    Assert.AreEqual CLng(2), hs.Count
+    Assert.areequal CLng(2), hs.Count
     Assert.IsTrue hs.Contains(x)
     Assert.IsTrue hs.Contains(y)
     Assert.IsTrue hs.Contains(z)

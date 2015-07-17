@@ -62,6 +62,11 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
     Next
 
 End Function
+Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
+
+    Set Repeat = defBuildable.Repeat(Str, c, n)
+
+End Function
 Friend Property Let Encapsulated(ByVal s As String)
 
     pString = s
@@ -131,6 +136,11 @@ Public Function Count() As Long
     
     Count = Len(pString)
     
+End Function
+Public Function DoubleQuote() As String
+
+    DoubleQuote = Asc(34)
+
 End Function
 '
 ' IBuildable
