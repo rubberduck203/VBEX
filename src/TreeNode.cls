@@ -5,54 +5,57 @@ END
 Attribute VB_Name = "TreeNode"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 Option Explicit
 
+Implements IShowable
+
 Private Type TTreenode
-	Name As String
-	Value As Variant
-	Children As TreeNodes
-	Parent As TreeNode
+    Name As String
+    Value As Variant
+    Children As TreeNodes
+    Parent As TreeNode
 End Type
 
 Private this As TTreenode
 
 Public Property Get Name() As String
-	Name = this.Name
+    Name = this.Name
 End Property
 
-Public Property Let Name(ByVal Value As String)
-	this.Name = Value
+Public Property Let Name(ByVal aName As String)
+    this.Name = aName
 End Property
 
 Public Property Get Value() As Variant
-	AssignUnknown Value, this.Value
+    Assign Value, this.Value
 End Property
 
 Public Property Set Value(ByVal newValue As Variant)
-	Set this.Value = newValue
+    Set this.Value = newValue
 End Property
 
 Public Property Let Value(ByVal newValue As Variant)
-	this.Value = newValue
+    this.Value = newValue
 End Property
 
 Public Property Get Children() As TreeNodes
-	Set Children = this.Children
+    Set Children = this.Children
 End Property
 
 Public Property Get Parent() As TreeNode
-	Set Parent = this.Parent
+    Set Parent = this.Parent
 End Property
 
 Public Property Set Parent(ByVal Value As TreeNode)
-	Set this.Parent = Value
+    Set this.Parent = Value
 End Property
 
 ' If the argument already has a Parent, AddChild creates a shallow copy of the node to be added.
 Public Function AddChild(ByVal node As TreeNode) As TreeNode
 Attribute AddChild.VB_Description = "If the argument already has a Parent, AddChild creates a shallow copy of the node to be added."
+
 	If node.Parent Is Nothing Then
 		this.Children.Add node
 		Set node.Parent = Me
@@ -65,7 +68,7 @@ Attribute AddChild.VB_Description = "If the argument already has a Parent, AddCh
 		If Not IsEmpty(node.Value) Then
 			'note: this should really use assign unknown, but it doesn't actually assign the value.
 			'  I'm really not sure why, but I suspect it is because I'm trying to set properties.
-		
+	
 			'AssignUnknown copyOfNode.Value, node.Value
 			
 			If IsObject(node.Value) Then
@@ -90,28 +93,33 @@ End Function
 
 Public Function AddNewChild(ByVal Name As String) As TreeNode
 Attribute AddNewChild.VB_Description = "Creates and Adds a New child node with the given Name."
+
 	Dim child As TreeNode
 	Set child = Me.AddChild(New TreeNode)
 	child.Name = Name
 	
 	Set AddNewChild = child
+
 End Function
 
 Public Sub RemoveChild(ByVal node As TreeNode)
 Attribute RemoveChild.VB_Description = "Removes the child node from this node's Children."
+	
 	With this.Children
 		Set .Item(.IndexOf(node)).Parent = Nothing
 	End With
 	
 	this.Children.Remove node
+	
 End Sub
 
 Public Function HasChildren() As Boolean
-	HasChildren = (this.Children.Count <> 0)
+    HasChildren = (this.Children.Count <> 0)
 End Function
 
 Public Function Path(Optional ByVal separator As String = "\") As String
-Attribute Path.VB_Description = "Uses the node names to build a Path String. If a node name is empty, the path will have consecutive separators."
+Attribute Path.VB_Description = "Uses the node Names to build a Path String. If a node Name is empty, the path will have consecutive separators."
+
 	Dim result As String
 	result = Me.Name
 	
@@ -124,21 +132,21 @@ Attribute Path.VB_Description = "Uses the node names to build a Path String. If 
 	End If
 	
 	Path = result
+        
+End Function
+'
+' IShowable
+' ---------
+Public Function Show() As String
+
+	Show = defShow.ParamShowableObject(Me, this.Name, this.Value)
 	
 End Function
+Private Function IShowable_Show() As String
 
-Public Function ToString() As String
-	ToString = "Name: " & this.Name & "; ValueType: " & TypeName(this.Value)
+	IShowable_Show = Show
+
 End Function
-
-Private Sub AssignUnknown(ByRef destination As Variant, ByVal source As Variant)
-	If IsObject(source) Then
-		Set destination = source
-	Else
-		destination = source
-	End If
-End Sub
-
 Private Sub Class_Initialize()
-	Set this.Children = New TreeNodes
+    Set this.Children = New TreeNodes
 End Sub

@@ -30,7 +30,7 @@ Public Function Exists(ByVal filePath As String, _
 
     If Not filePath = vbNullString Then
     
-        Exists = Not (Dir$(path.RTrimSep(filePath), vbType) = vbNullString)
+        Exists = Not (Dir$(Path.RTrimSep(filePath), vbType) = vbNullString)
         
     End If
     
@@ -54,26 +54,26 @@ End Function
 ''
 ' returns a List of strings that are paths of subitems in root which
 ' match pat.
-Public Function SubItems(ByVal root As String, Optional ByVal pat As String = ALLPAT, _
+Public Function SubItems(ByVal Root As String, Optional ByVal pat As String = ALLPAT, _
         Optional ByVal vbType As Integer = vbDirectory) As List
                   
     Set SubItems = List.Create
     
     Dim subItem As String
-    subItem = Dir$(JoinPath(root, pat), vbType)
+    subItem = Dir$(JoinPath(Root, pat), vbType)
 
     Do While subItem <> vbNullString
     
-        SubItems.Append JoinPath(root, subItem)
+        SubItems.Append JoinPath(Root, subItem)
         subItem = Dir$()
         
     Loop
     
 End Function
-Public Function SubFiles(ByVal root As String, _
+Public Function SubFiles(ByVal Root As String, _
         Optional pat As String = ALLPAT) As List
 
-    Set SubFiles = SubItems(root, pat, vbNormal)
+    Set SubFiles = SubItems(Root, pat, vbNormal)
     
 End Function
 ''
@@ -81,17 +81,17 @@ End Function
 ' When vbDirectory is passed to dir it still includes files.  Why the would
 ' anyone want that?  Now there is no direct way to actually list subfolders
 ' only get a list of both files and folders and filter out files
-Public Function SubFolders(ByVal root As String, Optional ByVal pat As String = vbNullString, _
+Public Function SubFolders(ByVal Root As String, Optional ByVal pat As String = vbNullString, _
         Optional ByVal skipDots As Boolean = True) As List
                     
     Dim result As List
-    Set result = SubItems(root, pat, vbDirectory)
+    Set result = SubItems(Root, pat, vbDirectory)
     
     If skipDots And result.Count > 0 Then
 
-        If result(1) = JoinPath(root, CURDIR) Then ' else root
+        If result(1) = JoinPath(Root, CURDIR) Then ' else root
             result.Remove 1
-            If result(1) = JoinPath(root, PARDIR) Then  ' else mountpoint
+            If result(1) = JoinPath(Root, PARDIR) Then  ' else mountpoint
                 result.Remove 1
             End If
         End If
@@ -109,52 +109,52 @@ Public Function SubFolders(ByVal root As String, Optional ByVal pat As String = 
     Set SubFolders = result
     
 End Function
-Public Function Find(ByVal root As String, Optional ByVal pat As String = "*", _
+Public Function Find(ByVal Root As String, Optional ByVal pat As String = "*", _
         Optional ByVal vbType As Integer = vbNormal) As List
 
     Dim result As List
     Set result = List.Create
     
-    FindRecurse root, result, pat, vbType
+    FindRecurse Root, result, pat, vbType
     
     Set Find = result
     
 End Function
-Private Sub FindRecurse(ByVal root As String, ByRef foundItems As List, _
+Private Sub FindRecurse(ByVal Root As String, ByRef foundItems As List, _
         Optional pat As String = "*", Optional ByVal vbType As Integer = vbNormal)
     
     Dim folder As Variant
-    For Each folder In SubFolders(root)
+    For Each folder In SubFolders(Root)
         FindRecurse folder, foundItems, pat, vbType
     Next folder
     
-    foundItems.Extend SubItems(root, pat, vbType)
+    foundItems.Extend SubItems(Root, pat, vbType)
     
 End Sub
 Public Function Glob(ByVal pattern As String, Optional ByVal vbType As Integer = vbNormal) As List
     
-    Dim root As String
-    root = path.LongestRoot(pattern)
+    Dim Root As String
+    Root = Path.LongestRoot(pattern)
     
     Dim patterns() As String
-    patterns = Split(right$(pattern, Len(pattern) - Len(root) - 1), path.SEP)
+    patterns = Split(right$(pattern, Len(pattern) - Len(Root) - 1), Path.SEP)
     
-    Set Glob = GlobRecurse(root, patterns, 0, vbType)
+    Set Glob = GlobRecurse(Root, patterns, 0, vbType)
     
 End Function
-Private Function GlobRecurse(ByVal root As String, ByRef patterns() As String, _
+Private Function GlobRecurse(ByVal Root As String, ByRef patterns() As String, _
         ByVal index As Integer, ByVal vbType As Integer) As List
     
     Dim result As List
     
     If index = UBound(patterns) Then
-        Set result = SubItems(root, patterns(index), vbType)
+        Set result = SubItems(Root, patterns(index), vbType)
     Else
         
         Set result = List.Create
         
         Dim folder As Variant
-        For Each folder In SubFolders(root, patterns(index))
+        For Each folder In SubFolders(Root, patterns(index))
             result.Extend GlobRecurse(folder, patterns, index + 1, vbType)
         Next folder
         

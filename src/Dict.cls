@@ -63,7 +63,7 @@ Public Function FromAssocs(ByVal assocs) As Dict
     
     Dim kv
     For Each kv In assocs
-        result.Add kv.key, kv.value
+        result.Add kv.key, kv.Value
     Next
     
     Set FromAssocs = result

@@ -5,24 +5,31 @@ END
 Attribute VB_Name = "Tree"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
 Option Explicit
 
 Private Type TTree
-    Root As TreeNode
+	Root As TreeNode
 End Type
 
 Private this As TTree
+Public Function Create() As Tree
+	
+	Dim result As New Tree
+	Set result.Root = New TreeNode
+	Set Create = result
 
+End Function
+Friend Property Set Root(ByVal node As TreeNode)
+	
+	Set this.Root = node
+	
+End Property
 Public Property Get Root() As TreeNode
+Attribute Root.VB_UserMemId = 0
+	
     Set Root = this.Root
+	
 End Property
 
-Public Property Set Root(ByVal Value As TreeNode)
-    Set this.Root = Value
-End Property
-
-Private Sub Class_Initialize()
-    Set this.Root = New TreeNode
-End Sub
