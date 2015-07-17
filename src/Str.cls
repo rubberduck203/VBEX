@@ -38,7 +38,7 @@ Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
     Dim strList As List
-    Set strList = List.Copy(Str)
+    Set strList = List.Copy(strings)
 
     Set Join = Make(Join(strList.ToArray, delim))
 
