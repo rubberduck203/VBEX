@@ -101,17 +101,6 @@ Public Function FilterNot(ByVal pred As IApplicable) As HashSet
     
 End Function
 '
-' ### Default Methods Implemented
-'
-' #### Access
-'
-Public Property Get Item(ByVal index As Long) As Variant
-Attribute Item.VB_UserMemId = 0
-    
-    cast.Assign Item, pDict.Item(index)
-    
-End Property
-'
 ' Mutability
 ' ----------
 '
@@ -189,7 +178,7 @@ End Sub
 ' ### ISetLike
 '
 Public Function Contains(ByVal sought) As Boolean
-
+Attribute Contains.VB_UserMemId = 0
     Contains = pDict.Exists(sought)
     
 End Function

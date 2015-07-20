@@ -64,7 +64,23 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
 End Function
 Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
 
-    Set Repeat = defBuildable.Repeat(Str, c, n)
+    Set Repeat = defRepeat.Repeat(Str, c, n)
+
+End Function
+Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = "`") As Str
+
+    Dim result As Str
+    Set result = Make(s)
+
+    Dim badChars() As Variant
+    badChars = Array(Str.DoubleQuote, "'", " ")
+
+    Dim badChar
+    For Each badChar In badChars
+        result.Substitute badChar, escapeChar & badChar
+    Next
+    
+    Set Escape = result
 
 End Function
 Friend Property Let Encapsulated(ByVal s As String)

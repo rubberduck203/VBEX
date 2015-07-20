@@ -7,15 +7,15 @@ Private Assert As New Rubberduck.AssertClass
 Private Sub SetEmptyConstructorTest(ByVal emptySet As SortedSet)
     
     Assert.IsNotNothing emptySet, "Empty set is not nothing"
-    Assert.areequal "SortedSet()", emptySet.Show, "Emptyset repr SortedSet()"
-    Assert.areequal CLng(0), emptySet.Count, "emptyset count = 0"
+    Assert.AreEqual "SortedSet()", emptySet.Show, "Emptyset repr SortedSet()"
+    Assert.AreEqual CLng(0), emptySet.Count, "emptyset count = 0"
     
 End Sub
 Private Sub SetNonEmptyConstructorTest(ByVal nonempty As SortedSet)
 
     Assert.IsNotNothing nonempty, "nonempty set is not nothing"
-    Assert.areequal "SortedSet(1, 2, 3)", nonempty.Show, "nonempty repr SortedSet(1, 2, 3)"
-    Assert.areequal CLng(3), nonempty.Count, "nonempty count = 0"
+    Assert.AreEqual "SortedSet(1, 2, 3)", nonempty.Show, "nonempty repr SortedSet(1, 2, 3)"
+    Assert.AreEqual CLng(3), nonempty.Count, "nonempty count = 0"
 
 End Sub
 
@@ -57,12 +57,12 @@ Public Sub SetDifference()
     Dim S3 As SortedSet
     Set S3 = SortedSet.Create(3, 5, 7)
     
-    Assert.areequal "SortedSet()", s1.Difference(s1).Show
-    Assert.areequal "SortedSet(1, 3, 5)", s1.Difference(s2).Show
-    Assert.areequal "SortedSet(2, 4, 6)", s2.Difference(s1).Show
+    Assert.AreEqual "SortedSet()", s1.Difference(s1).Show
+    Assert.AreEqual "SortedSet(1, 3, 5)", s1.Difference(s2).Show
+    Assert.AreEqual "SortedSet(2, 4, 6)", s2.Difference(s1).Show
     
-    Assert.areequal "SortedSet(7)", S3.Difference(s1).Show
-    Assert.areequal "SortedSet(1)", s1.Difference(S3).Show
+    Assert.AreEqual "SortedSet(7)", S3.Difference(s1).Show
+    Assert.AreEqual "SortedSet(1)", s1.Difference(S3).Show
     
 End Sub
 
@@ -87,13 +87,13 @@ Public Sub SetIntersect()
     Dim s1 As SortedSet, s2 As SortedSet, S3 As SortedSet
     Setup.unpack s1, s2, S3
     
-    Assert.areequal "SortedSet(1, 3, 5)", s1.Intersect(s1).Show
+    Assert.AreEqual "SortedSet(1, 3, 5)", s1.Intersect(s1).Show
     
-    Assert.areequal "SortedSet()", s1.Intersect(s2).Show
-    Assert.areequal "SortedSet()", s2.Intersect(s1).Show
+    Assert.AreEqual "SortedSet()", s1.Intersect(s2).Show
+    Assert.AreEqual "SortedSet()", s2.Intersect(s1).Show
     
-    Assert.areequal "SortedSet(3, 5)", S3.Intersect(s1).Show
-    Assert.areequal "SortedSet(3, 5)", s1.Intersect(S3).Show
+    Assert.AreEqual "SortedSet(3, 5)", S3.Intersect(s1).Show
+    Assert.AreEqual "SortedSet(3, 5)", s1.Intersect(S3).Show
     
 End Sub
 
@@ -103,13 +103,13 @@ Public Sub SetUnion()
     Dim s1 As SortedSet, s2 As SortedSet, S3 As SortedSet
     Setup.unpack s1, s2, S3
     
-    Assert.areequal "SortedSet(1, 3, 5)", s1.Union(s1).Show
+    Assert.AreEqual "SortedSet(1, 3, 5)", s1.Union(s1).Show
     
-    Assert.areequal "SortedSet(1, 2, 3, 4, 5, 6)", s1.Union(s2).Show
-    Assert.areequal "SortedSet(1, 2, 3, 4, 5, 6)", s2.Union(s1).Show
+    Assert.AreEqual "SortedSet(1, 2, 3, 4, 5, 6)", s1.Union(s2).Show
+    Assert.AreEqual "SortedSet(1, 2, 3, 4, 5, 6)", s2.Union(s1).Show
     
-    Assert.areequal "SortedSet(1, 3, 5, 7)", S3.Union(s1).Show
-    Assert.areequal "SortedSet(1, 3, 5, 7)", s1.Union(S3).Show
+    Assert.AreEqual "SortedSet(1, 3, 5, 7)", S3.Union(s1).Show
+    Assert.AreEqual "SortedSet(1, 3, 5, 7)", s1.Union(S3).Show
     
 End Sub
 
@@ -119,13 +119,13 @@ Public Sub SetSymmetricDifference()
     Dim s1 As SortedSet, s2 As SortedSet, S3 As SortedSet
     Setup.unpack s1, s2, S3
     
-    Assert.areequal "SortedSet()", s1.SymmetricDifference(s1).Show
+    Assert.AreEqual "SortedSet()", s1.SymmetricDifference(s1).Show
     
-    Assert.areequal "SortedSet(1, 2, 3, 4, 5, 6)", s1.SymmetricDifference(s2).Show
-    Assert.areequal "SortedSet(1, 2, 3, 4, 5, 6)", s2.SymmetricDifference(s1).Show
+    Assert.AreEqual "SortedSet(1, 2, 3, 4, 5, 6)", s1.SymmetricDifference(s2).Show
+    Assert.AreEqual "SortedSet(1, 2, 3, 4, 5, 6)", s2.SymmetricDifference(s1).Show
     
-    Assert.areequal "SortedSet(1, 7)", S3.SymmetricDifference(s1).Show
-    Assert.areequal "SortedSet(1, 7)", s1.SymmetricDifference(S3).Show
+    Assert.AreEqual "SortedSet(1, 7)", S3.SymmetricDifference(s1).Show
+    Assert.AreEqual "SortedSet(1, 7)", s1.SymmetricDifference(S3).Show
     
 End Sub
 

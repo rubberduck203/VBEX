@@ -105,6 +105,7 @@ End Sub
 ' ---------
 '
 Public Property Get Item(ByVal index As Long) As Variant
+Attribute Item.VB_UserMemId = 0
 
     CheckIndexRange Me, "Item", index
     Assign Item, pIterable.Item(index + pLower)

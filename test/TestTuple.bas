@@ -6,13 +6,13 @@ Private Assert As New Rubberduck.AssertClass
 
 Private Sub TupleTestEmpty(ByVal t As Tuple)
     Assert.IsNotNothing t, "Empty Tuple is not nothing"
-    Assert.areequal CLng(0), t.Count, "Empty Tuple count"
-    Assert.areequal "Tuple()", t.Show, "Empty Tuple Show"
+    Assert.AreEqual CLng(0), t.Count, "Empty Tuple count"
+    Assert.AreEqual "Tuple()", t.Show, "Empty Tuple Show"
 End Sub
 Private Sub TupleTestNonEmpty(ByVal t As Tuple)
     Assert.IsNotNothing t, "NonEmpty Tuple is not nothing"
-    Assert.areequal CLng(3), t.Count, "NonEmpty Tuple count"
-    Assert.areequal "Tuple(1, 2, 3)", t.Show, "NonEmpty Tuple Show"
+    Assert.AreEqual CLng(3), t.Count, "NonEmpty Tuple count"
+    Assert.AreEqual "Tuple(1, 2, 3)", t.Show, "NonEmpty Tuple Show"
 End Sub
 
 '@TestMethod
@@ -68,7 +68,7 @@ Public Sub TupleUnpackNonEmpty()
     Dim x As Integer, y As Integer, z As Integer
     Setup.unpack x, y, z
     
-    Assert.areequal "1 2 3", Join(Array(x, y, z))
+    Assert.AreEqual "1 2 3", Join(Array(x, y, z))
     
 End Sub
 
@@ -78,7 +78,7 @@ Public Sub TupleExplodeNonEmpty()
     Dim a(0 To 2) As Variant
     Setup.Explode a
     
-    Assert.areequal "1 2 3", Join(a)
+    Assert.AreEqual "1 2 3", Join(a)
     
 End Sub
 
@@ -88,6 +88,6 @@ Public Sub TupleExplodeNonEmptyOffset()
     Dim a(1 To 3) As Variant
     Setup.Explode a
     
-    Assert.areequal "1 2 3", Join(a)
+    Assert.AreEqual "1 2 3", Join(a)
     
 End Sub

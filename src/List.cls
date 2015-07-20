@@ -80,7 +80,7 @@ Public Function Create(ParamArray args() As Variant) As List
 End Function
 Public Function Repeat(ByVal x, ByVal n As Long) As List
 
-    Set Repeat = defBuildable.Repeat(List, x, n)
+    Set Repeat = defRepeat.Repeat(List, x, n)
 
 End Function
 '

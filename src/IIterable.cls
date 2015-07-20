@@ -15,6 +15,7 @@ Option Explicit
 ' Has Indexed _read_ access
 '
 Public Function Item(ByVal index As Long) As Variant
+Attribute Item.VB_UserMemId = 0
 
 End Function
 Public Function LowerBound() As Long

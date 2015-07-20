@@ -50,6 +50,7 @@ End Property
 ' -----------
 '
 Public Function Apply(ParamArray args()) As Variant
+Attribute Apply.VB_UserMemId = 0
 On Error GoTo ErrHandler
 
     Assign Apply, IApplicable_ApplyOnArray(CArray(args))

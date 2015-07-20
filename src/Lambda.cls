@@ -165,7 +165,7 @@ End Sub
 ' -----------
 '
 Public Function Apply(ParamArray args()) As Variant
-
+Attribute Apply.VB_UserMemId = 0
     Assign Apply, IApplicable_ApplyOnArray(CArray(args))
 
 End Function
