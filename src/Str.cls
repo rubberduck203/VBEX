@@ -38,7 +38,7 @@ Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
     Dim strList As List
-    Set strList = List.Copy(Str)
+    Set strList = List.Copy(strings)
 
     Set Join = Make(Join(strList.ToArray, delim))
 
@@ -62,12 +62,34 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
     Next
 
 End Function
+Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
+
+    Set Repeat = defRepeat.Repeat(Str, c, n)
+
+End Function
+Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = "`") As Str
+
+    Dim result As Str
+    Set result = Make(s)
+
+    Dim badChars() As Variant
+    badChars = Array(Str.DoubleQuote, "'", " ")
+
+    Dim badChar
+    For Each badChar In badChars
+        result.Substitute badChar, escapeChar & badChar
+    Next
+    
+    Set Escape = result
+
+End Function
 Friend Property Let Encapsulated(ByVal s As String)
 
     pString = s
 
 End Property
 Public Property Get NewEnum() As IUnknown
+Attribute NewEnum.VB_UserMemId = -4
 
     Static exploded As Collection
     Set exploded = Explode
@@ -130,6 +152,11 @@ Public Function Count() As Long
     
     Count = Len(pString)
     
+End Function
+Public Function DoubleQuote() As String
+
+    DoubleQuote = Asc(34)
+
 End Function
 '
 ' IBuildable

@@ -10,6 +10,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Function Apply(ParamArray args() As Variant) As Variant
+Attribute Apply.VB_UserMemId = 0
 
 End Function
 Public Function ApplyOnArray(ByRef args() As Variant) As Variant

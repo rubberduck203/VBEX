@@ -44,9 +44,9 @@ Public Property Get key() As Variant
     Assign key, pPair.Item(1)
     
 End Property
-Public Property Get value() As Variant
+Public Property Get Value() As Variant
     
-    Assign value, pPair.Item(2)
+    Assign Value, pPair.Item(2)
     
 End Property
 '
@@ -54,7 +54,7 @@ End Property
 '
 Public Function Show() As String
 
-    Show = defShow.Show(key) & " -> " & defShow.Show(value)
+    Show = defShow.Show(key) & " -> " & defShow.Show(Value)
 
 End Function
 Private Function IShowable_Show() As String

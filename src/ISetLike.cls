@@ -10,6 +10,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Function Contains(ByVal sought) As Boolean
+Attribute Contains.VB_UserMemId = 0
 
 End Function
 Public Property Get Elements() As IUnknown
