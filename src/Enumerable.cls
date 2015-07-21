@@ -99,12 +99,12 @@ Public Function Range(ByVal startValue As Long, ByVal endValue As Long) As Enume
     Set Range.Collection = mCollection
 End Function
 
-Public Function Repeat(ByVal value, ByVal times As Long) As Enumerable
+Public Function Repeat(ByVal Value, ByVal times As Long) As Enumerable
     Set mCollection = New Collection
     
     Dim i As Long
     For i = 1 To times
-        mCollection.Add value
+        mCollection.Add Value
     Next
     
     Set Repeat = New Enumerable

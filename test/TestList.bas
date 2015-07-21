@@ -49,6 +49,20 @@ Public Sub ListNested()
     Assert.IsFalse nested.Equals(nestedCopy)
     
 End Sub
+'@TestMethod
+Public Sub ListRepeat()
+
+    Dim xs As List
+    Set xs = List.Repeat("x", 5)
+    
+    Assert.AreEqual CLng(5), xs.Count
+    
+    Dim x
+    For Each x In xs
+        Assert.AreEqual "x", x
+    Next
+    
+End Sub
 '
 ' Interfaces
 ' ----------

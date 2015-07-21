@@ -58,13 +58,13 @@ Public Sub Rename(ByVal src As String, ByVal newName As String)
 
     On Error GoTo ErrHandler
     
-    Debug.Assert newName = path.BaseName(newName)
+    Debug.Assert newName = Path.BaseName(newName)
     
-    Dim root As String
-    root = RootName(src)
+    Dim Root As String
+    Root = RootName(src)
     
     Dim dest As String
-    dest = path.JoinPath(root, newName)
+    dest = Path.JoinPath(Root, newName)
     
     Move src, dest
     
@@ -150,7 +150,7 @@ End Sub
 Private Sub CreateRootPath(ByVal aPath As String)
     
     Dim parentFolder As String
-    parentFolder = path.RootName(aPath)
+    parentFolder = Path.RootName(aPath)
     
     If Not fsview.FolderExists(parentFolder) Then
         MakeDir parentFolder, createParent:=True
@@ -160,8 +160,8 @@ End Sub
 Private Sub DestIsFolderFeature(ByRef dest As String, _
         ByVal src As String)
     
-    If right$(dest, 1) = path.SEP Or fsview.FolderExists(dest) Then
-        dest = path.JoinPath(dest, path.BaseName(src))
+    If right$(dest, 1) = Path.SEP Or fsview.FolderExists(dest) Then
+        dest = Path.JoinPath(dest, Path.BaseName(src))
     End If
     
 End Sub

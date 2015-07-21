@@ -149,6 +149,7 @@ End Function
 ' --------------
 '
 Public Property Get Item(ByVal index)
+Attribute Item.VB_UserMemId = 0
 
     cast.Assign Item, pArray(index - 1)
     

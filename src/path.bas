@@ -49,9 +49,9 @@ Public Function BaseName(ByVal filePath As String, _
 End Function
 ''
 ' Returns the path of the parent folder. This is the opposite of `BaseName`.
-Public Function RootName(ByVal path As String) As String
+Public Function RootName(ByVal Path As String) As String
 
-    RootName = ParentDir(path, 1)
+    RootName = ParentDir(Path, 1)
     
 End Function
 ''
@@ -96,13 +96,13 @@ Public Function Ext(ByVal filePath As String) As String
 End Function
 ''
 ' Removes trailing SEP from path
-Public Function RTrimSep(ByVal path As String) As String
+Public Function RTrimSep(ByVal Path As String) As String
 
-    If right$(path, 1) = SEP Then
+    If right$(Path, 1) = SEP Then
         ' ends with SEP return all but end
-        RTrimSep = Left$(path, Len(path) - 1)
+        RTrimSep = Left$(Path, Len(Path) - 1)
     Else
-        RTrimSep = path
+        RTrimSep = Path
     End If
     
 End Function
@@ -121,8 +121,8 @@ Public Function Append(ByVal filePath As String, ByVal toAppend As String) As St
     Dim fileExt As String
     fileExt = Ext(filePath)
     
-    Dim root As String
-    root = RootName(filePath)
+    Dim Root As String
+    Root = RootName(filePath)
     
     Dim base As String
     base = BaseName(filePath, suffix:=fileExt)
@@ -130,7 +130,7 @@ Public Function Append(ByVal filePath As String, ByVal toAppend As String) As St
     Dim newName As String
     newName = base & toAppend & fileExt
     
-    Append = JoinPath(root, newName)
+    Append = JoinPath(Root, newName)
                      
 End Function
 ''
