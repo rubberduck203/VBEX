@@ -73,7 +73,7 @@ Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = 
     Set result = Make(s)
 
     Dim badChars() As Variant
-    badChars = Array(Str.DoubleQuote, "'", " ")
+    badChars = Array(Str.DoubleQuote, "'", " ", "&")
 
     Dim badChar
     For Each badChar In badChars
