@@ -1,5 +1,5 @@
-Attribute VB_Name = "TestList"
-'@TestModule
+Attribute VB_Name = "List"
+'@Module
 Option Explicit
 Option Private Module
 Private Assert As New Rubberduck.AssertClass
@@ -131,12 +131,12 @@ End Sub
 ' -------
 '
 '@TestMethod
-'Public Sub ListReduce()
-'
-'    Assert.AreEqual "abc", List.Create("a", "b", "c") _
-'        .Reduce(Lambda.FromString("(a, b) => a & b"))
-'
-'End Sub
+Public Sub ListReduce()
+
+    Assert.AreEqual "abc", List.Create("a", "b", "c") _
+        .Reduce(Lambda.FromProper("(a, b) => a & b"))
+
+End Sub
 '@TestMethod
 Public Sub ListFold()
 
@@ -144,4 +144,37 @@ Public Sub ListFold()
         .Fold("", Lambda.FromProper("(a, b) => a & b"))
         
 End Sub
+'@TestMethod
+Public Sub ListFold()
 
+    Assert.AreEqual "abc", List.Create("a", "b", "c") _
+        .Fold("", Lambda.FromProper("(a, b) => a & b"))
+        
+End Sub
+'@TestMethod
+Public Sub ListRepeat()
+    
+    Assert.AreEqual "List(1, 1, 1, 1, 1)", List.Repeat(1,5).Show
+    
+End Sub
+'@TestMethod
+Public Sub ListMap()
+End Sub
+'@TestMethod
+Public Sub ListFlatMap()
+End Sub
+'@TestMethod
+Public Sub ListFilter()
+End Sub
+'@TestMethod
+Public Sub ListFilterNot()
+End Sub
+'@TestMethod
+Public Sub ListFPSections()
+End Sub
+'@TestMethod
+Public Sub ListEmptyFPSections()
+End Sub
+'@TestMethod
+Public Sub ListGroupBy()
+End Sub

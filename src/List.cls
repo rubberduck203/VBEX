@@ -64,7 +64,8 @@ Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Varian
 End Sub
 '
 ''
-' ### Constructors
+' Constructors
+' ------------
 '
 Public Function Copy(ByVal sequence As Variant) As List
 Attribute Copy.VB_Description = "Create a new List using the elements of `sequence`."
@@ -85,45 +86,6 @@ Attribute Repeat.VB_Description = "Create a new List of `x` repeated `n` times."
 
     Set Repeat = defRepeat.Repeat(List, x, n)
 
-End Function
-'
-' ### Functional Constructors
-'
-Public Function Map(ByVal op As IApplicable) As List
-Attribute Map.VB_Description = "Return a new List by applying `op` to the elements of this list.  Identical to LINQ Select"
-    
-    Set Map = defMap.Map(List, op, Me)
-    
-End Function
-Public Function FlatMap(ByVal op As IApplicable) As List
-Attribute FlatMap.VB_Description = "Return a new List by applying `op` to the elements of this list and concatenating the results."
-
-    Set FlatMap = defMap.FlatMap(List, op, Me)
-
-End Function
-Public Function Filter(ByVal pred As IApplicable) As List
-Attribute Filter.VB_Description = "Return a new List of only the elements that satisfy `pred`.  Identical to LINQ Where"
-    
-    Set Filter = defFilter.Filter(List, pred, Me)
-    
-End Function
-Public Function FilterNot(ByVal pred As IApplicable) As List
-Attribute FilterNot.VB_Description = "Return a new List of only the elements that fail `pred`."
-    
-    Set FilterNot = defFilter.FilterNot(List, pred, Me)
-    
-End Function
-Public Function Fold(ByVal init As Variant, ByVal accum As IApplicable) As Variant
-Attribute Fold.VB_Description = "Accumulates a value by applying `accum` to each value using an given intial value."
-    
-    Assign Fold, defFold.Fold(accum, init, Me)
-    
-End Function
-Public Function Reduce(ByVal accum As IApplicable) As Variant
-Attribute Reduce.VB_Description = "Accumulates a value by applying `accum` to each value using the first element as the initial value. Identical to LINQ Aggregate"
-
-    cast.Assign Reduce, Tail.Fold(Head, accum)
-    
 End Function
 '
 ' Class
@@ -150,6 +112,59 @@ End Property
 ' --------------
 '
 ' ### Immutable operations
+'
+' #### Monadic
+'
+Public Function Map(ByVal op As IApplicable) As List
+Attribute Map.VB_Description = "Return a new List by applying `op` to the elements of this list.  Identical to LINQ Select"
+    
+    Set Map = defMap.Map(List, op, Me)
+    
+End Function
+Public Function FlatMap(ByVal op As IApplicable) As List
+Attribute FlatMap.VB_Description = "Return a new List by applying `op` to the elements of this list and concatenating the results."
+
+    Set FlatMap = defMap.FlatMap(List, op, Me)
+
+End Function
+'
+' ### Filter
+'
+Public Function Filter(ByVal pred As IApplicable) As List
+Attribute Filter.VB_Description = "Return a new List of only the elements that satisfy `pred`.  Identical to LINQ Where"
+    
+    Set Filter = defFilter.Filter(List, pred, Me)
+    
+End Function
+Public Function FilterNot(ByVal pred As IApplicable) As List
+Attribute FilterNot.VB_Description = "Return a new List of only the elements that fail `pred`."
+    
+    Set FilterNot = defFilter.FilterNot(List, pred, Me)
+    
+End Function
+'
+' #### Accumulators
+'
+Public Function Fold(ByVal init As Variant, ByVal accum As IApplicable) As Variant
+Attribute Fold.VB_Description = "Accumulates a value by applying `accum` to each value using a given intial value. `Tail.Fold(Head,f) = Reduce(f)`"
+    
+    Assign Fold, defAccum.Fold(accum, init, Me)
+    
+End Function
+Public Function Reduce(ByVal accum As IApplicable) As Variant
+Attribute Reduce.VB_Description = "Accumulates a value by applying `accum` to each value using the first element as the initial value. Identical to LINQ Aggregate"
+    
+    Assign Reduce, Tail.Fold(Head, accum)
+    
+End Function
+Public Function Scan(Byval init As Variant, ByVal accum As IApplicable) As List
+Attribute Scan.VB_Description = "Accumulates a list of by folding with `accum` and storing each result. `Scan(z,f).Last = Fold(z,f)`"
+    
+    Set Scan = defAccum.Scan(List, accum, init, Me)
+    
+End Function
+'
+' #### Sectioning
 '
 Public Function Head() as Variant
 Attribute Head.VB_Description = "Returns the first element. Identical to LINQ First"
@@ -194,6 +209,9 @@ Public Function Init() As List
     Set Init = Slice(1, Count - 1)
 
 End Function
+'
+' #### Misc.
+'
 Public Function ToArray() As Variant()
 Attribute ToArray.VB_Description = "Constructs an Array of the elements."
 
@@ -225,7 +243,32 @@ Attribute Count.VB_Description = "Returns the number of elements."
     Count = pCollec.Count
     
 End Function
-' TODO:
+''
+' GroupBy returns a Dict until Dict has an interface
+Public Function GroupBy(ByVal op As IApplicable) As Dict
+Attribute GroupBy.VB_Description = "Groups elements into a Dict according to `op`."
+
+    Dim result As Dict
+    Set result = Dict.Create
+
+    Dim element
+    For Each element In pCollec
+        
+        Dim key
+        Assign key, op.Apply(element)
+        
+        If Not result.Exists(key) Then
+            result.Add key, List.Create()
+        End If
+        
+        result.Item(key).Append element
+        
+    Next
+
+    Set GroupBy = result
+
+End Function
+' TODO: Additional methods below
 ' Drop(ByVal n As Long) As List
 ' Take(ByVal n As Long) As List
 ' FoldLeft, FoldRight, ReduceLeft, ReduceRight
@@ -236,6 +279,9 @@ End Function
 ' Find(ByVal pred As IApplicable) As Maybe = IndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
 ' FindLast(ByVal pred As IApplicable) As Maybe = LastIndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
 ' CountWhere(ByVal pred As IApplicable) As Boolean
+' Tails() As Iterator[List] whenever Iterator exists
+' Inits() As Iterator[List]
+' Sliding(???) As Iterator[List]
 '
 ' ### Mutators 
 '
