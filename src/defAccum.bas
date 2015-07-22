@@ -23,7 +23,7 @@ Public Function Scan(ByVal seed As IBuildable, ByVal op As IApplicable, ByVal in
     Assign temp, init
     
     Dim element
-    For Each element in sequence
+    For Each element In sequence
     
         Assign temp, op.Apply(temp, element)
         result.AddItem temp

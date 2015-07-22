@@ -157,7 +157,7 @@ Attribute Reduce.VB_Description = "Accumulates a value by applying `accum` to ea
     Assign Reduce, Tail.Fold(Head, accum)
     
 End Function
-Public Function Scan(Byval init As Variant, ByVal accum As IApplicable) As List
+Public Function Scan(ByVal init As Variant, ByVal accum As IApplicable) As List
 Attribute Scan.VB_Description = "Accumulates a list of by folding with `accum` and storing each result. `Scan(z,f).Last = Fold(z,f)`"
     
     Set Scan = defAccum.Scan(List, accum, init, Me)
@@ -166,13 +166,13 @@ End Function
 '
 ' #### Sectioning
 '
-Public Function Head() as Variant
+Public Function Head() As Variant
 Attribute Head.VB_Description = "Returns the first element. Identical to LINQ First"
     
     Assign Head, Item(1)
     
 End Function
-Public Function MaybeHead() as Maybe
+Public Function MaybeHead() As Maybe
 Attribute MaybeHead.VB_Description = "Returns the first element if the list is not empty."
     
     If Count > 0 Then
@@ -182,7 +182,7 @@ Attribute MaybeHead.VB_Description = "Returns the first element if the list is n
     End If
     
 End Function
-Public Function Tail() as List
+Public Function Tail() As List
 Attribute Tail.VB_Description = "Returns a new list of all but the first element."
     
     Set Tail = Slice(2, Count)
@@ -204,9 +204,9 @@ Attribute MaybeLast.VB_Description = "Returns the last element if the list is no
     End If
     
 End Function
-Public Function Init() As List
+Public Function init() As List
 
-    Set Init = Slice(1, Count - 1)
+    Set init = Slice(1, Count - 1)
 
 End Function
 '
@@ -283,7 +283,7 @@ End Function
 ' Inits() As Iterator[List]
 ' Sliding(???) As Iterator[List]
 '
-' ### Mutators 
+' ### Mutators
 '
 ' General pattern is to have a property or method that applies to one
 ' element and then extend that to sequences.
@@ -433,7 +433,7 @@ Public Sub Emplace(ByVal index As Long, ParamArray elems() As Variant)
 Attribute Emplace.VB_Description = "Inserts `elems` starting at `index`, shifting existing elements backward."
     
     TransformIndex index
-    pCollec.Add element, Before:=index
+    pCollec.Add elems, Before:=index
     
 End Sub
 ''

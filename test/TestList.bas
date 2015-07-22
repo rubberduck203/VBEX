@@ -1,4 +1,4 @@
-Attribute VB_Name = "List"
+Attribute VB_Name = "TestList"
 '@Module
 Option Explicit
 Option Private Module
@@ -145,17 +145,11 @@ Public Sub ListFold()
         
 End Sub
 '@TestMethod
-Public Sub ListFold()
+Public Sub ListScan()
 
-    Assert.AreEqual "abc", List.Create("a", "b", "c") _
-        .Fold("", Lambda.FromProper("(a, b) => a & b"))
+    Assert.AreEqual "List(z, za, zab, zabc)", List.Create("a", "b", "c") _
+        .Scan("z", Lambda.FromShort("_ & _")).Show
         
-End Sub
-'@TestMethod
-Public Sub ListRepeat()
-    
-    Assert.AreEqual "List(1, 1, 1, 1, 1)", List.Repeat(1,5).Show
-    
 End Sub
 '@TestMethod
 Public Sub ListMap()
