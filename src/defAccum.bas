@@ -1,4 +1,4 @@
-Attribute VB_Name = "defFold"
+Attribute VB_Name = "defAccum"
 Option Explicit
 
 Public Function Fold(ByVal op As IApplicable, ByVal init, ByVal sequence)
