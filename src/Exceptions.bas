@@ -28,7 +28,7 @@ Public Sub BubbleError(ByVal raiser, ByVal method As String, _
     Dim trace As String
     trace = MakeDescription(raiser, method, e.description)
 
-    Err.Raise e.Number, e.source, trace, e.HelpFile, e.HelpContext
+    Err.Raise e.Number, e.source, trace ', e.HelpFile, e.HelpContext
 
 End Sub
 Public Sub IndexError(ByVal raiser, ByVal method As String, _
