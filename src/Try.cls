@@ -35,8 +35,21 @@ Private pSuccess As Boolean
 ' Constructor
 ' -----------
 '
-Public Function Make(ByVal Attempt As IDelayed) As Try
+Public Function Create(ByVal op As IApplicable, ParamArray args()) As Try
+    
+    Set Create = Make(op, Tuple.Implode(CArray(args)))
+    
+End Function
+Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As Try
+    
+    Dim delayed As ByName
+    Set delayed = ByName.Make(op, args)
 
+    Set Make = FromDelayed(delayed)
+
+End Function
+Public Function FromDelayed(ByVal Attempt As IDelayed) As Try
+    
     Dim result As Try
     On Error GoTo Fail
     Set result = Success(Attempt.Evaluate())
