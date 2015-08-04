@@ -432,8 +432,7 @@ End Sub
 Public Sub Emplace(ByVal index As Long, ParamArray elems() As Variant)
 Attribute Emplace.VB_Description = "Inserts `elems` starting at `index`, shifting existing elements backward."
     
-    TransformIndex index
-    pCollec.Add elems, Before:=index
+    Insert index, CVar(elems)
     
 End Sub
 ''
