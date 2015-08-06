@@ -46,7 +46,7 @@ End Function
 Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
   
     Dim result As Str
-    Set result = Str.Make(fmt)
+    Set result = Make(fmt)
 
     Dim index As Long
     index = 0
@@ -60,6 +60,8 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
         index = index + 1
         Mid$(placeHolder, 2, 1) = index
     Next
+
+    Set Format = result
 
 End Function
 Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
@@ -149,7 +151,7 @@ End Function
 ' --------------
 '
 ' ### Mutators
-' 
+'
 Public Sub Append(ParamArray strings())
     
     Appends CVar(strings)
@@ -171,7 +173,7 @@ End Sub
 Public Sub Prepends(ByVal strings)
 
     Dim s
-    For Each s in strings
+    For Each s In strings
         pString = defShow.Show(s) & pString
     Next
 
@@ -183,7 +185,7 @@ Public Sub Substitute(ByVal oldString As String, ByVal newString As String)
 End Sub
 '
 ' ### Immutables
-' 
+'
 Public Function Concat(ByVal other As Str) As Str
 
     Set Concat = Make(Show & other.Show)
