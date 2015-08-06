@@ -46,7 +46,7 @@ End Function
 Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
   
     Dim result As Str
-    Set result = Str.Make(fmt)
+    Set result = Make(fmt)
 
     Dim index As Long
     index = 0
@@ -61,10 +61,12 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
         Mid$(placeHolder, 2, 1) = index
     Next
 
+    Set Format = result
+
 End Function
 Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
 
-    Set Repeat = defRepeat.Repeat(Str, c, n)
+    Set Repeat = defBuildable.Repeat(Str, c, n)
 
 End Function
 Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = "`") As Str
@@ -81,6 +83,31 @@ Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = 
     Next
     
     Set Escape = result
+
+End Function
+Public Function ASCIILowerCase() As Str
+
+   Set ASCIILowerCase = Make("abcdefghijklmnopqrstuvwxyz")
+
+End Function
+Public Function ASCIIUpperCase() As Str
+
+   Set ASCIIUpperCase = Make("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+End Function
+Public Function ASCIILetters() As Str
+
+   Set ASCIILetters = ASCIILowerCase.Concat(ASCIIUpperCase)
+
+End Function
+Public Function Digits() As Str
+
+    Set Digits = Make("0123456789")
+
+End Function
+Public Function DoubleQuote() As String
+
+    DoubleQuote = Asc(34)
 
 End Function
 Friend Property Let Encapsulated(ByVal s As String)
@@ -123,12 +150,19 @@ End Function
 ' Public Methods
 ' --------------
 '
+' ### Mutators
+'
 Public Sub Append(ParamArray strings())
     
-    Concat CVar(strings)
+    Appends CVar(strings)
     
 End Sub
-Public Sub Concat(ByVal strings)
+Public Sub Prepend(ParamArray strings())
+
+    Prepends CVar(strings)
+
+End Sub
+Public Sub Appends(ByVal strings)
     
     Dim s
     For Each s In strings
@@ -136,27 +170,31 @@ Public Sub Concat(ByVal strings)
     Next
     
 End Sub
+Public Sub Prepends(ByVal strings)
+
+    Dim s
+    For Each s In strings
+        pString = defShow.Show(s) & pString
+    Next
+
+End Sub
 Public Sub Substitute(ByVal oldString As String, ByVal newString As String)
 
     pString = Replace(pString, oldString, newString)
-    'Alt
-    'Dim loc As Long
-    'loc = InStr(1, pString, oldString)
-    '
-    'If loc > 0 Then
-    '    Mid$(pString, loc, len(newString) = newString
-    'End If
 
 End Sub
+'
+' ### Immutables
+'
+Public Function Concat(ByVal other As Str) As Str
+
+    Set Concat = Make(Show & other.Show)
+
+End Function
 Public Function Count() As Long
     
     Count = Len(pString)
     
-End Function
-Public Function DoubleQuote() As String
-
-    DoubleQuote = Asc(34)
-
 End Function
 '
 ' IBuildable
@@ -174,7 +212,7 @@ Private Sub IBuildable_AddItem(ByVal element)
 End Sub
 Private Sub IBuildable_AddItems(ByVal sequence)
     
-    Concat sequence
+    Appends sequence
     
 End Sub
 '

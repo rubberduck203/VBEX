@@ -84,7 +84,13 @@ End Function
 Public Function Repeat(ByVal x, ByVal n As Long) As List
 Attribute Repeat.VB_Description = "Create a new List of `x` repeated `n` times."
 
-    Set Repeat = defRepeat.Repeat(List, x, n)
+    Set Repeat = defBuildable.Repeat(List, x, n)
+
+End Function
+Public Function Enumerate(ByVal from As Long, ByVal til As Long, _
+    Optional ByVal by As Long = 1) As List
+
+    Set Enumerate = defBuildable.Enumerate(List, from, til, by)
 
 End Function
 '
