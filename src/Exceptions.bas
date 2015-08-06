@@ -64,8 +64,8 @@ Public Sub ValueError(ByVal raiser, ByVal method As String, _
     
 End Sub
 '
-'
-'
+' Private Methods
+' ---------------
 '
 Private Function MakeDescription(ByVal raiser, ByVal method As String, _
         ByVal msg As String) As String
