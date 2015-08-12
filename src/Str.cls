@@ -61,6 +61,8 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
         Mid$(placeHolder, 2, 1) = index
     Next
 
+    Set Format = result
+
 End Function
 Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
 
