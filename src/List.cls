@@ -124,13 +124,13 @@ End Property
 Public Function Map(ByVal op As IApplicable) As List
 Attribute Map.VB_Description = "Return a new List by applying `op` to the elements of this list.  Identical to LINQ Select"
     
-    Set Map = defMap.Map(List, op, Me)
+    Set Map = defMap.TransversableMap(List, op, Me)
     
 End Function
 Public Function FlatMap(ByVal op As IApplicable) As List
 Attribute FlatMap.VB_Description = "Return a new List by applying `op` to the elements of this list and concatenating the results."
 
-    Set FlatMap = defMap.FlatMap(List, op, Me)
+    Set FlatMap = defMap.TransversableBind(List, op, Me)
 
 End Function
 '

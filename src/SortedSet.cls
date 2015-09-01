@@ -104,12 +104,12 @@ End Function
 '
 Public Function Map(ByVal op As IApplicable) As SortedSet
     
-    Set Map = defMap.Map(SortedSet, op, pList)
+    Set Map = defMap.TransversableMap(SortedSet, op, pList)
     
 End Function
 Public Function FlatMap(ByVal op As IApplicable) As SortedSet
     
-    Set FlatMap = defMap.FlatMap(SortedSet, op, pList)
+    Set FlatMap = defMap.TransversableBind(SortedSet, op, pList)
     
 End Function
 Public Function Filter(ByVal pred As IApplicable) As SortedSet

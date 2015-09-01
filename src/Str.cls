@@ -27,6 +27,8 @@ Private pString As String
 ' Constructors
 ' ------------
 '
+' Default Constructor
+'
 Public Function Make(ByVal s As String) As Str
     
     Dim result As New Str
@@ -34,6 +36,9 @@ Public Function Make(ByVal s As String) As Str
     Set Make = result
 
 End Function
+'
+' ### Advanced Contsructors
+'
 Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
@@ -85,6 +90,9 @@ Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = 
     Set Escape = result
 
 End Function
+'
+' ### Constants
+'
 Public Function ASCIILowerCase() As Str
 
    Set ASCIILowerCase = Make("abcdefghijklmnopqrstuvwxyz")
@@ -115,19 +123,23 @@ Friend Property Let Encapsulated(ByVal s As String)
     pString = s
 
 End Property
+'
+' Transversable
+' -------------
+'
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
 
-    Static exploded As Collection
-    Set exploded = Explode
-    Set NewEnum = exploded.[_NewEnum]
+    Static copyCollec As Collection
+    Set copyCollec = ToCollection 
+    Set NewEnum = copyCollec.[_NewEnum]
     
 End Property
 '
 ' Private Methods
 ' ---------------
 '
-Private Function Explode() As Collection
+Private Function ToCollection() As Collection
 
     Dim length As Long
     length = Len(pString)
@@ -143,7 +155,7 @@ Private Function Explode() As Collection
         
     End If
     
-    Set Explode = result
+    Set ToCollection = result
 
 End Function
 '
@@ -189,6 +201,16 @@ End Sub
 Public Function Concat(ByVal other As Str) As Str
 
     Set Concat = Make(Show & other.Show)
+
+End Function
+Public Function Map(ByVal op As IApplicable) As Str
+
+    Set Map = defMap.IterableMap(Str, op, Me)
+
+End Function
+Public Function FlatMap(ByVal op As IApplicable) As Str
+
+    Set FlatMap = defMap.IterableBind(Str, op, Me)
 
 End Function
 Public Function Count() As Long

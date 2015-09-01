@@ -82,12 +82,12 @@ End Function
 '
 Public Function Map(ByVal op As IApplicable) As HashSet
     
-    Set Map = defMap.Map(HashSet, op, pDict)
+    Set Map = defMap.TransversableMap(HashSet, op, pDict.Keys)
     
 End Function
 Public Function FlatMap(ByVal op As IApplicable) As HashSet
     
-    Set FlatMap = defMap.FlatMap(HashSet, op, pDict)
+    Set FlatMap = defMap.TransversableBind(HashSet, op, pDict.Keys)
     
 End Function
 Public Function Filter(ByVal pred As IApplicable) As HashSet

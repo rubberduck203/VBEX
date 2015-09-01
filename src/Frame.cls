@@ -101,6 +101,58 @@ Friend Sub SetUpperBound(ByVal upper As Long)
 
 End Sub
 ''
+' Public Methods
+' --------------
+'
+Public Function ConvertTo(ByVal seed As IBuildable) As IBuildable
+
+    Dim result As IBuildable
+    Set result = seed.MakeEmpty
+
+    Dim i As Long
+    For i = pLower To pUpper
+        seed.AddItem Item(i)
+    Next
+
+    Set ConvertTo = result
+
+End Function
+Public Function MapTo(ByVal seed As IBuildable, ByVal op As IApplicable) As IBuildable
+
+    Set MapTo = defMap.IterableMap(seed, op, Me)
+
+End Function
+Public Function FlatMapTo(ByVal seed As IBuildable, ByVal op As IApplicable) As IBuildable
+
+    Set FlatMapTo = defMap.IterableBind(seed, op, Me)
+    
+End Function
+' FilterTo and all the others.....
+''
+' Transversable
+' -------------
+'
+Public Property Get NewEnum() As IUnknown
+Attribute NewEnum.VB_UserMemId = -4
+
+    Static copyCollec As Collection
+    Set copyCollec = ToCollection
+    Set NewEnum = copyCollec.[_NewEnum]
+
+End Property
+Private Function ToCollection() As Collection
+
+    Dim result As New Collection
+    
+    Dim i As Long
+    For i = pLower To pUpper
+        result.Add Item(index)
+    Next
+
+    Set ToCollection = result
+
+End Function
+''
 ' IIterable
 ' ---------
 '
@@ -113,7 +165,7 @@ Attribute Item.VB_UserMemId = 0
 End Property
 Public Function LowerBound() As Long
 
-    LowerBound = 0
+    LowerBound = 1
 
 End Function
 ''
