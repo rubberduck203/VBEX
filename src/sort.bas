@@ -61,17 +61,17 @@ Public Sub BubbleSort(ByRef sequence() As Variant, _
         Dim hasSwapped As Boolean
         hasSwapped = False
         
-        Dim bubble As Long
-        For bubble = lower To upperIt - 1
+        Dim Bubble As Long
+        For Bubble = lower To upperIt - 1
             
-            If sequence(bubble) > sequence(bubble + 1) Then
+            If sequence(Bubble) > sequence(Bubble + 1) Then
                 
-                Swap sequence(bubble), sequence(bubble + 1)
+                Swap sequence(Bubble), sequence(Bubble + 1)
                 hasSwapped = True
                 
             End If
             
-        Next bubble
+        Next Bubble
         
         If Not hasSwapped Then Exit Sub
         

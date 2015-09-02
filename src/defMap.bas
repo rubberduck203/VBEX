@@ -4,7 +4,7 @@ Option Explicit
 ' defMap
 ' ======
 '
-' Default implementations of Map and Bind for different structures. Classes 
+' Default implementations of Map and Bind for different structures. Classes
 ' that implement `Map`, or `Bind` (aka `FlatMap`), can avoid code duplication
 ' by using these functions with their predeclared object as `seed`.
 '
@@ -13,7 +13,7 @@ Private Const MAP_ADD As String = "AddItem"
 Private Const BIND_ADD As String = "AddItems"
 ' Transversable
 ' -------------
-' 
+'
 ' Transversable maps use `For Each` structures to loop over the sequence. Since
 ' mutliple data-types can use `For Each` the squence is a Variant.
 '
@@ -22,7 +22,7 @@ Private Const BIND_ADD As String = "AddItems"
 Public Function TransversableMap(ByVal seed As IBuildable, _
         ByVal op As IApplicable, ByVal sequence) As IBuildable
     
-    On Error Goto Bubble
+    On Error GoTo Bubble
     Set TransversableMap = GenericTransversableMap(MAP_ADD, seed, op, sequence)
     
 Exit Function
@@ -33,7 +33,7 @@ End Function
 Public Function TransversableBind(ByVal seed As IBuildable, _
         ByVal op As IApplicable, ByVal sequence) As IBuildable
     
-    On Error Goto Bubble
+    On Error GoTo Bubble
     Set TransversableBind = GenericTransversableMap(BIND_ADD, seed, op, sequence)
     
 Exit Function
@@ -49,7 +49,7 @@ Private Function GenericTransversableMap(ByVal buildMethod As String, _
     
     Dim element
     For Each element In sequence
-        CallByName result, buildMethod, vbMethod, op.Apply(element)
+        CallByName result, buildMethod, VbMethod, op.Apply(element)
     Next
     
     Set GenericTransversableMap = result
@@ -63,9 +63,9 @@ End Function
 ' Result must still be buildable.
 '
 Public Function IterableMap(ByVal seed As IBuildable, ByVal op As IApplicable, _
-        ByVal iterable As IIterable) AS IBuildable
+        ByVal iterable As IIterable) As IBuildable
     
-    On Error Goto Bubble
+    On Error GoTo Bubble
     Set IterableMap = GenericIterableMap(MAP_ADD, seed, op, iterable)
     
 Exit Function
@@ -74,9 +74,9 @@ Bubble:
     
 End Function
 Public Function IterableBind(ByVal seed As IBuildable, ByVal op As IApplicable, _
-        ByVal iterable As IIterable) AS IBuildable
+        ByVal iterable As IIterable) As IBuildable
     
-    On Error Goto Bubble
+    On Error GoTo Bubble
     Set IterableMap = GenericIterableMap(BIND_ADD, seed, op, iterable)
     
 Exit Function
@@ -86,14 +86,14 @@ Bubble:
 End Function
 Private Function GenericIterableMap(ByVal buildMethod As String, _
         ByVal seed As IBuildable, ByVal op As IApplicable, _
-        ByVal iterable As IIterable) AS IBuildable
+        ByVal iterable As IIterable) As IBuildable
     
     Dim result As IBuildable
-    Set result = IBuildable.MakeEmpty
+    Set result = seed.MakeEmpty
     
     Dim i As Long
     For i = iterable.LowerBound To iterable.UpperBound
-         CallByName result, buildMethod, vbMethod, op.Apply(iterable.Item(i))
+         CallByName result, buildMethod, VbMethod, op.Apply(iterable.Item(i))
     Next
     
     Set GenericIterableMap = result

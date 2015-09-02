@@ -131,7 +131,7 @@ Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
 
     Static copyCollec As Collection
-    Set copyCollec = ToCollection 
+    Set copyCollec = ToCollection
     Set NewEnum = copyCollec.[_NewEnum]
     
 End Property
