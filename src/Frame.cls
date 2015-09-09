@@ -24,39 +24,6 @@ Private pIterable As IIterable
 Private pLower As Long
 Private pUpper As Long
 '
-'
-' Private Methods
-' ---------------
-'
-' ### Errors
-'
-'
-' Public Methods
-' --------------
-'
-Public Function ToArray() As Variant()
-
-    Dim upper As Long
-    upper = UpperBound
-    
-    Dim results()
-    If upper >= 0 Then
-        
-        ReDim results(upper)
-        
-        Dim i As Long
-        For i = 0 To upper
-            Assign results(i), Item(i)
-        Next
-    
-    Else
-        results = Array()
-    End If
-    
-    ToArray = results
-    
-End Function
-'
 ' Constructors
 ' ------------
 '
@@ -175,6 +142,16 @@ Public Function UpperBound() As Long
 
     UpperBound = pUpper - pLower
     
+End Function
+Public Function ToArray() As Variant()
+
+    ToArray = defIterable.ToArray(Me)
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
+
 End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
 
