@@ -42,10 +42,10 @@ End Function
 Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
-    Dim strList As List
-    Set strList = List.Copy(strings)
+    Dim strs() As Variant
+    Set strs = List.Copy(strings).ToArray
 
-    Set Join = Make(Join(strList.ToArray, delim))
+    Set Join = Make(VBA.Join(strs, delim))
 
 End Function
 Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
