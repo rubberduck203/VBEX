@@ -14,6 +14,10 @@ Option Explicit
 '
 ' Wrapper for a IIterable with mutable bounds
 '
+' Copywrite (C) 2014 Philip Wales
+' This file (Frame.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
+'
 Implements IShowable
 Implements IIterable
 '
@@ -107,18 +111,6 @@ Attribute NewEnum.VB_UserMemId = -4
     Set NewEnum = copyCollec.[_NewEnum]
 
 End Property
-Private Function ToCollection() As Collection
-
-    Dim result As New Collection
-    
-    Dim i As Long
-    For i = pLower To pUpper
-        result.Add Item(index)
-    Next
-
-    Set ToCollection = result
-
-End Function
 ''
 ' IIterable
 ' ---------
@@ -167,6 +159,16 @@ Private Function IIterable_UpperBound() As Long
 
     IIterable_UpperBound = UpperBound
 
+End Function
+Private Function IIterable_ToArray() As Variant()
+
+    IIterable_ToArray = ToArray()
+
+End Function
+Private Function IIterable_ToCollection() As Collection
+
+    Set IIterable_ToCollection = ToCollection
+    
 End Function
 '
 ' IShowable

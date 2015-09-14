@@ -73,7 +73,7 @@ Public Function Map(ByVal op As IApplicable) As ByName
     Set opResult = op.Compose(pApplicable)
     
     Dim result As ByName
-    Set result = Make(opResult, Tuple.Implode(pArgs))
+    Set result = Make(opResult, pArgs)
     
     Set Map = result
 

@@ -24,3 +24,9 @@ End Function
 Public Function UpperBound() As Long
 
 End Function
+Public Function ToArray() As Variant()
+
+End Function
+Public Function ToCollection() As Collection
+
+End Function

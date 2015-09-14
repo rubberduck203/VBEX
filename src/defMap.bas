@@ -81,7 +81,7 @@ Public Function IterableBind(ByVal seed As IBuildable, ByVal op As IApplicable, 
         ByVal iterable As IIterable) As IBuildable
     
     On Error GoTo Bubble
-    Set IterableMap = GenericIterableMap(BIND_ADD, seed, op, iterable)
+    Set IterableBind = GenericIterableMap(BIND_ADD, seed, op, iterable)
     
 Exit Function
 Bubble:

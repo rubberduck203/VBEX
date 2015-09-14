@@ -55,34 +55,6 @@ End Sub
 '
 'End Sub
 '
-' ### Errors
-'
-'
-' Public Methods
-' --------------
-'
-Public Function ToArray() As Variant()
-
-    Dim upper As Long
-    upper = Count - 1
-    
-    Dim results()
-    If upper >= 0 Then
-        
-        ReDim results(upper)
-        
-        Dim i As Long
-        For i = 0 To upper
-            Assign results(i), pArray(i)
-        Next
-    
-    Else
-        results = Array()
-    End If
-    
-    ToArray = results
-    
-End Function
 '
 ' Class
 ' -----
@@ -175,6 +147,16 @@ Public Function UpperBound() As Long
     UpperBound = Count - 1
     
 End Function
+Public Function ToArray() As Variant()
+    
+    ToArray = defIterable.ToArray(Me)
+    
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
+
+End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
 
     Assign IIterable_Item, Item(index)
@@ -188,6 +170,16 @@ End Function
 Private Function IIterable_UpperBound() As Long
 
     IIterable_UpperBound = UpperBound
+
+End Function
+Private Function IIterable_ToArray() As Variant()
+    
+    IIterable_ToArray = ToArray
+    
+End Function
+Private Function IIterable_ToCollection() As Collection
+
+    Set IIterable_ToCollection = ToCollection
 
 End Function
 '

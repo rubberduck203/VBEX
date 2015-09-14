@@ -1,10 +1,10 @@
 Attribute VB_Name = "defAccum"
 Option Explicit
 
-Public Function Fold(ByVal op As IApplicable, ByVal init, ByVal sequence)
+Public Function Fold(ByVal op As IApplicable, ByVal Init, ByVal sequence)
     
     Dim result
-    Assign result, init
+    Assign result, Init
     
     Dim element
     For Each element In sequence
@@ -14,13 +14,13 @@ Public Function Fold(ByVal op As IApplicable, ByVal init, ByVal sequence)
     Assign Fold, result
     
 End Function
-Public Function Scan(ByVal seed As IBuildable, ByVal op As IApplicable, ByVal init, ByVal sequence) As IBuildable
+Public Function Scan(ByVal seed As IBuildable, ByVal op As IApplicable, ByVal Init, ByVal sequence) As IBuildable
 
     Dim result As IBuildable
     Set result = seed.MakeEmpty
     
     Dim temp
-    Assign temp, init
+    Assign temp, Init
     
     Dim element
     For Each element In sequence

@@ -43,7 +43,7 @@ Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
     Dim strs() As Variant
-    Set strs = List.Copy(strings).ToArray
+    strs = List.Copy(strings).ToArray
 
     Set Join = Make(VBA.Join(strs, delim))
 
@@ -135,29 +135,6 @@ Attribute NewEnum.VB_UserMemId = -4
     Set NewEnum = copyCollec.[_NewEnum]
     
 End Property
-'
-' Private Methods
-' ---------------
-'
-Private Function ToCollection() As Collection
-
-    Dim length As Long
-    length = Len(pString)
-
-    Dim result As New Collection
-    
-    If length > 0 Then
-    
-        Dim i As Long
-        For i = 1 To length
-            result.Add Mid$(pString, i, 1)
-        Next
-        
-    End If
-    
-    Set ToCollection = result
-
-End Function
 '
 ' Public Methods
 ' --------------
@@ -272,6 +249,16 @@ Public Function UpperBound() As Long
     UpperBound = Count
     
 End Function
+Public Function ToArray() As Variant()
+
+    ToArray = defIterable.ToArray(Me)
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
+
+End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
 
     IIterable_Item = Item(index)
@@ -286,5 +273,15 @@ Private Function IIterable_UpperBound() As Long
 
     IIterable_UpperBound = UpperBound
     
+End Function
+Private Function IIterable_ToArray() As Variant()
+
+    IIterable_ToArray = ToArray
+    
+End Function
+Private Function IIterable_ToCollection() As Collection
+
+    Set IIterable_ToCollection = ToCollection
+
 End Function
 

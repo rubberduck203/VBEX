@@ -1,5 +1,6 @@
+Attribute VB_Name = "defIterable"
 ''
-' Converts an iterable to an array.  The LBound and UBound of the array will be 
+' Converts an iterable to an array.  The LBound and UBound of the array will be
 ' the same as the LowerBound and UpperBound of the iterable. Unless the iterable
 ' is empty then an empty array will be returned, whose bounds are always (0,-1).
 Public Function ToArray(ByVal iterable As IIterable) As Variant()
@@ -47,3 +48,4 @@ Public Function ToCollection(ByVal iterable As IIterable) As Collection
     Set ToCollection = result
 
 End Function
+
