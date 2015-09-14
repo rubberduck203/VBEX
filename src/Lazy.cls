@@ -31,10 +31,10 @@ Private pValue As Variant
 '
 Public Function Create(ByVal op As IApplicable, ParamArray args()) As Lazy
 
-    Set Create = Make(op, Tuple.Implode(CArray(args)))
+    Set Create = Make(op, CArray(args))
 
 End Function
-Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As Lazy
+Public Function Make(ByVal op As IApplicable, ByRef args()) As Lazy
     
     Dim delayed As ByName
     Set delayed = ByName.Make(op, args)
@@ -91,10 +91,10 @@ Public Function Map(ByVal op As IApplicable) As Lazy
 
     Dim result As IDelayed
     If IsDelayed Then
-        'Set result = ByName.Create(op, Me) ' Evaluates `Me` before returning result
-        'Set result = ByName.Make(op, Tuple.Pack(Me)) ' Same result: Parameter Array + Me => default property evaluated.
-        'Set result = ByName.Make(op, Tuple.Implode(Array(Me))) ' Same result
-        Set result = ByName.Make(op, Tuple.SingleValue(Me)) ' Evaluating result does not evaluate `Me` when using a CallByName IApplicable.
+        ' `Me` in a parameter array evauluates the default property...
+        Dim args(0 To 0) As Variant
+        Assign args(0), Me
+        Set result = ByName.Make(op, args) ' Evaluating result does not evaluate `Me` when using a CallByName IApplicable.
         Debug.Assert IsDelayed
     Else
         Set result = ByName.Create(op, pValue)

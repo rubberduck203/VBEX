@@ -37,10 +37,10 @@ Private pSuccess As Boolean
 '
 Public Function Create(ByVal op As IApplicable, ParamArray args()) As Try
     
-    Set Create = Make(op, Tuple.Implode(CArray(args)))
+    Set Create = Make(op, CArray(args))
     
 End Function
-Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As Try
+Public Function Make(ByVal op As IApplicable, ByRef args() As Variant) As Try
     
     Dim delayed As ByName
     Set delayed = ByName.Make(op, args)
@@ -185,11 +185,7 @@ Public Function Map(ByVal op As IApplicable) As Try
 
     Dim result As Try
     If IsSuccess Then
-
-        Dim delay As ByName
-        Set delay = ByName.Make(op, pResult)
-        Set result = Make(delay)
-
+        Set result = Create(op, pResult)
     Else
         Set result = Me
     End If
@@ -208,7 +204,7 @@ Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
 End Function
 Private Function IMonadic_Unit(ByVal x) As IMonadic
 
-    Set IMonadic_Unit = Make(x)
+    Set IMonadic_Unit = FromDelayed(x)
 
 End Function
 

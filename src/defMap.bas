@@ -8,9 +8,13 @@ Option Explicit
 ' that implement `Map`, or `Bind` (aka `FlatMap`), can avoid code duplication
 ' by using these functions with their predeclared object as `seed`.
 '
+' It may be more prudent to split these into the various default files like
+' defIterable, defTransversable etc...
+'
 ' TODO: Should these belong in IBuildable?
 Private Const MAP_ADD As String = "AddItem"
 Private Const BIND_ADD As String = "AddItems"
+'
 ' Transversable
 ' -------------
 '
@@ -99,11 +103,4 @@ Private Function GenericIterableMap(ByVal buildMethod As String, _
     Set GenericIterableMap = result
     
 End Function
-
-
-
-
-
-
-
 

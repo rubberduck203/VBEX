@@ -31,19 +31,14 @@ Private pArgs() As Variant
 '
 Public Function Create(ByVal op As IApplicable, ParamArray args()) As ByName
 
-    Set Create = Make(op, Tuple.Implode(CArray(args)))
+    Set Create = Make(op, CArray(args))
 
 End Function
-Public Function Make(ByVal op As IApplicable, ByVal args As Tuple) As ByName
-    
-    Dim arrArgs() As Variant
-    ReDim arrArgs(0 To args.Count - 1)
-    args.Explode arrArgs
+Public Function Make(ByVal op As IApplicable, ByRef args()) As ByName
     
     Dim result As New ByName
     Set result.Applicable = op
-    result.Arguements = arrArgs
-    
+    result.Arguements = args
     Set Make = result
 
 End Function
