@@ -48,9 +48,9 @@ End Sub
 Public Sub TestStrEscape()
 
     Dim s As Str
-    Set s = Str.Escape("Phil's parrot said ""I'm not dead""")
+    Set s = Str.Escape("&Phil's parrot said ""I'm not dead""")
     
-    Assert.AreEqual "Phil`s` parrot` said` `""I`'m` not` dead`""", s.Show
+    Assert.AreEqual "`&Phil`s` parrot` said` `""I`'m` not` dead`""", s.Show
 
 End Sub
 '@TestMethod
