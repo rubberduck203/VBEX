@@ -1,12 +1,34 @@
 VBEX
 ====
 
-VBA Extension Library
+_VBA Extension Library_
 
 Ease production of VBA code with the VBEX library of rich idiomatic containers and some functional programing 
-capabilities. With VBEX you can:
+capabilities to bring VBA into the new millenium. With VBEX you can:
 
-Use in-lined constructors:
+  1. Use Class Constructors for immutable classes.
+  1. Print meaningful debug methods that reveal a datastructures contents
+
+        Console.PrintLine List.Create(1, 2, 3, 4) ' Note usage of class constructors
+        List(1, 2, 3, 4)
+
+  1. Create functional objects to use with higher order functions.  With those we have created some monadic classes _(List, Maybe, Try)_ that implement the traditonal `Map`, `FlatMap` or `Bind` methods.
+  1. Access a growing library of Containers.
+  <!-- Later: APIs for SQL, FSO, WSH -->
+
+
+<!--
+    Debug.Print Show(List.Create(1, 2, 3))
+    List(1, 2, 3)
+
+    Console.PrintLine xs
+    List(1, a, Collection(&289234581))
+    
+    Console.PrintLine s
+    SortedSet(1, 2, 3)
+    
+    Console.PrintLine d
+    Dict(Parrot -> Dead, Spam -> Yum)
 
     Dim xs As List
     Set xs = List.Create(1,"a", New Collection)
@@ -20,22 +42,6 @@ Use in-lined constructors:
         Assoc.Make("Spam", "Yum") _
     )
 
-Print meaningful debug messages
-
-    Debug.Print Show(List.Create(1, 2, 3))
-    List(1, 2, 3)
-
-    Console.PrintLine xs
-    List(1, a, Collection(&289234581))
-    
-    Console.PrintLine s
-    SortedSet(1, 2, 3)
-    
-    Console.PrintLine d
-    Dict(Parrot -> Dead, Spam -> Yum)
-
-Create functional objects
-
     Dim getRow As OnObject
     Set getRow = OnObject.Make("Row", vbGet)
     
@@ -47,6 +53,7 @@ Create functional objects
     
     Dim rowIndexes As List
     Set rowIndexes = tableRows.Map(getRow.AndThen(offsetRow))
+-->
 
 Intro
 -----
@@ -65,22 +72,26 @@ VBEX is not a normal VBA library, before you start using you should understand t
 
   1. All public classes have a predeclared instance of that class called the "predeclared object".
        - The predeclared object has the same name as the class, _e.g._
+
                Dim xs As List ' word "List" as a type
                Set xs = List.Create(1, 2, 3) ' word "List" here is the predeclared object
+
        - All creatable classes are created from the predeclared object.
        - Predeclared objects of mutable classes can be mutated.
            + Dont do that.
   2. VBEX utilizes a broad interface system.  
-       - Interfaces are minimally defined
+       - Interfaces are minimally defined.
        - Many classes implement more than one interface (are polymorphic).
   3. Implementations of the _IApplicable_ interface allow methods and functions to be treated as objects.
        - All IApplicable objects are immutable.
-       - The _Lambda_ class writes functions to a VBEX modules and allows you to execute that code
-           + Using the Lambda class will sometimes prevent debugging
+       - The _Lambda_ class writes functions to a VBEX modules and allows you to execute that code.
+           + Using the Lambda class will sometimes disable the debugger.
            + A lambda has no reference to environment in it was created.
+               * `Lambda.FromShort("_ + x")` will always error even if `x` is in the current scope.
        - _OnArgs_ and _OnObject_ are complementary.
            + `OnArgs.Make(myObject, "method", vbMethod)` is `(x) => myObject.method(x)`
            + `OnObject.Make("method", vbMethod, myArgs)` is `(o) => o.method(myArgs)`
+           + These are the _only_ applicable objects that have references to the current environment.
 
 <!--
 ### Predeclared Objects
