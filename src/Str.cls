@@ -115,7 +115,7 @@ Public Function Digits() As Str
 End Function
 Public Function DoubleQuote() As String
 
-    DoubleQuote = Asc(34)
+    DoubleQuote = Chr(34)
 
 End Function
 Friend Property Let Encapsulated(ByVal s As String)

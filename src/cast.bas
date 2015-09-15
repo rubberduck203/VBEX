@@ -26,7 +26,7 @@ On Error GoTo CheckIfNotArray
 Exit Function
 CheckIfNotArray:
     Debug.Assert Not IsArray(xs)
-    NotImplementedError "cast", "cast.CArray"
+    NotImplementedError "cast", "CArray"
     
 End Function
 ''

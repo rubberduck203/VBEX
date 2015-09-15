@@ -14,7 +14,7 @@ Public Sub CastAssignPrimative()
     Dim x As Integer
     x = 1
     
-    cast.assign x, 2
+    cast.Assign x, 2
     Assert.AreEqual 2, x
     
 End Sub
@@ -28,7 +28,7 @@ Public Sub CastAssignArray()
     Dim lower As Integer
     lower = LBound(a)
     
-    cast.assign a(lower), "x"
+    cast.Assign a(lower), "x"
     Assert.AreEqual "x", a(lower)
 
 End Sub
@@ -42,7 +42,7 @@ Public Sub CastAssignObject()
     Set ys = List.Create("A", "B", "C")
     
     ' Assign uses default "Set"
-    cast.assign xs, ys
+    cast.Assign xs, ys
     Assert.IsTrue xs.Equals(ys)
     Assert.AreEqual ObjPtr(ys), ObjPtr(xs)
     

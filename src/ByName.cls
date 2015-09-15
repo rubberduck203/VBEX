@@ -37,21 +37,21 @@ End Function
 Public Function Make(ByVal op As IApplicable, ByRef args()) As ByName
     
     Dim result As New ByName
-    Set result.Applicable = op
-    result.Arguements = args
+    result.SetOp op
+    result.SetArgs args
     Set Make = result
 
 End Function
-Friend Property Set Applicable(ByVal op As IApplicable)
+Friend Sub SetOp(ByVal op As IApplicable)
 
     Set pApplicable = op
 
-End Property
-Friend Property Let Arguements(ByRef args())
+End Sub
+Friend Sub SetArgs(ByRef args())
 
     pArgs = args
 
-End Property
+End Sub
 '
 ' IDelayed
 ' --------

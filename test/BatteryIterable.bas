@@ -52,7 +52,7 @@ Private Sub ItemInRange(ByVal itbl As IIterable)
 
     Dim x
     On Error GoTo Fail
-    assign x, GetRandomItem(itbl, lower, upper)
+    Assign x, GetRandomItem(itbl, lower, upper)
     On Error GoTo 0
     
     Assert.IsFalse IsEmpty(x), msg
@@ -74,7 +74,7 @@ Private Sub ItemLTLower(ByVal itbl As IIterable)
 
     Dim x
     On Error GoTo Pass
-    assign x, itbl.Item(lower - 1)
+    Assign x, itbl.Item(lower - 1)
     On Error GoTo 0
     
     Assert.Fail msg
@@ -82,7 +82,7 @@ Private Sub ItemLTLower(ByVal itbl As IIterable)
 CleanExit:
 Exit Sub
 Pass:
-    Assert.AreEqual Err.Number, 9, msg
+    Assert.AreEqual Err.Number, CLng(9), msg
     
 End Sub
 Private Sub ItemGTUpper(ByVal itbl As IIterable)
@@ -95,7 +95,7 @@ Private Sub ItemGTUpper(ByVal itbl As IIterable)
 
     Dim x
     On Error GoTo Pass
-    assign x, itbl.Item(upper + 1)
+    Assign x, itbl.Item(upper + 1)
     On Error GoTo 0
     
     Assert.Fail msg
@@ -103,7 +103,7 @@ Private Sub ItemGTUpper(ByVal itbl As IIterable)
 CleanExit:
 Exit Sub
 Pass:
-    Assert.AreEqual Err.Number, 9, msg
+    Assert.AreEqual Err.Number, CLng(9), msg
     
 End Sub
 '
@@ -114,7 +114,7 @@ Private Function GetRandomItem(ByVal itbl As IIterable, ByVal lower As Long, _
     
     Dim ri As Long
     ri = RandomIndex(lower, upper)
-    assign GetRandomItem, itbl.Item(ri)
+    Assign GetRandomItem, itbl.Item(ri)
     
 End Function
 Private Function RandomIndex(ByVal lower As Long, ByVal upper As Long) As Long

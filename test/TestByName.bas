@@ -22,11 +22,8 @@ Public Sub ByNameMakeTest()
     Dim op As OnArgs
     Set op = OnArgs.Make("GetItem", VbMethod, Dict.Create(Assoc.Make("key", "value")))
     
-    Dim args As Tuple
-    Set args = Tuple.Pack("none", "default")
-    
     Dim bn As ByName
-    Set bn = ByName.Make(op, args)
+    Set bn = ByName.Make(op, carray(Array("none", "default")))
     Assert.AreEqual bn.Evaluate, "default"
 
 End Sub
