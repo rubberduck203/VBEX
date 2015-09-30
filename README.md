@@ -14,7 +14,9 @@ capabilities to bring VBA into the new millenium. With VBEX you can:
 
   1. Create functional objects to use with higher order functions.  With those we have created some monadic classes _(List, Maybe, Try)_ that implement the traditonal `Map`, `FlatMap` or `Bind` methods.
   1. Access a growing library of Containers.
-  <!-- Later: APIs for SQL, FSO, WSH -->
+  1. Perform file-system operations.
+      - These will later be replaced or enhanced with an object-oriented model
+  1. Later there will be APIs for ADODB (SQL) and Windows Scripting Host
 
 
 <!--
@@ -61,9 +63,14 @@ Intro
 Install
 -------
 
-Once you acquire the source by either cloning this repo or downloading zip and extracting, then simply run the _Make.ps1_ script to build _VBEXsrc.xlam_ and _VBEXtest.xlam_.
-_VBEXtest.xlam_ contains unit-testing code and is only relevant to development.
-Reference _VBEXsrc.xlam_ in projects to use VBEX, from the VBE from the menu _tools >> References >> Browse_.
+Once you acquire the source by either cloning this repo or downloading zip and extracting
+
+  1. Run the _Make.ps1_ script to build _VBEXsrc.xlam_ and _VBEXtest.xlam_.
+      - _VBEXtest.xlam_ contains unit-testing code and is only relevant to development.
+  1. Reference _VBEXsrc.xlam_ in projects to use VBEX
+      - From the VBE from the menu _tools >> References >> Browse_.
+  1. Enable ["Programmatic access to Office VBA project"](https://support.microsoft.com/en-us/kb/282830)
+      -  This is required for the Lambda class.
 
 Usage
 -----
