@@ -29,37 +29,58 @@ Private pArgs() As Variant
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal app As IApplicable, ParamArray args()) As ByName
+Public Function Create(ByVal op As IApplicable, ParamArray args()) As ByName
 
+    Set Create = Make(op, CArray(args))
+
+End Function
+Public Function Make(ByVal op As IApplicable, ByRef args()) As ByName
+    
     Dim result As New ByName
-    Set result.Applicable = app
-    result.Arguements = cast.CArray(args)
+    result.SetOp op
+    result.SetArgs args
     Set Make = result
 
 End Function
-Friend Property Set Applicable(ByVal app As IApplicable)
+Friend Sub SetOp(ByVal op As IApplicable)
 
-    Set pApplicable = app
+    Set pApplicable = op
 
-End Property
-Friend Property Let Arguements(ByRef args())
+End Sub
+Friend Sub SetArgs(ByRef args())
 
     pArgs = args
 
-End Property
+End Sub
 '
 ' IDelayed
 ' --------
 '
-Public Function Evaluate() As Variant
+Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
     Assign Evaluate, pApplicable.ApplyOnArray(pArgs)
 
-End Function
-Private Function IDelayed_Evaluate() As Variant
+End Property
+Private Property Get IDelayed_Evaluate() As Variant
 
     Assign IDelayed_Evaluate, Evaluate
+
+End Property
+Public Function Map(ByVal op As IApplicable) As ByName
+
+    Dim opResult As IApplicable
+    Set opResult = op.Compose(pApplicable)
+    
+    Dim result As ByName
+    Set result = Make(opResult, pArgs)
+    
+    Set Map = result
+
+End Function
+Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed
+
+    Set IDelayed_Map = Map(op)
 
 End Function
 '

@@ -97,16 +97,8 @@ Public Function SubFolders(ByVal Root As String, Optional ByVal pat As String = 
         End If
         
     End If
-    
-    ' filter method!
-    Dim i As Long
-    For i = result.Count To 1 Step -1
-        If FileExists(result(i)) Then
-            result.Remove i
-        End If
-    Next i
-    
-    Set SubFolders = result
+
+    Set SubFolders = result.FilterNot(InternalDelegate.Make("FileExists"))
     
 End Function
 Public Function Find(ByVal Root As String, Optional ByVal pat As String = "*", _

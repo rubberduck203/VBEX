@@ -82,7 +82,7 @@ Private Sub ItemLTLower(ByVal itbl As IIterable)
 CleanExit:
 Exit Sub
 Pass:
-    Assert.AreEqual Err.Number, 9, msg
+    Assert.AreEqual Err.Number, CLng(9), msg
     
 End Sub
 Private Sub ItemGTUpper(ByVal itbl As IIterable)
@@ -103,7 +103,7 @@ Private Sub ItemGTUpper(ByVal itbl As IIterable)
 CleanExit:
 Exit Sub
 Pass:
-    Assert.AreEqual Err.Number, 9, msg
+    Assert.AreEqual Err.Number, CLng(9), msg
     
 End Sub
 '

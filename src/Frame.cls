@@ -14,6 +14,10 @@ Option Explicit
 '
 ' Wrapper for a IIterable with mutable bounds
 '
+' Copywrite (C) 2014 Philip Wales
+' This file (Frame.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
+'
 Implements IShowable
 Implements IIterable
 '
@@ -23,39 +27,6 @@ Implements IIterable
 Private pIterable As IIterable
 Private pLower As Long
 Private pUpper As Long
-'
-'
-' Private Methods
-' ---------------
-'
-' ### Errors
-'
-'
-' Public Methods
-' --------------
-'
-Public Function ToArray() As Variant()
-
-    Dim upper As Long
-    upper = UpperBound
-    
-    Dim results()
-    If upper >= 0 Then
-        
-        ReDim results(upper)
-        
-        Dim i As Long
-        For i = 0 To upper
-            Assign results(i), Item(i)
-        Next
-    
-    Else
-        results = Array()
-    End If
-    
-    ToArray = results
-    
-End Function
 '
 ' Constructors
 ' ------------
@@ -101,6 +72,46 @@ Friend Sub SetUpperBound(ByVal upper As Long)
 
 End Sub
 ''
+' Public Methods
+' --------------
+'
+Public Function ConvertTo(ByVal seed As IBuildable) As IBuildable
+
+    Dim result As IBuildable
+    Set result = seed.MakeEmpty
+
+    Dim i As Long
+    For i = pLower To pUpper
+        seed.AddItem Item(i)
+    Next
+
+    Set ConvertTo = result
+
+End Function
+Public Function MapTo(ByVal seed As IBuildable, ByVal op As IApplicable) As IBuildable
+
+    Set MapTo = defMap.IterableMap(seed, op, Me)
+
+End Function
+Public Function FlatMapTo(ByVal seed As IBuildable, ByVal op As IApplicable) As IBuildable
+
+    Set FlatMapTo = defMap.IterableBind(seed, op, Me)
+    
+End Function
+' FilterTo and all the others.....
+''
+' Transversable
+' -------------
+'
+Public Property Get NewEnum() As IUnknown
+Attribute NewEnum.VB_UserMemId = -4
+
+    Static copyCollec As Collection
+    Set copyCollec = ToCollection
+    Set NewEnum = copyCollec.[_NewEnum]
+
+End Property
+''
 ' IIterable
 ' ---------
 '
@@ -113,7 +124,7 @@ Attribute Item.VB_UserMemId = 0
 End Property
 Public Function LowerBound() As Long
 
-    LowerBound = 0
+    LowerBound = 1
 
 End Function
 ''
@@ -123,6 +134,16 @@ Public Function UpperBound() As Long
 
     UpperBound = pUpper - pLower
     
+End Function
+Public Function ToArray() As Variant()
+
+    ToArray = defIterable.ToArray(Me)
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
+
 End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
 
@@ -138,6 +159,16 @@ Private Function IIterable_UpperBound() As Long
 
     IIterable_UpperBound = UpperBound
 
+End Function
+Private Function IIterable_ToArray() As Variant()
+
+    IIterable_ToArray = ToArray()
+
+End Function
+Private Function IIterable_ToCollection() As Collection
+
+    Set IIterable_ToCollection = ToCollection
+    
 End Function
 '
 ' IShowable

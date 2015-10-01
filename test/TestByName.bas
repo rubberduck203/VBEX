@@ -1,0 +1,29 @@
+Attribute VB_Name = "TestByName"
+'@TestModule
+Option Explicit
+Option Private Module
+Private Assert As New Rubberduck.AssertClass
+
+
+'@TestMethod
+Public Sub ByNameCreateTest()
+
+    Dim op As OnArgs
+    Set op = OnArgs.Make("GetItem", VbMethod, Dict.Create(Assoc.Make("key", "value")))
+    
+    Dim bn As ByName
+    Set bn = ByName.Create(op, "key", "default")
+    Assert.AreEqual bn.Evaluate, "value"
+
+End Sub
+'@TestMethod
+Public Sub ByNameMakeTest()
+
+    Dim op As OnArgs
+    Set op = OnArgs.Make("GetItem", VbMethod, Dict.Create(Assoc.Make("key", "value")))
+    
+    Dim bn As ByName
+    Set bn = ByName.Make(op, carray(Array("none", "default")))
+    Assert.AreEqual bn.Evaluate, "default"
+
+End Sub

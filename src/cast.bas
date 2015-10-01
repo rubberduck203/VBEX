@@ -26,7 +26,7 @@ On Error GoTo CheckIfNotArray
 Exit Function
 CheckIfNotArray:
     Debug.Assert Not IsArray(xs)
-    NotImplementedError "cast", "cast.CArray"
+    NotImplementedError "cast", "CArray"
     
 End Function
 ''
@@ -37,7 +37,3 @@ Public Function IsArray(ByVal x) As Boolean
 
 End Function
 
-Public Sub derp()
-    Dim x As List
-    Set x = Maybe.None
-End Sub

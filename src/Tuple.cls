@@ -77,6 +77,11 @@ End Sub
 ' Constructors
 ' ------------
 '
+Public Function SingleValue(ByVal val) As Tuple
+
+    Set SingleValue = Pack(val)
+
+End Function
 ''
 ' Pack: create a tuple from a parameter array
 '

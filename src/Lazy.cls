@@ -24,22 +24,30 @@ Implements IDelayed
 ' ---------------
 '
 Private pDelayed As IDelayed
-Private pValue As Maybe
+Private pValue As Variant
 '
 ' Constructors
 ' ------------
 '
-Private Sub Class_Initialize()
+Public Function Create(ByVal op As IApplicable, ParamArray args()) As Lazy
 
-    Set pValue = Maybe.None
+    Set Create = Make(op, CArray(args))
 
-End Sub
-Public Function Make(ByVal delayed As IDelayed) As Lazy
+End Function
+Public Function Make(ByVal op As IApplicable, ByRef args()) As Lazy
+    
+    Dim delayed As ByName
+    Set delayed = ByName.Make(op, args)
+
+    Set Make = FromDelayed(delayed)
+
+End Function
+Public Function FromDelayed(ByVal delayed As IDelayed) As Lazy
 
     Dim result As New Lazy
     Set result.DelayedOp = delayed
-    Set Make = result
-
+    Set FromDelayed = result
+    
 End Function
 Friend Property Set DelayedOp(ByVal delayed As IDelayed)
 
@@ -47,22 +55,57 @@ Friend Property Set DelayedOp(ByVal delayed As IDelayed)
 
 End Property
 '
+' Public Methods
+' --------------
+'
+Public Function IsDelayed() As Boolean
+
+    IsDelayed = IsEmpty(pValue)
+
+End Function
+Public Function IsEvaluated() As Boolean
+
+    IsEvaluated = (Not IsDelayed)
+
+End Function
+'
 ' IDelayed
 ' --------
 '
-Public Function Evaluate() As Variant
+Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
-    If pValue.IsNone Then
-        Set pValue = Maybe.Some(delayed.Evaluate)
+    If IsDelayed Then
+        Assign pValue, pDelayed.Evaluate
     End If
 
-    Assign Evaluate, pValue.GetItem
+    Assign Evaluate, pValue
 
-End Function
-Private Function IDelayed_Evaluate() As Variant
+End Property
+Private Property Get IDelayed_Evaluate() As Variant
 
     Assign IDelayed_Evaluate, Evaluate
+
+End Property
+Public Function Map(ByVal op As IApplicable) As Lazy
+
+    Dim result As IDelayed
+    If IsDelayed Then
+        ' `Me` in a parameter array evauluates the default property...
+        Dim args(0 To 0) As Variant
+        Assign args(0), Me
+        Set result = ByName.Make(op, args) ' Evaluating result does not evaluate `Me` when using a CallByName IApplicable.
+        Debug.Assert IsDelayed
+    Else
+        Set result = ByName.Create(op, pValue)
+    End If
+    
+    Set Map = Lazy.FromDelayed(result)
+
+End Function
+Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed
+
+    Set IDelayed_Map = Map(op)
 
 End Function
 '
@@ -72,8 +115,11 @@ End Function
 Public Function Show() As String
 
     Dim repr As String
-    defShow.Show (pValue.GetOrElse(pDelayed))
-
+    If IsDelayed Then
+        repr = defShow.Show(pDelayed)
+    Else
+        repr = defShow.Show(pValue)
+    End If
     Show = defShow.ParamShowableObject(Me, repr)
 
 End Function

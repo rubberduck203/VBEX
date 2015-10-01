@@ -35,8 +35,21 @@ Private pSuccess As Boolean
 ' Constructor
 ' -----------
 '
-Public Function Make(ByVal Attempt As IDelayed) As Try
+Public Function Create(ByVal op As IApplicable, ParamArray args()) As Try
+    
+    Set Create = Make(op, CArray(args))
+    
+End Function
+Public Function Make(ByVal op As IApplicable, ByRef args() As Variant) As Try
+    
+    Dim delayed As ByName
+    Set delayed = ByName.Make(op, args)
 
+    Set Make = FromDelayed(delayed)
+
+End Function
+Public Function FromDelayed(ByVal Attempt As IDelayed) As Try
+    
     Dim result As Try
     On Error GoTo Fail
     Set result = Success(Attempt.Evaluate())
@@ -56,13 +69,13 @@ Private Function Success(ByVal x) As Try
     
     Dim result As New Try
     result.AssignResult x
-    Set Some = result
+    Set Success = result
     
 End Function
 Private Function Failure(ByVal e As ErrObject) As Try
 
     Dim result As New Try
-    result.AssingError e
+    result.AssignError e
     Set Failure = result
 
 End Function
@@ -85,7 +98,7 @@ End Sub
 ' Public Methods
 ' --------------
 '
-Public Function IsSucces() As Boolean
+Public Function IsSuccess() As Boolean
     
     IsSuccess = pSuccess
     
@@ -148,7 +161,7 @@ Public Function Bind(ByVal op As IApplicable) As Try
     
         On Error GoTo ErrHandler
         Dim opResult
-        Assign opResult, op.Apply(pVar)
+        Assign opResult, op.Apply(pResult)
         Set result = opResult
         On Error GoTo 0
         
@@ -172,11 +185,7 @@ Public Function Map(ByVal op As IApplicable) As Try
 
     Dim result As Try
     If IsSuccess Then
-
-        Dim delay As ByName
-        Set delay = ByName.Make(op, pResult)
-        Set result = Make(delay)
-
+        Set result = Create(op, pResult)
     Else
         Set result = Me
     End If
@@ -195,9 +204,10 @@ Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
 End Function
 Private Function IMonadic_Unit(ByVal x) As IMonadic
 
-    Set IMonadic_Unit = Make(x)
+    Set IMonadic_Unit = FromDelayed(x)
 
 End Function
+
 '
 ' IShowable
 ' ---------
