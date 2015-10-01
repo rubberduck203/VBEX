@@ -139,7 +139,7 @@ Public Function FromShort(ByVal shorthand As String) As Lambda
     For i = 0 To argsize
     
         Dim paramChar As String
-        paramChar = chr(ASCaCODE + i)
+        paramChar = Chr(ASCaCODE + i)
         
         expr = Replace(expr, SHORT_HAND_CHAR, paramChar, Count:=1)
         
@@ -166,6 +166,7 @@ End Sub
 '
 Public Function Apply(ParamArray args()) As Variant
 Attribute Apply.VB_UserMemId = 0
+
     Assign Apply, IApplicable_ApplyOnArray(CArray(args))
 
 End Function

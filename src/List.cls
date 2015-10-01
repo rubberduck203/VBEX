@@ -64,9 +64,11 @@ Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Varian
 End Sub
 '
 ''
-' ### Constructors
+' Constructors
+' ------------
 '
 Public Function Copy(ByVal sequence As Variant) As List
+Attribute Copy.VB_Description = "Create a new List using the elements of `sequence`."
 
     Dim result As New List
     result.Extend sequence
@@ -74,48 +76,27 @@ Public Function Copy(ByVal sequence As Variant) As List
     
 End Function
 Public Function Create(ParamArray args() As Variant) As List
+Attribute Create.VB_Description = "Create a new List using the elements of `args`."
 
     Set Create = Copy(CVar(args))
     
 End Function
 Public Function Repeat(ByVal x, ByVal n As Long) As List
+Attribute Repeat.VB_Description = "Create a new List of `x` repeated `n` times."
 
-    Set Repeat = defRepeat.Repeat(List, x, n)
+    Set Repeat = defBuildable.Repeat(List, x, n)
+
+End Function
+Public Function Enumerate(ByVal from As Long, ByVal til As Long, _
+    Optional ByVal by As Long = 1) As List
+
+    Set Enumerate = defBuildable.Enumerate(List, from, til, by)
 
 End Function
 '
-' ### Functional Constructors
+' Class
+' -----
 '
-Public Function Map(ByVal op As IApplicable) As List
-
-    Set Map = defMap.Map(List, op, Me)
-
-End Function
-Public Function FlatMap(ByVal op As IApplicable) As List
-
-    Set FlatMap = defMap.FlatMap(List, op, Me)
-
-End Function
-Public Function Filter(ByVal pred As IApplicable) As List
-    
-    Set Filter = defFilter.Filter(List, pred, Me)
-    
-End Function
-Public Function FilterNot(ByVal pred As IApplicable) As List
-    
-    Set FilterNot = defFilter.FilterNot(List, pred, Me)
-    
-End Function
-Public Function Fold(ByVal init As Variant, ByVal binaryOp As IApplicable) As Variant
-    
-    Assign Fold, defFold.Fold(binaryOp, init, Me)
-    
-End Function
-Public Function Reduce(ByVal binaryOp As IApplicable) As Variant
-    
-    cast.Assign Reduce, Slice(2, -1).Fold(pCollec(1), binaryOp)
-    
-End Function
 Private Sub Class_Initialize()
     Set pCollec = New Collection
 End Sub
@@ -136,10 +117,195 @@ End Property
 ' Public Methods
 ' --------------
 '
+' ### Immutable operations
+'
+' #### Monadic
+'
+Public Function Map(ByVal op As IApplicable) As List
+Attribute Map.VB_Description = "Return a new List by applying `op` to the elements of this list.  Identical to LINQ Select"
+    
+    Set Map = defMap.TransversableMap(List, op, Me)
+    
+End Function
+Public Function FlatMap(ByVal op As IApplicable) As List
+Attribute FlatMap.VB_Description = "Return a new List by applying `op` to the elements of this list and concatenating the results."
+
+    Set FlatMap = defMap.TransversableBind(List, op, Me)
+
+End Function
+'
+' ### Filter
+'
+Public Function Filter(ByVal pred As IApplicable) As List
+Attribute Filter.VB_Description = "Return a new List of only the elements that satisfy `pred`.  Identical to LINQ Where"
+    
+    Set Filter = defFilter.Filter(List, pred, Me)
+    
+End Function
+Public Function FilterNot(ByVal pred As IApplicable) As List
+Attribute FilterNot.VB_Description = "Return a new List of only the elements that fail `pred`."
+    
+    Set FilterNot = defFilter.FilterNot(List, pred, Me)
+    
+End Function
+'
+' #### Accumulators
+'
+Public Function Fold(ByVal Init As Variant, ByVal accum As IApplicable) As Variant
+Attribute Fold.VB_Description = "Accumulates a value by applying `accum` to each value using a given intial value. `Tail.Fold(Head,f) = Reduce(f)`"
+    
+    Assign Fold, defAccum.Fold(accum, Init, Me)
+    
+End Function
+Public Function Reduce(ByVal accum As IApplicable) As Variant
+Attribute Reduce.VB_Description = "Accumulates a value by applying `accum` to each value using the first element as the initial value. Identical to LINQ Aggregate"
+    
+    Assign Reduce, Tail.Fold(Head, accum)
+    
+End Function
+Public Function Scan(ByVal Init As Variant, ByVal accum As IApplicable) As List
+Attribute Scan.VB_Description = "Accumulates a list of by folding with `accum` and storing each result. `Scan(z,f).Last = Fold(z,f)`"
+    
+    Set Scan = defAccum.Scan(List, accum, Init, Me)
+    
+End Function
+'
+' #### Sectioning
+'
+Public Function Head() As Variant
+Attribute Head.VB_Description = "Returns the first element. Identical to LINQ First"
+    
+    Assign Head, Item(1)
+    
+End Function
+Public Function MaybeHead() As Maybe
+Attribute MaybeHead.VB_Description = "Returns the first element if the list is not empty."
+    
+    If Count > 0 Then
+        Set MaybeHead = Maybe.Some(Head)
+    Else
+        Set MaybeHead = Maybe.None
+    End If
+    
+End Function
+Public Function Tail() As List
+Attribute Tail.VB_Description = "Returns a new list of all but the first element."
+    
+    Dim result As List
+    If Count > 2 Then
+        Set result = Slice(2, Count)
+    Else
+        Set result = Create()
+    End If
+    
+    Set Tail = result
+    
+End Function
+Public Function Last() As Variant
+Attribute Last.VB_Description = "Returns the last element."
+    
+    Assign Last, Item(Count)
+    
+End Function
+Public Function MaybeLast() As Variant
+Attribute MaybeLast.VB_Description = "Returns the last element if the list is not empty"
+    
+    If Count > 0 Then
+        Set MaybeLast = Maybe.Some(Last)
+    Else
+        Set MaybeLast = Maybe.None
+    End If
+    
+End Function
+Public Function Init() As List
+
+    Set Init = Slice(1, Count - 1)
+
+End Function
+'
+' #### Misc.
+'
+Public Function Reverse() As List
+Attribute Reverse.VB_Description = "Returns the reverse of the list."
+    
+    Set Reverse = Slice(Count, 1)
+    
+End Function
+Public Function Count() As Long
+Attribute Count.VB_Description = "Returns the number of elements."
+    
+    Count = pCollec.Count
+    
+End Function
+''
+' GroupBy returns a Dict until Dict has an interface
+Public Function GroupBy(ByVal op As IApplicable) As Dict
+Attribute GroupBy.VB_Description = "Groups elements into a Dict according to `op`."
+
+    Dim result As Dict
+    Set result = Dict.Create
+
+    Dim element
+    For Each element In pCollec
+        
+        Dim key
+        Assign key, op.Apply(element)
+        
+        If Not result.Exists(key) Then
+            result.Add key, List.Create()
+        End If
+        
+        result.Item(key).Append element
+        
+    Next
+
+    Set GroupBy = result
+
+End Function
+' TODO: Additional methods below
+Public Function Drop(ByVal n As Long) As List
+
+    Dim result As List
+    If n < Count Then
+        Set result = Slice(n + 1, Count)
+    Else
+        Set result = Create()
+    End If
+
+    Set Drop = result
+
+End Function
+' TODO: Additional methods below
+Public Function Take(ByVal n As Long) As List
+
+    Dim result As List
+    If n < Count Then
+        Set result = Slice(1, n)
+    Else
+        Set result = Copy(Me)
+    End If
+
+    Set Take = result
+
+End Function
+' FoldLeft, FoldRight, ReduceLeft, ReduceRight
+' IndexOf(ByVal val) As Maybe[Long]
+' IndexWhere(ByVal pred As IApplicable) As Maybe[Long]
+' LastIndexOf(Byval val) As Maybe[Long]
+' lastIndexWhere(Byval pred As IApplicable) As Maybe[long]
+' Find(ByVal pred As IApplicable) As Maybe = IndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
+' FindLast(ByVal pred As IApplicable) As Maybe = LastIndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
+' CountWhere(ByVal pred As IApplicable) As Boolean
+' Tails() As Iterator[List] whenever Iterator exists
+' Inits() As Iterator[List]
+' Sliding(???) As Iterator[List]
+'
+' ### Mutators
+'
 ' General pattern is to have a property or method that applies to one
 ' element and then extend that to sequences.
 '
-' ### Access and Replace
+' #### Access and Replace
 '
 ' `Item` allows for access and replacement of an element through indexes.
 ' `Slice` extends that to sequences that allows reversing and steps. Only
@@ -147,21 +313,24 @@ End Property
 '
 ''
 ' Default member is Item
-Public Property Let Item(ByVal index As Long, ByVal element As Variant)
+Public Property Let Item(ByVal index As Long, ByVal val As Variant)
+Attribute Item.VB_Description = "Replaces the element at `index` with `val`."
 Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
-    Replace index, element
+    Replace index, val
     
 End Property
-Public Property Set Item(ByVal index As Long, ByVal element As Variant)
+Public Property Set Item(ByVal index As Long, ByVal val As Object)
+Attribute Item.VB_Description = "Replaces the element at `index` with `val`."
 Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
-    Replace index, element
+    Replace index, val
     
 End Property
 Public Property Get Item(ByVal index As Long) As Variant
+Attribute Item.VB_Description = "Returns the element at `index`."
 Attribute Item.VB_UserMemId = 0
     
     TransformIndex index
@@ -223,11 +392,12 @@ NotSequence:
     
 End Property
 '
-' ### Removal
+' #### Removal
 '
 ''
 ' Remove
 Public Sub Remove(ByVal index As Long)
+Attribute Remove.VB_Description = "Removes the element at `index`."
     
     TransformIndex index
     pCollec.Remove index
@@ -236,6 +406,7 @@ End Sub
 ''
 ' Revisions from CR
 Public Sub Clear(ByVal start As Long, ByVal size As Long)
+Attribute Clear.VB_Description = "Removes `size` elements at `start`."
     
     TransformIndex start
     
@@ -245,19 +416,19 @@ Public Sub Clear(ByVal start As Long, ByVal size As Long)
     Next i
 
 End Sub
-
 '
-' ### Extension
+' #### Extension
 '
 ''
 ' Append: Vanilla `Add`
-Public Sub Append(ParamArray Elements() As Variant)
-    Extend CVar(Elements)
+Public Sub Append(ParamArray elems() As Variant)
+Attribute Append.VB_Description = "Adds `elems` to the end of the list."
+    Extend CVar(elems)
 End Sub
 ''
 ' Extend: Append sequence
-' `myList.Extend rng.Value ' shtbrx`
 Public Sub Extend(ByVal sequence As Variant)
+Attribute Extend.VB_Description = "Adds the elements of `sequence` to the end of the list."
     
     On Error GoTo NotSequence
     Dim element As Variant
@@ -271,21 +442,21 @@ NotSequence:
     
 End Sub
 '
-' ### Insert
+' #### Insert
 '
 ''
 ' Emplace: Place element at index, existing elements shifted backward.
-' Synonymous with `pCollec.Add element, before:=index.`
-Public Sub Emplace(ByVal index As Long, ByVal element As Variant)
+Public Sub Emplace(ByVal index As Long, ParamArray elems() As Variant)
+Attribute Emplace.VB_Description = "Inserts `elems` starting at `index`, shifting existing elements backward."
     
-    TransformIndex index
-    pCollec.Add element, Before:=index
+    Insert index, CVar(elems)
     
 End Sub
 ''
 ' Insert: Sames as Emplace but with a sequence
 Public Sub Insert(ByVal index As Long, ByVal sequence As Variant)
-    
+Attribute Insert.VB_Description = "Inserts the elements of `sequence` starting at `index`, shifting existing elements backward."
+
     TransformIndex index
     On Error GoTo NotSequence
     
@@ -303,37 +474,6 @@ NotSequence:
     RaiseNotSequenceError "Insert", sequence
     
 End Sub
-'
-' ### Auxillary
-'
-Public Function ToArray() As Variant()
-
-    If pCollec.Count = 0 Then
-        ToArray = Array()
-        Exit Function
-    End If
-    
-    Dim a() As Variant
-    ReDim a(pCollec.Count - 1) As Variant
-    
-    Dim i As Long
-    For i = 1 To pCollec.Count
-        cast.Assign a(i - 1), pCollec(i)
-    Next i
-    
-    ToArray = a
-    
-End Function
-Public Function Reverse() As List
-    
-    Set Reverse = Slice(-1, 1)
-    
-End Function
-Public Function Count() As Long
-
-    Count = pCollec.Count
-    
-End Function
 '
 ' Interfaces
 ' ----------
@@ -373,10 +513,31 @@ Private Function IIterable_UpperBound() As Long
     IIterable_UpperBound = Count
 
 End Function
+Public Function ToArray() As Variant()
+
+    ToArray = defIterable.ToArray(Me)
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
+
+End Function
+Private Function IIterable_ToArray() As Variant()
+
+    IIterable_ToArray = ToArray
+
+End Function
+Private Function IIterable_ToCollection() As Collection
+
+    Set IIterable_ToCollection = ToCollection
+    
+End Function
 '
 ' ### IEquatable
 '
 Public Function Equals(ByVal x) As Boolean
+Attribute Equals.VB_Description = "Check this list is identical to unknown value `x`."
 
     Equals = False
     
@@ -409,33 +570,31 @@ End Function
 ' ### IMonadic
 '
 Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
-
+    
     Set IMonadic_Bind = FlatMap(op)
-
+    
 End Function
 Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
-
+    
     Set IMonadic_Map = Map(op)
-
+    
 End Function
 Private Function IMonadic_Unit(ByVal x) As IMonadic
-
+    
     Set IMonadic_Unit = List.Create(x)
-
+    
 End Function
 '
 '  ### IShowable
 '
 Public Function Show() As String
-
+Attribute Show.VB_Description = "Represent the List as a String."
+    
     Show = defShow.ShowableObject(Me, ToArray)
     
 End Function
-
-
-
 Private Function IShowable_Show() As String
-
+    
     IShowable_Show = Show()
     
 End Function

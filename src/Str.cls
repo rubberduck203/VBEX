@@ -27,6 +27,8 @@ Private pString As String
 ' Constructors
 ' ------------
 '
+' Default Constructor
+'
 Public Function Make(ByVal s As String) As Str
     
     Dim result As New Str
@@ -34,19 +36,22 @@ Public Function Make(ByVal s As String) As Str
     Set Make = result
 
 End Function
+'
+' ### Advanced Contsructors
+'
 Public Function Join(ByVal strings, _
         Optional ByVal delim As String = vbNullString) As Str
 
-    Dim strList As List
-    Set strList = List.Copy(strings)
+    Dim strs() As Variant
+    strs = List.Copy(strings).ToArray
 
-    Set Join = Make(Join(strList.ToArray, delim))
+    Set Join = Make(VBA.Join(strs, delim))
 
 End Function
 Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
   
     Dim result As Str
-    Set result = Str.Make(fmt)
+    Set result = Make(fmt)
 
     Dim index As Long
     index = 0
@@ -61,10 +66,12 @@ Public Function Format(ByVal fmt As String, ParamArray vals()) As Str
         Mid$(placeHolder, 2, 1) = index
     Next
 
+    Set Format = result
+
 End Function
 Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
 
-    Set Repeat = defRepeat.Repeat(Str, c, n)
+    Set Repeat = defBuildable.Repeat(Str, c, n)
 
 End Function
 Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = "`") As Str
@@ -73,7 +80,7 @@ Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = 
     Set result = Make(s)
 
     Dim badChars() As Variant
-    badChars = Array(Str.DoubleQuote, "'", " ")
+    badChars = Array(Str.DoubleQuote, "'", " ", "&")
 
     Dim badChar
     For Each badChar In badChars
@@ -83,52 +90,68 @@ Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = 
     Set Escape = result
 
 End Function
+'
+' ### Constants
+'
+Public Function ASCIILowerCase() As Str
+
+   Set ASCIILowerCase = Make("abcdefghijklmnopqrstuvwxyz")
+
+End Function
+Public Function ASCIIUpperCase() As Str
+
+   Set ASCIIUpperCase = Make("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+End Function
+Public Function ASCIILetters() As Str
+
+   Set ASCIILetters = ASCIILowerCase.Concat(ASCIIUpperCase)
+
+End Function
+Public Function Digits() As Str
+
+    Set Digits = Make("0123456789")
+
+End Function
+Public Function DoubleQuote() As String
+
+    DoubleQuote = Chr(34)
+
+End Function
 Friend Property Let Encapsulated(ByVal s As String)
 
     pString = s
 
 End Property
+'
+' Transversable
+' -------------
+'
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
 
-    Static exploded As Collection
-    Set exploded = Explode
-    Set NewEnum = exploded.[_NewEnum]
+    Static copyCollec As Collection
+    Set copyCollec = ToCollection
+    Set NewEnum = copyCollec.[_NewEnum]
     
 End Property
-'
-' Private Methods
-' ---------------
-'
-Private Function Explode() As Collection
-
-    Dim length As Long
-    length = Len(pString)
-
-    Dim result As New Collection
-    
-    If length > 0 Then
-    
-        Dim i As Long
-        For i = 1 To length
-            result.Add Mid$(pString, i, 1)
-        Next
-        
-    End If
-    
-    Set Explode = result
-
-End Function
 '
 ' Public Methods
 ' --------------
 '
+' ### Mutators
+'
 Public Sub Append(ParamArray strings())
     
-    Concat CVar(strings)
+    Appends CVar(strings)
     
 End Sub
-Public Sub Concat(ByVal strings)
+Public Sub Prepend(ParamArray strings())
+
+    Prepends CVar(strings)
+
+End Sub
+Public Sub Appends(ByVal strings)
     
     Dim s
     For Each s In strings
@@ -136,27 +159,41 @@ Public Sub Concat(ByVal strings)
     Next
     
 End Sub
+Public Sub Prepends(ByVal strings)
+
+    Dim s
+    For Each s In strings
+        pString = defShow.Show(s) & pString
+    Next
+
+End Sub
 Public Sub Substitute(ByVal oldString As String, ByVal newString As String)
 
     pString = Replace(pString, oldString, newString)
-    'Alt
-    'Dim loc As Long
-    'loc = InStr(1, pString, oldString)
-    '
-    'If loc > 0 Then
-    '    Mid$(pString, loc, len(newString) = newString
-    'End If
 
 End Sub
+'
+' ### Immutables
+'
+Public Function Concat(ByVal other As Str) As Str
+
+    Set Concat = Make(Show & other.Show)
+
+End Function
+Public Function Map(ByVal op As IApplicable) As Str
+
+    Set Map = defMap.IterableMap(Str, op, Me)
+
+End Function
+Public Function FlatMap(ByVal op As IApplicable) As Str
+
+    Set FlatMap = defMap.IterableBind(Str, op, Me)
+
+End Function
 Public Function Count() As Long
     
     Count = Len(pString)
     
-End Function
-Public Function DoubleQuote() As String
-
-    DoubleQuote = Asc(34)
-
 End Function
 '
 ' IBuildable
@@ -174,7 +211,7 @@ Private Sub IBuildable_AddItem(ByVal element)
 End Sub
 Private Sub IBuildable_AddItems(ByVal sequence)
     
-    Concat sequence
+    Appends sequence
     
 End Sub
 '
@@ -212,6 +249,16 @@ Public Function UpperBound() As Long
     UpperBound = Count
     
 End Function
+Public Function ToArray() As Variant()
+
+    ToArray = defIterable.ToArray(Me)
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
+
+End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
 
     IIterable_Item = Item(index)
@@ -226,5 +273,15 @@ Private Function IIterable_UpperBound() As Long
 
     IIterable_UpperBound = UpperBound
     
+End Function
+Private Function IIterable_ToArray() As Variant()
+
+    IIterable_ToArray = ToArray
+    
+End Function
+Private Function IIterable_ToCollection() As Collection
+
+    Set IIterable_ToCollection = ToCollection
+
 End Function
 

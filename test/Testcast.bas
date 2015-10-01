@@ -47,7 +47,7 @@ Public Sub CastAssignObject()
     Assert.AreEqual ObjPtr(ys), ObjPtr(xs)
     
     'Double Check
-    ys.append "D"
+    ys.Append "D"
     Assert.IsTrue xs.Equals(ys)
     
 End Sub

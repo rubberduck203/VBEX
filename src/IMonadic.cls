@@ -16,5 +16,6 @@ Public Function Map(ByVal op As IApplicable) As IMonadic
 
 End Function
 Public Function Unit(ByVal x) As IMonadic
+Attribute Unit.VB_UserMemId = 0
 
 End Function

@@ -36,7 +36,6 @@ Public Sub SetNonEmptyCopy()
     SetNonEmptyConstructorTest SortedSet.Copy(Array(1, 2, 3, 1, 2, 3))
     
 End Sub
-
 '@TestMethod
 Public Sub SetNonEmptyCreate()
 
