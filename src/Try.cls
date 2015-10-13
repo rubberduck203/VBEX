@@ -56,7 +56,7 @@ Public Function FromDelayed(ByVal Attempt As IDelayed) As Try
     On Error GoTo 0
 
 CleanExit:
-    Set Try = result
+    Set FromDelayed = result
 
 Exit Function
 
