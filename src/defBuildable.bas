@@ -1,7 +1,7 @@
 Attribute VB_Name = "defBuildable"
 Option Explicit
 
-Public Function Repeat(ByVal seed As IBuildable, ByVal val, ByVal n As Long) 
+Public Function Repeat(ByVal seed As IBuildable, ByVal val, ByVal n As Long) _
         As IBuildable
 
     Dim result As IBuildable
@@ -35,12 +35,12 @@ Public Function Enumerate(ByVal seed As IBuildable, ByVal from As Long, _
 End Function
 ''
 ' Converts an Transversable to any IBuildable
-Public Function ConvertTo(ByVal seed As IBuildable, ByVal transversable) 
+Public Function ConvertTo(ByVal seed As IBuildable, ByVal transversable) _
         As Variant
         
     Dim result As IBuildable
     Set result = IBuildable.MakeEmpty
-    result.AddItems(transversable)
-    Set ToBuildable = result
+    result.AddItems (transversable)
+    Set ConvertTo = result
 
 End Function

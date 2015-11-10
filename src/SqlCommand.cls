@@ -154,7 +154,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defshow.ParamShowableObject(Me, pCommand.CommandText)
+    Show = defShow.ParamShowableObject(Me, pCommand.CommandText)
 
 End Function
 Private Function IShowable_Show() As String

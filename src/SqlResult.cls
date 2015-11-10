@@ -89,7 +89,7 @@ Public Function HDict() As Dict
     
     If UBound(recs, 1) > 1 Then
         Err.Raise TOO_MANY_FIELDS, _
-            Description:=TypeName(Me) & ".HDict: Query returned more than 2 fields."
+            description:=TypeName(Me) & ".HDict: Query returned more than 2 fields."
     End If
     
     Dim keys As List
@@ -142,7 +142,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defshow.ParamShowableObject(Me, pFieldNames, pRecords)
+    Show = defShow.ParamShowableObject(Me, pFieldNames, pRecords)
 
 End Function
 Private Function IShowable_Show() As String

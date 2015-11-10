@@ -122,7 +122,7 @@ Public Function GetOrElse(ByVal k, Optional ByVal default = Empty) As Variant
 End Function
 Public Function MaybeGet(ByVal k) As Maybe
 
-    Set MaybeGet = Maybe.Attempt(ByName.Make(OnArgs.Make("Item", vbGet, Me), k))
+    Set MaybeGet = Maybe.Attempt(ByName.Create(OnArgs.Make("Item", VbGet, Me), k))
 
 End Function
 ''
@@ -136,9 +136,9 @@ End Function
 ' Produce Lists
 ' -------------
 '
-Public Function Keys() As List
+Public Function keys() As List
 
-    Set Keys = List.Copy(pDict.Keys)
+    Set keys = List.Copy(pDict.keys)
     
 End Function
 Public Function Values() As List
@@ -152,7 +152,7 @@ Public Function Pairs() As List
     Set result = List.Create
     
     Dim k
-    For Each k In Keys
+    For Each k In keys
         result.Append Pair(k)
     Next
     
@@ -188,7 +188,7 @@ End Function
 Public Sub Update(ByVal other As Dict)
 
     Dim k
-    For Each k In other.Keys
+    For Each k In other.keys
         pDict(k) = other(k)
     Next
     

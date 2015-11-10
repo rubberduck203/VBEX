@@ -1,3 +1,11 @@
+# Commit.ps1
+#
+# Collects VBEX files into an office add-in file
+#
+# Copywrite (C) 2015 Philip Wales
+#
+Param()
+
 $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
     $PSScriptRoot
 } else {
@@ -5,6 +13,7 @@ $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
 }
 $export = (Join-Path "$scriptRoot" "Export.ps1")
 $builds = @("src", "test")
+# $dests = $builds | % {Join-Path "$scriptRoot" "$build"}
 
 ForEach($build in $builds) {
     $file = (Join-Path "$scriptRoot" "VBEX$build.xlam")
@@ -12,3 +21,6 @@ ForEach($build in $builds) {
     Get-ChildItem "$dest" | Remove-Item
     & $export "$file" "$dest"
 }
+
+$files = $builds | % { Join-Path "$scriptRoot" "VBEX$build.xlam" }
+ForEach($file in $files) { Remove-Item $file } 

@@ -159,7 +159,7 @@ Private Function ShowSquareArrayMembers(ByRef xs As Variant) As String
     
     Dim i As Long
     For i = 1 To size
-        results(i) = ShowArrayMembers(Application.Index(txs, i, 0))
+        results(i) = ShowArrayMembers(Application.index(txs, i, 0))
     Next
     
     ShowSquareArrayMembers = Join(results, SQUARE_ARRAY_DELIM)

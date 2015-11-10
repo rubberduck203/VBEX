@@ -110,7 +110,7 @@ End Property
 '
 Private Function IShowable_Show() As String
 
-    IShowable_Show = defshow.ParamShowableObject(Me, pConnection.ConnectionString)
+    IShowable_Show = defShow.ParamShowableObject(Me, pConnection.ConnectionString)
 
 End Function
 '
