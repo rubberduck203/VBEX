@@ -44,7 +44,7 @@ function ExportModules($prjCOM, [String] $outDest) {
 		if ($compFileExt -ne "") {
 			$compFileName = $component.name + $compFileExt
 			$exportPath = (Join-Path $outDest $compFileName)
-                        Write-Host "`t $compFileName `t => `t $exportPath"
+                        Write-Host "`t $compFileName => $exportPath"
 			$component.Export($exportPath)
                 }
 	}

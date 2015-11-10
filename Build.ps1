@@ -12,12 +12,13 @@ Param(
 
 function main {
 
-	$fileExt = [System.IO.Path]::GetExtension($buildPath)
-	$officeCOM = switch -wildcard ($fileExt.ToLower()) {
+    $fileExt = [System.IO.Path]::GetExtension($buildPath)
+    $officeCOM = switch -wildcard ($fileExt.ToLower()) {
         ".xl*" {New-Object -ComObject Excel.Application; break}
         #".ac*" {New-Object -ComObject Acces.Application; break}
         default {throw "$fileName is not a supported office file."}
     } 
+    Write-Host "Will Build $buildPath"
     dosEOLFolder $sourceFiles
     $srcAddin = (BuildExcelAddin $officeCOM $sourceFiles $references $buildPath)
     $officeCOM.Quit()
@@ -32,7 +33,7 @@ function BuildExcelAddin($officeCOM,
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($outputPath)
     BuildVBProject $prj $projectName $moduleFiles $references
     
-    #save as addin
+    Write-Host "Saving Addin as $outputPath" -ForeGround Green
     $newFile.SaveAs($outputPath, 55)
     return $newFile
 }
@@ -50,11 +51,23 @@ function BuildVBProject($prj, [String] $name, [System.Array] $moduleFiles,
         [System.Array] $references) {
     
     $prj.Name = $name
-    $moduleFiles | ForEach-Object { $prj.VBComponents.Import( $_ ) }
-    $references | ForEach-Object { $prj.References.AddFromFile( $_ ) }
-    
+    Write-Host "=> Building VBProject $name`:"
+    $moduleCount = $moduleFiles.length
+    Write-Host "==> Importing $moduleCount Modules:"
+    ForEach($moduleFile in $modulefiles) {
+        Write-Host "   -> $moduleFile"
+        $prj.VBComponents.Import($moduleFile)
+    }
+    $refCount = $references.length
+    Write-Host "==> Linking $refCount References:"
+    ForEach($reference in $references) {
+        Write-Host "   -> $reference"
+        $prj.References.AddFromFile( $reference ) 
+    }
 }
 function dosEOLFolder([System.Array] $textFiles) {
+    $count = $textFiles.length
+    Write-Host "Converting $count files to CRLF"
     $textFiles | ForEach-Object { dosEOL $_ }
 }
 function dosEOL([String] $textFile) {
