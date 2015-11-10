@@ -111,12 +111,19 @@ End Property
 ' GetItem: Return default value if `key` does not exist
 Public Function GetItem(ByVal k, Optional ByVal default = Empty) As Variant
         
-    If pDict.Exists(k) Then
-        Assign GetItem, pDict(k)
-    Else
-        Assign GetItem, default
-    End If
+    Console.PrintLine "WARNING: Method Dict.GetItem is deprecated."
+    Assign GetItem, GetOrElse(k, default)
     
+End Function
+Public Function GetOrElse(ByVal k, Optional ByVal default = Empty) As Variant
+
+    Assign GetOrElse, MaybeGet(k).GetOrElse(default)
+
+End Function
+Public Function MaybeGet(ByVal k) As Maybe
+
+    Set MaybeGet = Maybe.Attempt(ByName.Make(OnArgs.Make("Item", vbGet, Me), k))
+
 End Function
 ''
 ' Pair: return a `Tuple` of (key, value)

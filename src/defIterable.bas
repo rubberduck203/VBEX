@@ -48,4 +48,19 @@ Public Function ToCollection(ByVal iterable As IIterable) As Collection
     Set ToCollection = result
 
 End Function
+''
+' Converts an iterable to any IBuildable
+Public Function ToBuildable(ByVal seed As IBuildable, ByVal iterable As IIterable) _
+        As IBuildable
 
+    Dim result As IBuildable
+    Set result = IBuildable.MakeEmpty
+    
+    Dim index As Long
+    For index = iterable.LowerBound To iterable.UpperBound
+        result.AddItem iterable(index)
+    Next
+
+    Set ToBuildable = result
+
+End Function
