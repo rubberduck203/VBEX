@@ -38,13 +38,15 @@ function ExportModules($prjCOM, [String] $outDest) {
     
 	$vbComps = ($prjCOM.VBComponents)
         $count = $vbComps.count
-        Write-Host "Exporting $count modules:"
+        Write-Host "=> " -ForeGround Blue -noNewLine
+        Write-Host "Exporting $count modules to $outDest`:"
 	ForEach ($component in $vbComps) {
 		$compFileExt = (GetComponentExt($component))
 		if ($compFileExt -ne "") {
 			$compFileName = $component.name + $compFileExt
 			$exportPath = (Join-Path $outDest $compFileName)
-                        Write-Host "`t $compFileName => $exportPath"
+                        Write-Host "  -> " -ForeGround yellow -noNewLine
+                        Write-Host "$compFileName"
 			$component.Export($exportPath)
                 }
 	}

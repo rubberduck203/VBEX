@@ -51,17 +51,22 @@ function BuildVBProject($prj, [String] $name, [System.Array] $moduleFiles,
         [System.Array] $references) {
     
     $prj.Name = $name
-    Write-Host "=> Building VBProject $name`:"
+    Write-Host "=> " -ForeGround Blue -noNewLine
+    Write-Host "Building VBProject $name`:"
     $moduleCount = $moduleFiles.length
-    Write-Host "==> Importing $moduleCount Modules:"
+    Write-Host "==> " -ForeGround Green -noNewLine
+    Write-Host "Importing $moduleCount Modules:"
     ForEach($moduleFile in $modulefiles) {
-        Write-Host "   -> $moduleFile"
+        Write-Host "   -> " -ForeGround Yellow -noNewLine 
+        Write-Host "$moduleFile"
         $prj.VBComponents.Import($moduleFile)
     }
     $refCount = $references.length
-    Write-Host "==> Linking $refCount References:"
+    Write-Host "==> " -ForeGround Green -noNewLine
+    Write-Host "Linking $refCount References:"
     ForEach($reference in $references) {
-        Write-Host "   -> $reference"
+        Write-Host "   -> " -ForeGround Yellow -noNewLine
+        Write-Host "$reference"
         $prj.References.AddFromFile( $reference ) 
     }
 }
