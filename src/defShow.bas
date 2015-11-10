@@ -62,7 +62,7 @@ Private Function UnShowableObject(ByVal obj As Object) As String
     Dim repr As String
     repr = "&" & ObjPtr(obj)
 
-    UnShowableObject = ShowableObject(obj, cast.CArray(Array(repr)))
+    UnShowableObject = ShowableObject(obj, cast.xArray(repr))
 
 End Function
 '
@@ -150,7 +150,7 @@ Private Function ShowSquareArrayMembers(ByRef xs As Variant) As String
     upper = UBound(txs)
     
     Dim size As Long
-    size = upper - lower
+    size = upper - lower + 1
     
     Dim results() As String
     If lower <= upper Then

@@ -50,7 +50,7 @@ End Property
 Public Function ADOExecuteQueryOnArray(ByRef args() As Variant) As ADODB.RecordSet
 
     ResetArgs args
-    Set ADOExecuteQuery = pCommand.Execute()
+    Set ADOExecuteQueryOnArray = pCommand.Execute()
 
 End Function
 Public Function ADOExecuteQuery(ParamArray args() As Variant) As ADODB.RecordSet
@@ -146,14 +146,24 @@ Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
     Set IApplicable_ApplyOnArray = ExecuteQueryOnArray(CArray(args))
 
 End Function
+Public Function Compose(ByVal f As IApplicable) As IApplicable
+
+    Set Compose = defApply.Compose(Me, f)
+
+End Function
 Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
 
-    Set IApplicable_Compose = defApply.Compose(Me, f)
+    Set IApplicable_Compose = Compose(f)
+
+End Function
+Public Function AndThen(ByVal g As IApplicable) As IApplicable
+
+    Set AndThen = defApply.AndThen(Me, g)
 
 End Function
 Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
 
-    Set IApplicable_AndThen = defApply.AndThen(Me, g)
+    Set IApplicable_AndThen = AndThen(g)
 
 End Function
 '
