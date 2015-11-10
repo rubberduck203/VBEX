@@ -47,9 +47,17 @@ End Property
 ' which is only a SELECT command) or the number of rows affected if the command
 ' is an update command (which is an INSERT, UPDATE, or DELETE command.)
 '
-'
-''
-'
+Public Function ADOExecuteQueryOnArray(ByRef args() As Variant) As ADODB.RecordSet
+
+    ResetArgs args
+    Set ADOExecuteQuery = pCommand.Execute()
+
+End Function
+Public Function ADOExecuteQuery(ParamArray args() As Variant) As ADODB.RecordSet
+
+    Set ADOExecuteQuery = ADOExecuteQueryOnArray(CArray(args))
+
+End Function
 Public Function ExecuteQuery(ParamArray args() As Variant) As SqlResult
 
     Set ExecuteQuery = ExecuteQueryOnArray(CArray(args))
@@ -57,8 +65,7 @@ Public Function ExecuteQuery(ParamArray args() As Variant) As SqlResult
 End Function
 Public Function ExecuteQueryOnArray(ByRef args() As Variant) As SqlResult
 
-    ResetArgs args
-    Set ExecuteQueryOnArray = SqlResult.Make(pCommand.Execute())
+    Set ExecuteQueryOnArray = SqlResult.Make(ADOExecuteQueryOnArray(args))
 
 End Function
 Public Function ExecuteUpdate(ParamArray args() As Variant) As Long
