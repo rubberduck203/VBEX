@@ -13,7 +13,6 @@ $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
 }
 $export = (Join-Path "$scriptRoot" "Export.ps1")
 $builds = @("src", "test")
-# $dests = $builds | % {Join-Path "$scriptRoot" "$build"}
 
 ForEach($build in $builds) {
     $file = (Join-Path "$scriptRoot" "VBEX$build.xlam")
@@ -22,5 +21,3 @@ ForEach($build in $builds) {
     & $export "$file" "$dest"
 }
 
-$files = $builds | % { Join-Path "$scriptRoot" "VBEX$build.xlam" }
-ForEach($file in $files) { Remove-Item $file } 
