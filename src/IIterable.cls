@@ -30,3 +30,6 @@ End Function
 Public Function ToCollection() As Collection
 
 End Function
+Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+End Function

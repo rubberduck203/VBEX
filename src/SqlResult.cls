@@ -131,7 +131,7 @@ End Function
 Public Function AllDicts() As List
     
     ' TODO: Use a convert to instead of map with identity.
-    Set AllDicts = defMap.IterableMap(List, Lambda.FromShort(" _ "), Me)
+    Set AllDicts = ToBuildable(List)
 
 End Function
 '
@@ -196,5 +196,15 @@ End Function
 Private Function IIterable_ToCollection() As Collection
 
     Set IIterable_ToCollection = ToCollection
+
+End Function
+Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+    Set ToBuildable = defIterable.ToBuildable(seed, Me)
+
+End Function
+Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+    Set IIterable_ToBuildable = ToBuildable(seed)
 
 End Function

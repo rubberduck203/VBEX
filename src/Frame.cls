@@ -135,16 +135,7 @@ Public Function UpperBound() As Long
     UpperBound = pUpper - pLower
     
 End Function
-Public Function ToArray() As Variant()
 
-    ToArray = defIterable.ToArray(Me)
-
-End Function
-Public Function ToCollection() As Collection
-
-    Set ToCollection = defIterable.ToCollection(Me)
-
-End Function
 Private Function IIterable_Item(ByVal index As Long) As Variant
 
     Assign IIterable_Item, Item(index)
@@ -160,15 +151,35 @@ Private Function IIterable_UpperBound() As Long
     IIterable_UpperBound = UpperBound
 
 End Function
+Public Function ToArray() As Variant()
+
+    ToArray = defIterable.ToArray(Me)
+
+End Function
 Private Function IIterable_ToArray() As Variant()
 
     IIterable_ToArray = ToArray()
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
 Private Function IIterable_ToCollection() As Collection
 
     Set IIterable_ToCollection = ToCollection
     
+End Function
+Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+    Set ToBuildable = defIterable.ToBuildable(seed, Me)
+
+End Function
+Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+    Set IIterable_ToBuildable = ToBuildable(seed)
+
 End Function
 '
 ' IShowable
