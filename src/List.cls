@@ -192,7 +192,7 @@ Public Function Tail() As List
 Attribute Tail.VB_Description = "Returns a new list of all but the first element."
     
     Dim result As List
-    If Count > 2 Then
+    If Count > 1 Then
         Set result = Slice(2, Count)
     Else
         Set result = Create()
