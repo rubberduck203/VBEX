@@ -17,8 +17,6 @@ $programFiles = if ([Environment]::Is64BitOperatingSystem) {
     "Program Files"
 }
 
-$VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
-$VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
 
 # Compatible with earlier powershell versions
 $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
@@ -30,12 +28,16 @@ $buildScript = (Join-Path $scriptRoot "Build.ps1")
 
 $ext = switch ($officeApp) {
     "Excel" {"xlam"}
-    "Access" {"accde"}
+    # "Access" {"accde"} Wow is the Acces Object Model shit.
     default {throw "$officeApp is not a supported office application."}
 }
 
+$VBA_EXTENSIBILITY_LIB = "C:\$programFiles\Common Files\Microsoft Shared\VBA\VBA6\VBE6EXT.OLB"
+$VBA_SCRIPTING_LIB = "C:\Windows\system32\scrrun.dll"
+$ACTIVEX_DATA_OBJECTS_LIB = "C:\$programFiles\Common Files\System\ado\msado15.dll"
+
 $buildRefs = @{
-    "src" = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB");
+    "src" = @("$VBA_EXTENSIBILITY_LIB", "$VBA_SCRIPTING_LIB", "$ACTIVEX_DATA_OBJECTS_LIB");
     "test" = @((Join-Path $scriptRoot "VBEXsrc.$ext"))
 }
 

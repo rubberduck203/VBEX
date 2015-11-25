@@ -44,7 +44,7 @@ Private Sub Class_Terminate()
 End Sub
 Private Function SetList() As List
 
-    Set SetList = List.Copy(pDict.Keys)
+    Set SetList = List.Copy(pDict.keys)
 
 End Function
 '
@@ -82,12 +82,12 @@ End Function
 '
 Public Function Map(ByVal op As IApplicable) As HashSet
     
-    Set Map = defMap.TransversableMap(HashSet, op, pDict.Keys)
+    Set Map = defMap.TransversableMap(HashSet, op, pDict.keys)
     
 End Function
 Public Function FlatMap(ByVal op As IApplicable) As HashSet
     
-    Set FlatMap = defMap.TransversableBind(HashSet, op, pDict.Keys)
+    Set FlatMap = defMap.TransversableBind(HashSet, op, pDict.keys)
     
 End Function
 Public Function Filter(ByVal pred As IApplicable) As HashSet
@@ -310,7 +310,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ShowableObject(Me, cast.CArray(pDict.Keys))
+    Show = defShow.ShowableObject(Me, cast.CArray(pDict.keys))
     
 End Function
 Private Function IShowable_Show() As String

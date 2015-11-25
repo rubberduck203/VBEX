@@ -111,12 +111,19 @@ End Property
 ' GetItem: Return default value if `key` does not exist
 Public Function GetItem(ByVal k, Optional ByVal default = Empty) As Variant
         
-    If pDict.Exists(k) Then
-        Assign GetItem, pDict(k)
-    Else
-        Assign GetItem, default
-    End If
+    Console.PrintLine "WARNING: Method Dict.GetItem is deprecated."
+    Assign GetItem, GetOrElse(k, default)
     
+End Function
+Public Function GetOrElse(ByVal k, Optional ByVal default = Empty) As Variant
+
+    Assign GetOrElse, MaybeGet(k).GetOrElse(default)
+
+End Function
+Public Function MaybeGet(ByVal k) As Maybe
+
+    Set MaybeGet = Maybe.Attempt(ByName.Create(OnArgs.Make("Item", VbGet, Me), k))
+
 End Function
 ''
 ' Pair: return a `Tuple` of (key, value)
@@ -129,9 +136,9 @@ End Function
 ' Produce Lists
 ' -------------
 '
-Public Function Keys() As List
+Public Function keys() As List
 
-    Set Keys = List.Copy(pDict.Keys)
+    Set keys = List.Copy(pDict.keys)
     
 End Function
 Public Function Values() As List
@@ -145,7 +152,7 @@ Public Function Pairs() As List
     Set result = List.Create
     
     Dim k
-    For Each k In Keys
+    For Each k In keys
         result.Append Pair(k)
     Next
     
@@ -181,7 +188,7 @@ End Function
 Public Sub Update(ByVal other As Dict)
 
     Dim k
-    For Each k In other.Keys
+    For Each k In other.keys
         pDict(k) = other(k)
     Next
     

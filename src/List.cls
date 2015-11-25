@@ -192,7 +192,7 @@ Public Function Tail() As List
 Attribute Tail.VB_Description = "Returns a new list of all but the first element."
     
     Dim result As List
-    If Count > 2 Then
+    If Count > 1 Then
         Set result = Slice(2, Count)
     Else
         Set result = Create()
@@ -518,20 +518,30 @@ Public Function ToArray() As Variant()
     ToArray = defIterable.ToArray(Me)
 
 End Function
-Public Function ToCollection() As Collection
-
-    Set ToCollection = defIterable.ToCollection(Me)
-
-End Function
 Private Function IIterable_ToArray() As Variant()
 
     IIterable_ToArray = ToArray
+
+End Function
+Public Function ToCollection() As Collection
+
+    Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
 Private Function IIterable_ToCollection() As Collection
 
     Set IIterable_ToCollection = ToCollection
     
+End Function
+Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+    Set ToBuildable = defIterable.ToBuildable(seed, Me)
+
+End Function
+Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+
+    Set IIterable_ToBuildable = ToBuildable(seed)
+
 End Function
 '
 ' ### IEquatable

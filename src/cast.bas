@@ -29,6 +29,11 @@ CheckIfNotArray:
     NotImplementedError "cast", "CArray"
     
 End Function
+Public Function xArray(ParamArray xs() As Variant) As Variant()
+
+    xArray = CArray(xs)
+
+End Function
 ''
 ' Is x An Array?
 Public Function IsArray(ByVal x) As Boolean

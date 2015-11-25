@@ -1,3 +1,11 @@
+# Commit.ps1
+#
+# Collects VBEX files into an office add-in file
+#
+# Copywrite (C) 2015 Philip Wales
+#
+Param()
+
 $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
     $PSScriptRoot
 } else {
@@ -12,3 +20,4 @@ ForEach($build in $builds) {
     Get-ChildItem "$dest" | Remove-Item
     & $export "$file" "$dest"
 }
+
