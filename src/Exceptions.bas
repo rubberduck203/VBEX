@@ -15,6 +15,7 @@ Public Enum exErrorNums
     INDEX_ERROR = vbErrorNums.INDEX_ERROR
     VALUE_ERROR = vbErrorNums.VALUE_ERROR
     UNIMPLEMENTED = 1 ' TODO: use more non-conflicting values
+    ILLEGAL_ARGUMENT = 666
     KEY_ERROR
     OS_ERROR
 End Enum
@@ -31,16 +32,22 @@ Public Sub BubbleError(ByVal raiser, ByVal method As String, _
     Err.Raise e.Number, e.source, trace ', e.HelpFile, e.HelpContext
 
 End Sub
+Public Sub IllegalArgument(ByVal raiser, ByVal method As String, _
+        Optional ByVal msg As String)
+
+    RaiseError exErrorNums.ILLEGAL_ARGUMENT, raiser, method, msg
+
+End Sub
 Public Sub IndexError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
     
-    Err.Raise exErrorNums.INDEX_ERROR, description:=MakeDescription(raiser, method, msg)
+    RaiseError exErrorNums.INDEX_ERROR, raiser, method, msg
  
 End Sub
 Public Sub KeyError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
         
-    Err.Raise exErrorNums.KEY_ERROR, description:=MakeDescription(raiser, method, msg)
+    RaiseError exErrorNums.KEY_ERROR, raiser, method, msg
     
 End Sub
 Public Sub NotImplementedError(ByVal raiser, ByVal method As String)
@@ -51,31 +58,37 @@ Public Sub NotImplementedError(ByVal raiser, ByVal method As String)
     Dim msg As String
     msg = source & " Not implemented."
 
-    Err.Raise exErrorNums.UNIMPLEMENTED, description:=MakeDescription(raiser, method, msg)
+    RaiseError exErrorNums.UNIMPLEMENTED, raiser, method, msg
     
 End Sub
 Public Sub OSError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
         
-    Err.Raise exErrorNums.OS_ERROR, description:=MakeDescription(raiser, method, msg)
+    RaiseError exErrorNums.OS_ERROR, raiser, method, msg
     
 End Sub
 Public Sub TypeError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
         
-    Err.Raise exErrorNums.TYPE_ERROR, description:=MakeDescription(raiser, method, msg)
+    RaiseError exErrorNums.TYPE_ERROR, raiser, method, msg
     
 End Sub
 Public Sub ValueError(ByVal raiser, ByVal method As String, _
         Optional ByVal msg As String)
         
-    Err.Raise exErrorNums.VALUE_ERROR, description:=MakeDescription(raiser, method, msg)
+     RaiseError exErrorNums.VALUE_ERROR, raiser, method, msg
     
 End Sub
 '
 ' Private Methods
 ' ---------------
 '
+Private Sub RaiseError(ByVal errNum As exErrorNums, ByVal raiser, _
+        ByVal method As String, ByVal msg As String)
+
+    Err.Raise errNum, description:=MakeDescription(raiser, method, msg)
+
+End Sub
 Private Function MakeDescription(ByVal raiser, ByVal method As String, _
         ByVal msg As String) As String
     

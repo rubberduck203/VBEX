@@ -25,19 +25,25 @@ Implements IApplicable
 ' ---------------
 '
 Private pApplicable As IApplicable
-Private pArgs As Tuple
+Private pStoredArgs() As Variant
+Private pArgLower As Long
+Private pArgUpper As Long
 '
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal app As IApplicable, ByVal args As Tuple) As Partial
+Public Function Make(ByVal app As IApplicable, ByRef storedArgs()) As Partial
+
+    Dim result As New Partial
+    Set result.Applicable = app
+    result.StoreArguments storedArgs
+    Set Make = result
 
 End Function
-Public Function Prepend(ByVal app As IApplicable, ParamArray frontArgs()) As Partial
+Public Function Create(ByVal app As IApplicable, ParamArray storedArgs())
 
-End Function
-Public Function Append(ByVal app As IApplicable, ParamArray backArgs()) As Partial
-    
+    Set Create = Make(app, CArray(storedArgs))
+
 End Function
 '
 ' Friend Methods
@@ -48,30 +54,85 @@ Friend Property Set Applicable(ByVal app As IApplicable)
     Set pApplicable = app
     
 End Property
-Friend Property Set Arguments(ByVal args As Tuple)
+Friend Sub StoreArguments(ByRef args())
 
-    Set pArgs = args
+    pStoredArgs = args
+    pArgLower = LBound(pStoredArgs)
+    pArgUpper = UBound(pStoredArgs)
 
-End Property
+End Sub
 '
 ' IApplicable
 ' -----------
 '
 Public Function Apply(ParamArray args()) As Variant
+Attribute Apply.VB_UserMemId = 0
+On Error GoTo SimpleBubble
 
-    Assign Apply, IApplicable_ApplyOnArray(CArray(args))
+    Assign Apply, ApplyOnArray(CArray(args))
+
+Exit Function
+SimpleBubble:
+    Exceptions.BubbleError Me, "Apply", Err
+
+End Function
+Public Function ApplyOnArray(ByRef args()) As Variant
+
+    On Error GoTo ErrHandler
+
+    Dim sentArgs() As Variant
+    ReDim sentArgs(pArgLower To pArgUpper)
+    
+    Dim passedArgsLower As Long
+    passedArgsLower = LBound(args)
+
+    Dim passedArgsUpper As Long
+    passedArgsUpper = UBound(args)
+
+    ' Weave args into pStoredArgs as sentArgs
+    Dim a As Long
+    a = passedArgsLower
+
+    Dim s As Long
+    For s = pArgLower To pArgUpper
+
+        If IsEmpty(pStoredArgs(s)) Then
+            Assign sentArgs(s), args(a)
+            a = a + 1
+        Else
+            Assign sentArgs(s), pStoredArgs(s)
+        End If
+
+    Next
+
+    If a < passedArgsUpper Then
+        On Error GoTo 0
+            Exceptions.IllegalArgument Me, "ApplyOnArray", _
+                "Called with too many arguments"
+        On Error GoTo ErrHandler
+    End If
+
+    Assign ApplyOnArray, pApplicable.ApplyOnArray(sentArgs)
+
+Exit Function
+ErrHandler:
+    Select Case Err.Number
+    Case vbErrorNums.INDEX_ERROR
+        Exceptions.IndexError Me, "ApplyOnArray", _
+            "Not called with enough arguments."
+    Case Else
+        Exceptions.BubbleError Me, "ApplyOnArray", Err
+    End Select
 
 End Function
 Private Function IApplicable_Apply(ParamArray args()) As Variant
 
-    Assign IApplicable_Apply, IApplicable_ApplyOnArray(CArray(args))
+    Assign IApplicable_Apply, ApplyOnArray(CArray(args))
     
 End Function
-Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
+Private Function IApplicable_ApplyOnArray(ByRef args()) As Variant
     
-    Dim sentArgs() As Variant
-    ' sentArgs = ???
-    Assign IApplicable_ApplyOnArray, pApplicable.ApplyOnArray(sentArgs)
+    Assign IApplicable_ApplyOnArray, ApplyOnArray(args)
     
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable
@@ -100,8 +161,8 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ParamShowableObject(Me, pFunctionName)
-
+    Show = defShow.ParamShowableObject(Me, pApplicable, pStoredArgs)
+    
 End Function
 Private Function IShowable_Show() As String
 
