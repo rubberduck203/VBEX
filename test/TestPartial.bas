@@ -15,11 +15,11 @@ Public Sub PartialMakeTest()
     Set itemGetter = OnArgs.Make("GetItem", VbMethod, myDict)
     
     Dim keyPart As Partial
-    Set keyPart = Partial.Make(itemGetter, Array(Empty, "default value"))
+    Set keyPart = Partial.Make(itemGetter, xArray(Empty, "default value"))
     
     BatteryApplicable.Battery keyPart, "key", "default value"
     
-    myDict.Append "key", "value"
+    myDict.Add "key", "value"
     BatteryApplicable.Battery keyPart, "key", "value"
 
 End Sub
