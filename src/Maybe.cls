@@ -14,8 +14,8 @@ Option Explicit
 '
 '
 ' Copywrite (C) 2014 Philip Wales
-' This file (Maybe.cls) is distributed under the MIT license
-' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
+' This file (Maybe.cls) is distributed under the GPL-3.0 license
+' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 ' An object that optionally contains an item.  It's use is an abstraction from
 ' checking if a method returned a value or not.

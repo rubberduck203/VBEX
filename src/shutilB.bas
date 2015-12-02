@@ -8,8 +8,8 @@ Option Explicit
 ' operation is successful or `false` if failed.
 '
 ' Copyright (c) 2014 Philip Wales
-' This file (shutilB.bas) is distributed under the MIT license.
-' Obtain a copy of the license here: http://opensource.org/licenses/MIT
+' This file (shutilB.bas) is distributed under the GPL-3.0 license.
+' Obtain a copy of the license here: http://opensource.org/licenses/GPL-3.0
 '
 ' It simply calls the respective `shutilE` method and uses boiler plate
 ' code to evaluate succes.  Until procedures can be treated as data types

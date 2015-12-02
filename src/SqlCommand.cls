@@ -13,8 +13,8 @@ Option Explicit
 ' ==========
 
 ' Copywrite (C) 2014 Philip Wales
-' This file (SqlCommand.cls) is distributed under the MIT license
-' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
+' This file (SqlCommand.cls) is distributed under the GPL-3.0 license
+' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 ' Wrapper for `ADODB.Command`.  It is only created by a SqlConnection. I don't
 ' know if it does anything more useful than `ADODB.Command` other than return
