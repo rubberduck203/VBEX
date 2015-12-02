@@ -7,10 +7,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-
 '
 ' Lambda
 ' ======
+'
+' Copywrite (C) 2014 Philip Wales
+' Original idea from Mathieu Guindon.
+' This file (Lambda.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 ' Create lambda expressions from strings using
 ' either C# notation
@@ -60,7 +64,6 @@ Attribute VB_Exposed = True
 ' TODO:
 ' -----
 '
-'  - Delegate as just reference to client code procedure
 '  - pass local variables to the lambda.
 '
 Option Explicit
@@ -164,20 +167,31 @@ End Sub
 ' IApplicable
 ' -----------
 '
+' ### Meaningful
+'
+Public Function ApplyOnArray(ByRef args() As Variant) As Variant
+    
+    Assign ApplyOnArray, defApply.ApplicationRunOnArray(pId, args)
+    
+End Function
+'
+' ### Embeded
+'
+'! default member
 Public Function Apply(ParamArray args()) As Variant
 Attribute Apply.VB_UserMemId = 0
 
-    Assign Apply, IApplicable_ApplyOnArray(CArray(args))
+    Assign Apply, ApplyOnArray(CArray(args))
 
 End Function
 Private Function IApplicable_Apply(ParamArray args()) As Variant
 
-    Assign IApplicable_Apply, IApplicable_ApplyOnArray(CArray(args))
+    Assign IApplicable_Apply, ApplyOnArray(CArray(args))
     
 End Function
 Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
     
-    Assign IApplicable_ApplyOnArray, defApply.ApplicationRunOnArray(pId, args)
+    Assign IApplicable_ApplyOnArray, ApplyOnArray(args)
     
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable
@@ -185,19 +199,59 @@ Public Function Compose(ByVal f As IApplicable) As IApplicable
     Set Compose = defApply.Compose(Me, f)
 
 End Function
-Public Function AndThen(ByVal g As IApplicable) As IApplicable
-
-    Set AndThen = defApply.AndThen(Me, g)
-
-End Function
 Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
 
     Set IApplicable_Compose = Compose(f)
 
 End Function
+Public Function AndThen(ByVal g As IApplicable) As IApplicable
+
+    Set AndThen = defApply.AndThen(Me, g)
+
+End Function
 Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
 
     Set IApplicable_AndThen = AndThen(g)
+
+End Function
+Public Function Partial(ParamArray args() As Variant) As IApplicable
+
+    Set Partial = AsPartial(CArray(args))
+
+End Function
+Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
+
+    Set IApplicable_Partial = AsPartial(Carray(args)
+
+End Function
+Public Function AsPartial(ParamArray args() As Variant) As IApplicable
+
+    Set AsPartial = defApply.AsPartial(args)
+
+End Function
+Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+
+    Set IApplicable_AsPartial = AsPartial(args)
+
+End Function
+Public Function Delay(ParamArray args() As Variant) As IDelayed
+
+    Set Delay = AsDelay(CArray(args))
+
+End Function
+Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+
+    Set IApplicable_Delay = AsDelay(CArray(args))
+
+End Function
+Public Function AsDelay(ParamArray args() As Variant) As IDelayed
+
+    Set AsDelay = defDelay.AsDelay(args)
+
+End Function
+Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+
+    Set IApplicable_AsDelay = AsDelay(args)
 
 End Function
 

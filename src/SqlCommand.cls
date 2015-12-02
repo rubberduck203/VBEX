@@ -9,8 +9,12 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 '
-' SqlCmd
-' ======
+' SqlCommand
+' ==========
+
+' Copywrite (C) 2014 Philip Wales
+' This file (SqlCommand.cls) is distributed under the MIT license
+' Obtain a copy of the MIT license <http://opensource.org/licenses/MIT>
 '
 ' Wrapper for `ADODB.Command`.  It is only created by a SqlConnection. I don't
 ' know if it does anything more useful than `ADODB.Command` other than return
@@ -146,6 +150,9 @@ Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
     Set IApplicable_ApplyOnArray = ExecuteQueryOnArray(CArray(args))
 
 End Function
+'
+' ### Embeded
+'
 Public Function Compose(ByVal f As IApplicable) As IApplicable
 
     Set Compose = defApply.Compose(Me, f)
@@ -164,6 +171,36 @@ End Function
 Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
 
     Set IApplicable_AndThen = AndThen(g)
+
+End Function
+Public Function AsPartial(ParamArray args() As Variant) As IApplicable
+
+    Set AsPartial = defApply.AsPartial(args)
+
+End Function
+Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+
+    Set IApplicable_AsPartial = AsPartial(args)
+
+End Function
+Public Function Delay(ParamArray args() As Variant) As IDelayed
+
+    Set Delay = AsDelay(CArray(args))
+
+End Function
+Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+
+    Set IApplicable_Delay = AsDelay(CArray(args))
+
+End Function
+Public Function AsDelay(ParamArray args() As Variant) As IDelayed
+
+    Set AsDelay = defDelay.AsDelay(args)
+
+End Function
+Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+
+    Set IApplicable_AsDelay = AsDelay(args)
 
 End Function
 '

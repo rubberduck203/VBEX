@@ -7,11 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-Option Explicit
 '
 ' OnObject
 ' ========
-'
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (OnObject.cls) is distributed under the MIT license
@@ -19,6 +17,7 @@ Option Explicit
 '
 ' _.method(args)
 '
+Option Explicit
 Implements IApplicable
 Implements IShowable
 '
@@ -32,15 +31,21 @@ Private pArgs() As Variant
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal method As String, ByVal callT As VbCallType, _
+Public Function Create(ByVal method As String, ByVal callT As VbCallType _
         ParamArray args() As Variant) As OnObject
+
+    Set Create = Make(method, callT, CArray(args))
+
+End Function
+Public Function Make(ByVal method As String, ByVal callT As VbCallType, _
+        ByRef args() As Variant) As OnObject
 
     Dim result As New OnObject
     
     With result
         .MethodName = method
         .CallType = callT
-        .Arguments = cast.CArray(args)
+        .Arguments = args
     End With
     
     Set Make = result
@@ -83,18 +88,7 @@ End Sub
 ' IApplicable
 ' -----------
 '
-Public Function Apply(ParamArray args() As Variant) As Variant
-Attribute Apply.VB_UserMemId = 0
-
-    Assign Apply, IApplicable_ApplyOnArray(cast.CArray(args))
-
-End Function
-Private Function IApplicable_Apply(ParamArray args() As Variant) As Variant
-
-    Assign IApplicable_Apply, IApplicable_ApplyOnArray(cast.CArray(args))
-
-End Function
-Private Function IApplicable_ApplyOnArray(ByRef params() As Variant) As Variant
+Public Function ApplyOnArray(ByRef params() As Variant) As Variant
 
     Dim Callee As Object
     If UBound(params) = LBound(params) Then
@@ -103,17 +97,32 @@ Private Function IApplicable_ApplyOnArray(ByRef params() As Variant) As Variant
         InvalidArguementsError params
     End If
     
-    Assign IApplicable_ApplyOnArray, defApply.CallByNameOnArray(Callee, pMethod, pCallType, pArgs)
+    Assign ApplyOnArray, defApply.CallByNameOnArray(Callee, pMethod, pCallType, pArgs)
 
+End Function
+'
+' ### Embedded
+'
+Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
+
+    Assign IApplicable_ApplyOnArray, ApplyOnArray(args)
+   
+End Function
+'! default member
+Public Function Apply(ParamArray args() As Variant) As Variant
+Attribute Apply.VB_UserMemId = 0
+
+    Assign Apply, ApplyOnArray(cast.CArray(args))
+
+End Function
+Private Function IApplicable_Apply(ParamArray args() As Variant) As Variant
+
+    Assign IApplicable_Apply, ApplyOnArray(CArray(args))
+   
 End Function
 Public Function Compose(ByVal f As IApplicable) As IApplicable
 
     Set Compose = defApply.Compose(Me, f)
-
-End Function
-Public Function AndThen(ByVal g As IApplicable) As IApplicable
-
-    Set AndThen = defApply.AndThen(Me, g)
 
 End Function
 Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
@@ -121,9 +130,54 @@ Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
     Set IApplicable_Compose = Compose(f)
 
 End Function
+Public Function AndThen(ByVal g As IApplicable) As IApplicable
+
+    Set AndThen = defApply.AndThen(Me, g)
+
+End Function
 Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
 
     Set IApplicable_AndThen = AndThen(g)
+
+End Function
+Public Function Partial(ParamArray args() As Variant) As IApplicable
+
+    Set Partial = AsPartial(CArray(args))
+
+End Function
+Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
+
+    Set IApplicable_Partial = AsPartial(Carray(args)
+
+End Function
+Public Function AsPartial(ParamArray args() As Variant) As IApplicable
+
+    Set AsPartial = defApply.AsPartial(args)
+
+End Function
+Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+
+    Set IApplicable_AsPartial = AsPartial(args)
+
+End Function
+Public Function Delay(ParamArray args() As Variant) As IDelayed
+
+    Set Delay = AsDelay(CArray(args))
+
+End Function
+Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+
+    Set IApplicable_Delay = AsDelay(CArray(args))
+
+End Function
+Public Function AsDelay(ParamArray args() As Variant) As IDelayed
+
+    Set AsDelay = defDelay.AsDelay(args)
+
+End Function
+Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+
+    Set IApplicable_AsDelay = AsDelay(args)
 
 End Function
 '
