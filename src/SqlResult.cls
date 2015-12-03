@@ -57,10 +57,16 @@ End Property
 '
 Public Function SingleResult() As Maybe
 
-    Dim getIt As Lambda
-    Set getIt = Lambda.FromShort("_(0, 0)")
+    ' Could use (x) => x(0,0)
+    ' but less lambdas the better
+    Dim result as Maybe
+    If pRecords.IsSome Then
+        Set result = Maybe.Some(pRecords.GetItem(0,0))
+    Else
+        Set result = Maybe.None
+    End If
 
-    Set SingleResult = pRecords.Map(getIt)
+    Set SingleResult = result
     
 End Function
 '
