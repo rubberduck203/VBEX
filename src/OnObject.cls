@@ -45,7 +45,7 @@ Public Function Make(ByVal method As String, ByVal callT As VbCallType, _
     With result
         .MethodName = method
         .CallType = callT
-        .Arguments = args
+        .LetArguments args
     End With
     
     Set Make = result
@@ -64,11 +64,11 @@ Friend Property Let CallType(ByVal callT As String)
     pCallType = callT
     
 End Property
-Friend Property Let Arguments(ByRef args() As Variant)
+Friend Sub LetArguments(ByRef args() As Variant)
 
     pArgs = args
 
-End Property
+End Sub
 '
 ' Errors
 ' ------
