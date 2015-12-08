@@ -59,9 +59,9 @@ Public Function SingleResult() As Maybe
 
     ' Could use (x) => x(0,0)
     ' but less lambdas the better
-    Dim result as Maybe
+    Dim result As Maybe
     If pRecords.IsSome Then
-        Set result = Maybe.Some(pRecords.GetItem(0,0))
+        Set result = Maybe.Some(pRecords.GetItem(0, 0))
     Else
         Set result = Maybe.None
     End If
