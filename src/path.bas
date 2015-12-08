@@ -7,7 +7,7 @@ Option Explicit
 ' Common Path Manipulations for VBEX
 '
 ' Copyright (c) 2014 Philip Wales
-' This file (path.bas) is distributed under the MIT license.
+' This file (path.bas) is distributed under the GPL-3.0 license.
 '
 
 

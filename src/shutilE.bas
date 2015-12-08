@@ -8,8 +8,8 @@ Option Explicit
 ' attempted operation fails.
 '
 ' Copyright (c) 2014 Philip Wales
-' This file (shutilE.bas) is distributed under the MIT license.
-' Obtain a copy of the license here: http://opensource.org/licenses/MIT
+' This file (shutilE.bas) is distributed under the GPL-3.0 license.
+' Obtain a copy of the license here: http://opensource.org/licenses/GPL-3.0
 '
 ' Scripting.FileSystemObject is slow and unstable since it relies on sending
 ' signals to ActiveX objects across the system.  This module only uses built-in

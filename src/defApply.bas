@@ -11,6 +11,16 @@ Public Function AndThen(ByVal inner As IApplicable, ByVal outer As IApplicable) 
     Set AndThen = Composed.Make(outer, inner)
 
 End Function
+Public Function AsPartial(ByVal f As IApplicable, ByRef args() As Variant) As IApplicable
+
+    Set AsPartial = Partial.Make(f, args)
+
+End Function
+Public Function AsDelay(ByVal f As IApplicable, ByRef args() As Variant) As IDelayed
+
+    Set AsDelay = ByName.Make(f, args)
+
+End Function
 Public Function ApplicationRunOnArray(ByVal id As String, ByRef args() As Variant) As Variant
 
     Dim result

@@ -11,8 +11,8 @@ Option Explicit
 ' 4. Glob search (Only uses VB `?` and `*` wild cards)
 '
 ' Copyright (c) 2014 Philip Wales
-' This file (fsview.bas) is distributed under the MIT license.
-' Obtain a copy of the license here: http://opensource.org/licenses/MIT
+' This file (fsview.bas) is distributed under the GPL-3.0 license.
+' Obtain a copy of the license here: http://opensource.org/licenses/GPL-3.0
 
 Private Const ALLPAT As String = "*"
 Public Const PARDIR As String = ".."
