@@ -140,19 +140,59 @@ Public Function Compose(ByVal f As IApplicable) As IApplicable
     Set Compose = defApply.Compose(Me, f)
 
 End Function
-Public Function AndThen(ByVal g As IApplicable) As IApplicable
-
-    Set AndThen = defApply.AndThen(Me, g)
-
-End Function
 Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
 
     Set IApplicable_Compose = Compose(f)
 
 End Function
+Public Function AndThen(ByVal g As IApplicable) As IApplicable
+
+    Set AndThen = defApply.AndThen(Me, g)
+
+End Function
 Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
 
     Set IApplicable_AndThen = AndThen(g)
+
+End Function
+Public Function Partial(ParamArray args() As Variant) As IApplicable
+
+    Set Partial = AsPartial(CArray(args))
+
+End Function
+Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
+
+    Set IApplicable_Partial = AsPartial(CArray(args))
+
+End Function
+Public Function AsPartial(ByRef args() As Variant) As IApplicable
+
+    Set AsPartial = defApply.AsPartial(Me, args)
+
+End Function
+Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+
+    Set IApplicable_AsPartial = AsPartial(args)
+
+End Function
+Public Function Delay(ParamArray args() As Variant) As IDelayed
+
+    Set Delay = AsDelay(CArray(args))
+
+End Function
+Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+
+    Set IApplicable_Delay = AsDelay(CArray(args))
+
+End Function
+Public Function AsDelay(ByRef args() As Variant) As IDelayed
+
+    Set AsDelay = defApply.AsDelay(Me, args)
+
+End Function
+Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+
+    Set IApplicable_AsDelay = AsDelay(args)
 
 End Function
 '

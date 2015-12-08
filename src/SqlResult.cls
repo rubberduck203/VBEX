@@ -30,7 +30,7 @@ Public Function Make(ByVal rs As ADODB.RecordSet) As SqlResult
 End Function
 Friend Property Set RecordSet(ByVal rs As ADODB.RecordSet)
 
-    Set pFieldNames = TransversableMap(List, OnObject.Make("Name", VbGet), rs.Fields)
+    Set pFieldNames = TransversableMap(List, OnObject.Create("Name", VbGet), rs.Fields)
     
     If Not rs.EOF Then
         Set pRecords = Maybe.Some(rs.GetRows)

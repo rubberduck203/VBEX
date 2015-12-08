@@ -50,7 +50,7 @@ End Property
 '
 ' IApplicable
 ' -----------
-' 
+'
 ' ### Meaningful
 '
 Public Function ApplyOnArray(ByRef args() As Variant) As Variant
@@ -105,12 +105,12 @@ Public Function Partial(ParamArray args() As Variant) As IApplicable
 End Function
 Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
 
-    Set IApplicable_Partial = AsPartial(Carray(args)
+    Set IApplicable_Partial = AsPartial(CArray(args))
 
 End Function
-Public Function AsPartial(ParamArray args() As Variant) As IApplicable
+Public Function AsPartial(ByRef args() As Variant) As IApplicable
 
-    Set AsPartial = defApply.AsPartial(args)
+    Set AsPartial = defApply.AsPartial(Me, args)
 
 End Function
 Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
@@ -128,9 +128,9 @@ Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
     Set IApplicable_Delay = AsDelay(CArray(args))
 
 End Function
-Public Function AsDelay(ParamArray args() As Variant) As IDelayed
+Public Function AsDelay(ByRef args() As Variant) As IDelayed
 
-    Set AsDelay = defDelay.AsDelay(args)
+    Set AsDelay = defApply.AsDelay(Me, args)
 
 End Function
 Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed

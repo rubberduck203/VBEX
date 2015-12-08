@@ -22,4 +22,16 @@ End Function
 Public Function AndThen(ByVal g As IApplicable) As IApplicable
 
 End Function
+Public Function Partial(ParamArray args() As Variant) As IApplicable
+
+End Function
+Public Function AsPartial(ByRef args() As Variant) As IApplicable
+
+End Function
+Public Function Delay(ParamArray args() As Variant) As IDelayed
+
+End Function
+Public Function AsDelay(ByRef args() As Variant) As IDelayed
+
+End Function
 
