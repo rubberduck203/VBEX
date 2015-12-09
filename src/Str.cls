@@ -74,6 +74,19 @@ Public Function Repeat(ByVal c As String, ByVal n As Long) As Str
     Set Repeat = defBuildable.Repeat(Str, c, n)
 
 End Function
+Public Function Replace(ByVal expr As String, _
+        ByVal oldString As String, ByVal newString As String, _
+        Optional startIndex As Long = 1, Optional limitCount As Long = -1, _
+        Optional compareMeth As VbCompareMethod = vbBinaryCompare) As Str
+
+    Dim result As Str
+    Set result = Make(expr)
+    
+    result.Substitute oldString, newString, startIndex, limitCount, compareMeth
+    
+    Set Replace = result
+
+End Function
 Public Function Escape(ByVal s As String, Optional ByVal escapeChar As String = "`") As Str
 
     Dim result As Str
@@ -113,9 +126,9 @@ Public Function Digits() As Str
     Set Digits = Make("0123456789")
 
 End Function
-Public Function DoubleQuote() As String
+Public Function DoubleQuote() As Str
 
-    DoubleQuote = Chr(34)
+    DoubleQuote = Make(Chr(34))
 
 End Function
 Friend Property Let Encapsulated(ByVal s As String)
@@ -167,9 +180,11 @@ Public Sub Prepends(ByVal strings)
     Next
 
 End Sub
-Public Sub Substitute(ByVal oldString As String, ByVal newString As String)
+Public Sub Substitute(ByVal oldString As String, ByVal newString As String, _
+        Optional startIndex As Long = 1, Optional limitCount As Long = -1, _
+        Optional compareMeth As VbCompareMethod = vbBinaryCompare)
 
-    pString = Replace(pString, oldString, newString)
+    pString = VBA.Replace(pString, oldString, newString, startIndex, limitCount, compareMeth)
 
 End Sub
 '
