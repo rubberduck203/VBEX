@@ -98,14 +98,14 @@ Public Function HDict() As Dict
             description:=TypeName(Me) & ".HDict: Query returned more than 2 fields."
     End If
     
-    Dim keys As List
-    Set keys = List.Copy(GetColumn(0))
+    Dim Keys As List
+    Set Keys = List.Copy(GetColumn(0))
     
     Dim vals As List
     Set vals = List.Copy(GetColumn(1))
     
     Dim result As Dict
-    Set result = Dict.FromLists(keys, vals)
+    Set result = Dict.FromLists(Keys, vals)
     
     Set HDict = result
     

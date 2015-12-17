@@ -71,6 +71,17 @@ Public Function FromAssocs(ByVal assocs) As Dict
     Set FromAssocs = result
     
 End Function
+Public Function MapKeySet(ByVal keySet As ISetLike, ByVal op As IApplicable) As Dict
+
+    Dim result As New Dict
+    Dim k
+    For Each k In keySet.Elements
+        result.Add k, op.Apply(k)
+    Next
+    
+    Set MapKeySet = result
+
+End Function
 Public Function Copy(ByVal thatD As Dict) As Dict
 
     Set Copy = FromAssocs(thatD.Pairs)
@@ -133,12 +144,34 @@ Public Function Pair(ByVal k) As Assoc
     
 End Function
 '
+' Produce Dicts
+' -------------
+'
+Public Function MapValues(ByVal op As IApplicable) As Dict
+
+    Dim result As New Dict
+    Dim k
+    For Each k In pDict.Keys
+        result.Add k, op.Apply(pDict.Item(k))
+    Next
+
+    Set MapValues = result
+
+End Function
+'
+' FilterKeys
+' FilterValues
+' FilterNotKeys
+' FilterNotValues
+'
+' TODO: is Dict ISetLike?
+'
 ' Produce Lists
 ' -------------
 '
-Public Function keys() As List
+Public Function Keys() As List
 
-    Set keys = List.Copy(pDict.keys)
+    Set Keys = List.Copy(pDict.Keys)
     
 End Function
 Public Function Values() As List
@@ -152,7 +185,7 @@ Public Function Pairs() As List
     Set result = List.Create
     
     Dim k
-    For Each k In keys
+    For Each k In Keys
         result.Append Pair(k)
     Next
     
@@ -188,7 +221,7 @@ End Function
 Public Sub Update(ByVal other As Dict)
 
     Dim k
-    For Each k In other.keys
+    For Each k In other.Keys
         pDict(k) = other(k)
     Next
     
