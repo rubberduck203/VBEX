@@ -1,4 +1,4 @@
-﻿# Build.ps1
+# Build.ps1
 #
 # Collects VBEX files into an office add-in file
 #
