@@ -65,13 +65,14 @@ Public Function ToExcel(ByVal filePath As String) As SqlConnection
 
 End Function
 Public Function ToMySql(ByVal server As String, ByVal db As String, _
-        ByVal username As String, ByVal passwd As String) As SqlConnection
+        ByVal username As String, ByVal passwd As String, _
+        ByVal vers As String) As SqlConnection
         
     Dim connectTemplate As String
-    connectTemplate = "DRIVER={MySQL ODBC 3.51 Driver}; SERVER={0}; DATABASE={1}; UID={2};PASSWORD={3}; OPTION=3"
+    connectTemplate = "DRIVER={MySQL ODBC {4} Driver}; SERVER={0}; DATABASE={1}; UID={2};PASSWORD={3}; OPTION=3"
 
     Dim connect As String
-    connect = Str.Format(connectTemplate, server, db, username, passwd)
+    connect = Str.Format(connectTemplate, server, db, username, passwd, vers)
     
     Set ToMySql = Make(connect)
     

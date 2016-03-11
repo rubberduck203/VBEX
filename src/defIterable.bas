@@ -54,7 +54,7 @@ Public Function ToBuildable(ByVal seed As IBuildable, ByVal iterable As IIterabl
         As IBuildable
 
     Dim result As IBuildable
-    Set result = IBuildable.MakeEmpty
+    Set result = seed.MakeEmpty
     
     Dim index As Long
     For index = iterable.LowerBound To iterable.UpperBound

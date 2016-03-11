@@ -98,7 +98,9 @@ Public Function SubFolders(ByVal Root As String, Optional ByVal pat As String = 
         
     End If
 
-    Set SubFolders = result.FilterNot(InternalDelegate.Make("FileExists"))
+    ' Do not use FilterNot(FileExists) as an optimization
+    ' it will crash on illegal file names
+    Set SubFolders = result.Filter(InternalDelegate.Make("FolderExists"))
     
 End Function
 Public Function Find(ByVal Root As String, Optional ByVal pat As String = "*", _
