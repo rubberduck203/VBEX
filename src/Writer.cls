@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '
 '
 Option Explicit
-Implements IOutput
+Implements Output
 
 '
 ' Private Members
@@ -189,7 +189,7 @@ End Sub
 ' Interfaces
 ' ----------
 '
-' ### IOutput
+' ### Output
 '
 '
 ' #### Prints
@@ -199,7 +199,7 @@ Public Sub Prints(ByVal data As Variant)
     AppendData defShow.Show(data), method:="Prints"
     
 End Sub
-Public Sub IOutput_Prints(ByVal data As Variant)
+Public Sub Output_Prints(ByVal data As Variant)
 
     Prints data
 
@@ -213,7 +213,7 @@ Public Sub PrintLine(ByVal line As Variant)
     AppendData vbNewLine, method:="PrintLine"
     
 End Sub
-Public Sub IOutput_PrintLine(ByVal line As Variant)
+Public Sub Output_PrintLine(ByVal line As Variant)
 
     PrintLine line
 
@@ -229,7 +229,7 @@ Public Sub PrintLines(ByRef lines() As Variant)
     Next line
     
 End Sub
-Public Sub IOutput_PrintLines(ByRef lines() As Variant)
+Public Sub Output_PrintLines(ByRef lines() As Variant)
 
     PrintLine lines
 

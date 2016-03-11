@@ -1,10 +1,10 @@
 Attribute VB_Name = "defBuildable"
 Option Explicit
 
-Public Function Repeat(ByVal seed As IBuildable, ByVal val, ByVal n As Long) _
-        As IBuildable
+Public Function Repeat(ByVal seed As Buildable, ByVal val, ByVal n As Long) _
+        As Buildable
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
     
     Dim i As Long
@@ -15,14 +15,14 @@ Public Function Repeat(ByVal seed As IBuildable, ByVal val, ByVal n As Long) _
     Set Repeat = result
 
 End Function
-Public Function Enumerate(ByVal seed As IBuildable, ByVal from As Long, _
-        ByVal til As Long, Optional ByVal by As Long = 1) As IBuildable
+Public Function Enumerate(ByVal seed As Buildable, ByVal from As Long, _
+        ByVal til As Long, Optional ByVal by As Long = 1) As Buildable
 
     If Not (0 < (til - from) * Sgn(by)) Then ' Does not converge
         Exceptions.ValueError seed, "Enumerate", "Sequence does not converge"
     End If
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
 
     Dim i As Long
@@ -34,12 +34,12 @@ Public Function Enumerate(ByVal seed As IBuildable, ByVal from As Long, _
 
 End Function
 ''
-' Converts an Transversable to any IBuildable
-Public Function ConvertTo(ByVal seed As IBuildable, ByVal transversable) _
+' Converts an Transversable to any Buildable
+Public Function ConvertTo(ByVal seed As Buildable, ByVal transversable) _
         As Variant
         
-    Dim result As IBuildable
-    Set result = IBuildable.MakeEmpty
+    Dim result As Buildable
+    Set result = Buildable.MakeEmpty
     result.AddItems (transversable)
     Set ConvertTo = result
 

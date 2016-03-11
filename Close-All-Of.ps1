@@ -30,7 +30,7 @@ Function Close-All-Of {
     $closeAll = Read-Host "May I close all instances of $processName" + "? [y/N]"
     $msg = if ($closeAll -like "y*") {
         Stop-Process -Name "$processName"
-        "WARNING! All instances of $procName were closed!"
+        "WARNING! All instances of $processName were closed!"
     } else {
         "WARNING! There are unused instances of $processName in the background!"
     }

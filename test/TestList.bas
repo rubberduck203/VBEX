@@ -67,7 +67,7 @@ End Sub
 ' Interfaces
 ' ----------
 '
-' ### IEquatable
+' ### Equatable
 '
 '@TestMethod
 Public Sub ListEquals()

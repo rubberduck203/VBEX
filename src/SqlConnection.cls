@@ -15,7 +15,7 @@ Option Explicit
 ' Establishes an ADODB connection to a source and provides a rich interface to
 ' that source.
 '
-Implements IShowable
+Implements Showable
 '
 ' Private Member
 ' --------------
@@ -107,11 +107,11 @@ End Property
 ' Interfaces
 ' ----------
 '
-' ### IShowable
+' ### Showable
 '
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = defShow.ParamShowableObject(Me, pConnection.ConnectionString)
+    Showable_Show = defShow.ParamShowableObject(Me, pConnection.ConnectionString)
 
 End Function
 '

@@ -17,24 +17,24 @@ Option Explicit
 ' This file (ByName.cls) is distributed under the GPL-3.0 license
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
-Implements IShowable
-Implements IDelayed
+Implements Showable
+Implements delayed
 '
 ' Private Members
 ' ---------------
 '
-Private pApplicable As IApplicable
+Private pApplicable As Applicable
 Private pArgs() As Variant
 '
 ' Constructors
 ' ------------
 '
-Public Function Create(ByVal op As IApplicable, ParamArray args()) As ByName
+Public Function Create(ByVal op As Applicable, ParamArray args()) As ByName
 
     Set Create = Make(op, CArray(args))
 
 End Function
-Public Function Make(ByVal op As IApplicable, ByRef args()) As ByName
+Public Function Make(ByVal op As Applicable, ByRef args()) As ByName
     
     Dim result As New ByName
     result.SetOp op
@@ -42,7 +42,7 @@ Public Function Make(ByVal op As IApplicable, ByRef args()) As ByName
     Set Make = result
 
 End Function
-Friend Sub SetOp(ByVal op As IApplicable)
+Friend Sub SetOp(ByVal op As Applicable)
 
     Set pApplicable = op
 
@@ -53,7 +53,7 @@ Friend Sub SetArgs(ByRef args())
 
 End Sub
 '
-' IDelayed
+' Delayed
 ' --------
 '
 Public Property Get Evaluate() As Variant
@@ -62,14 +62,14 @@ Attribute Evaluate.VB_UserMemId = 0
     Assign Evaluate, pApplicable.ApplyOnArray(pArgs)
 
 End Property
-Private Property Get IDelayed_Evaluate() As Variant
+Private Property Get Delayed_Evaluate() As Variant
 
-    Assign IDelayed_Evaluate, Evaluate
+    Assign Delayed_Evaluate, Evaluate
 
 End Property
-Public Function Map(ByVal op As IApplicable) As ByName
+Public Function Map(ByVal op As Applicable) As ByName
 
-    Dim opResult As IApplicable
+    Dim opResult As Applicable
     Set opResult = op.Compose(pApplicable)
     
     Dim result As ByName
@@ -78,13 +78,13 @@ Public Function Map(ByVal op As IApplicable) As ByName
     Set Map = result
 
 End Function
-Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed
+Private Function Delayed_Map(ByVal op As Applicable) As delayed
 
-    Set IDelayed_Map = Map(op)
+    Set Delayed_Map = Map(op)
 
 End Function
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -92,8 +92,8 @@ Public Function Show() As String
     Show = defShow.ParamShowableObject(Me, pApplicable, pArgs)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

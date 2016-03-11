@@ -21,9 +21,9 @@ Option Explicit
 ' checking if a method returned a value or not.
 '
 '
-Implements IEquatable
-Implements IShowable
-Implements IMonadic
+Implements Equatable
+Implements Showable
+Implements Monadic
 '
 ' Private Members
 ' ---------------
@@ -35,12 +35,12 @@ Private pSuccess As Boolean
 ' Constructor
 ' -----------
 '
-Public Function Create(ByVal op As IApplicable, ParamArray args()) As Try
+Public Function Create(ByVal op As Applicable, ParamArray args()) As Try
     
     Set Create = Make(op, CArray(args))
     
 End Function
-Public Function Make(ByVal op As IApplicable, ByRef args() As Variant) As Try
+Public Function Make(ByVal op As Applicable, ByRef args() As Variant) As Try
     
     Dim delayed As ByName
     Set delayed = ByName.Make(op, args)
@@ -48,7 +48,7 @@ Public Function Make(ByVal op As IApplicable, ByRef args() As Variant) As Try
     Set Make = FromDelayed(delayed)
 
 End Function
-Public Function FromDelayed(ByVal Attempt As IDelayed) As Try
+Public Function FromDelayed(ByVal Attempt As delayed) As Try
     
     Dim result As Try
     On Error GoTo Fail
@@ -133,7 +133,7 @@ End Function
 ' Recover / RecoverWith?
 '
 '
-' IEquatable
+' Equatable
 ' ----------
 '
 Public Function Equals(ByVal x As Try) As Boolean
@@ -145,16 +145,16 @@ Public Function Equals(ByVal x As Try) As Boolean
     End If
 
 End Function
-Private Function IEquatable_Equals(ByVal x) As Boolean
+Private Function Equatable_Equals(ByVal x) As Boolean
 
-    IEquatable_Equals = Equals(x)
+    Equatable_Equals = Equals(x)
 
 End Function
 '
-' IMonadic
+' Monadic
 ' --------
 '
-Public Function Bind(ByVal op As IApplicable) As Try
+Public Function Bind(ByVal op As Applicable) As Try
 
     Dim result As Try
     If IsSuccess Then
@@ -181,7 +181,7 @@ ErrHandler:
             Exceptions.BubbleError Me, "Bind", Err
     End Select
 End Function
-Public Function Map(ByVal op As IApplicable) As Try
+Public Function Map(ByVal op As Applicable) As Try
 
     Dim result As Try
     If IsSuccess Then
@@ -192,24 +192,24 @@ Public Function Map(ByVal op As IApplicable) As Try
     Set Map = result
     
 End Function
-Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
+Private Function Monadic_Bind(ByVal op As Applicable) As Monadic
 
-    Set IMonadic_Bind = Bind(op)
-
-End Function
-Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
-
-    Set IMonadic_Map = Map(op)
+    Set Monadic_Bind = Bind(op)
 
 End Function
-Private Function IMonadic_Unit(ByVal x) As IMonadic
+Private Function Monadic_Map(ByVal op As Applicable) As Monadic
 
-    Set IMonadic_Unit = FromDelayed(x)
+    Set Monadic_Map = Map(op)
+
+End Function
+Private Function Monadic_Unit(ByVal x) As Monadic
+
+    Set Monadic_Unit = FromDelayed(x)
 
 End Function
 
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -224,8 +224,8 @@ Public Function Show() As String
     Show = result
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

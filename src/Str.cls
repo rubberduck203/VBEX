@@ -18,9 +18,9 @@ Option Explicit
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 '
-Implements IBuildable
-Implements IShowable
-Implements IIterable
+Implements Buildable
+Implements Showable
+Implements Linear
 '
 Private pString As String
 '
@@ -195,12 +195,12 @@ Public Function Concat(ByVal other As Str) As Str
     Set Concat = Make(Show & other.Show)
 
 End Function
-Public Function Map(ByVal op As IApplicable) As Str
+Public Function Map(ByVal op As Applicable) As Str
 
     Set Map = defMap.IterableMap(Str, op, Me)
 
 End Function
-Public Function FlatMap(ByVal op As IApplicable) As Str
+Public Function FlatMap(ByVal op As Applicable) As Str
 
     Set FlatMap = defMap.IterableBind(Str, op, Me)
 
@@ -211,26 +211,26 @@ Public Function Count() As Long
     
 End Function
 '
-' IBuildable
+' Buildable
 ' ----------
 '
-Private Function IBuildable_MakeEmpty() As IBuildable
+Private Function Buildable_MakeEmpty() As Buildable
     
-    Set IBuildable_MakeEmpty = Make(vbNullString)
+    Set Buildable_MakeEmpty = Make(vbNullString)
     
 End Function
-Private Sub IBuildable_AddItem(ByVal element)
+Private Sub Buildable_AddItem(ByVal element)
     
     Append element
     
 End Sub
-Private Sub IBuildable_AddItems(ByVal sequence)
+Private Sub Buildable_AddItems(ByVal sequence)
     
     Appends sequence
     
 End Sub
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -239,13 +239,13 @@ Attribute Show.VB_UserMemId = 0
     Show = pString
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function
 '
-' IIterable
+' Linear
 ' ---------
 '
 Public Function Item(ByVal index As Long) As String
@@ -263,19 +263,19 @@ Public Function UpperBound() As Long
     UpperBound = Count
     
 End Function
-Private Function IIterable_Item(ByVal index As Long) As Variant
+Private Function Linear_Item(ByVal index As Long) As Variant
 
-    IIterable_Item = Item(index)
+    Linear_Item = Item(index)
     
 End Function
-Private Function IIterable_LowerBound() As Long
+Private Function Linear_LowerBound() As Long
 
-    IIterable_LowerBound = LowerBound
+    Linear_LowerBound = LowerBound
     
 End Function
-Private Function IIterable_UpperBound() As Long
+Private Function Linear_UpperBound() As Long
 
-    IIterable_UpperBound = UpperBound
+    Linear_UpperBound = UpperBound
     
 End Function
 Public Function ToArray() As Variant()
@@ -283,9 +283,9 @@ Public Function ToArray() As Variant()
     ToArray = defIterable.ToArray(Me)
 
 End Function
-Private Function IIterable_ToArray() As Variant()
+Private Function Linear_ToArray() As Variant()
 
-    IIterable_ToArray = ToArray
+    Linear_ToArray = ToArray
     
 End Function
 Public Function ToCollection() As Collection
@@ -293,19 +293,19 @@ Public Function ToCollection() As Collection
     Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
-Private Function IIterable_ToCollection() As Collection
+Private Function Linear_ToCollection() As Collection
 
-    Set IIterable_ToCollection = ToCollection
+    Set Linear_ToCollection = ToCollection
 
 End Function
-Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
     Set ToBuildable = defIterable.ToBuildable(seed, Me)
 
 End Function
-Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set IIterable_ToBuildable = ToBuildable(seed)
+    Set Linear_ToBuildable = ToBuildable(seed)
 
 End Function
 

@@ -7,7 +7,7 @@ Option Explicit
 ' ### Max|Min
 '
 Private Function GenericExtremum(ByVal lg As CompareResult, _
-        ByVal sequence As IIterable) As Long
+        ByVal sequence As Linear) As Long
 
     Dim result As Long
     result = sequence.LowerBound
@@ -32,7 +32,7 @@ Private Function GenericExtremum(ByVal lg As CompareResult, _
 End Function
 ''
 ' MaxIndex: Returns the index of `sequence` that has the maximum value
-Public Function MaxIndex(ByVal sequence As IIterable) As Long
+Public Function MaxIndex(ByVal sequence As Linear) As Long
     
     MaxIndex = GenericExtremum(gt, sequence)
     
@@ -40,7 +40,7 @@ End Function
 ''
 ' MaxValue: Returns the value of `sequence` that is the Maximum
 ' Uses `MaxIndex`
-Public Function MaxValue(ByVal sequence As IIterable) As Variant
+Public Function MaxValue(ByVal sequence As Linear) As Variant
     
     Assign MaxValue, sequence.Item(MaxIndex(sequence))
     
@@ -52,14 +52,14 @@ Public Function Max(ParamArray vals() As Variant) As Variant
 End Function
 ''
 ' MinIndex
-Public Function MinIndex(ByVal sequence As IIterable) As Long
+Public Function MinIndex(ByVal sequence As Linear) As Long
     
     MinIndex = GenericExtremum(lt, sequence)
     
 End Function
 ''
 ' MinValue
-Public Function MinValue(ByVal sequence As IIterable) As Variant
+Public Function MinValue(ByVal sequence As Linear) As Variant
     
     Assign MinValue, sequence.Item(MinIndex(sequence))
     
@@ -74,7 +74,7 @@ End Function
 '
 ''
 ' LinearSearch:
-Public Function LinearSearch(ByVal sought, ByVal sequence As IIterable) As Maybe
+Public Function LinearSearch(ByVal sought, ByVal sequence As Linear) As Maybe
     
     Dim i As Long
     For i = sequence.LowerBound To sequence.UpperBound
@@ -92,7 +92,7 @@ End Function
 ''
 ' Binary Search: Sequence must be sorted.  Has the option of returning where the
 ' value should be instead of not found.
-Public Function BinarySearch(ByVal sought, ByVal sortedSequence As IIterable, _
+Public Function BinarySearch(ByVal sought, ByVal sortedSequence As Linear, _
         Optional ByVal nearest As Boolean = False) As Maybe
     
     Dim lower As Long

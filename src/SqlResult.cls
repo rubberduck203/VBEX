@@ -12,8 +12,8 @@ Option Explicit
 ' SqlResult
 ' ---------
 '
-Implements IShowable
-Implements IIterable
+Implements Showable
+Implements Linear
 
 Private pRecords As Maybe ' Maybe(Rows)
 Private pFieldNames As List ' [Fields]
@@ -144,24 +144,24 @@ End Function
 ' Interfaces
 ' ----------
 '
-' ### IShowable
+' ### Showable
 '
 Public Function Show() As String
 
     Show = defShow.ParamShowableObject(Me, pFieldNames, pRecords)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
     
-    IShowable_Show = Show
+    Showable_Show = Show
     
 End Function
 '
-' ### IIterable
+' ### Linear
 '
-Private Function IIterable_Item(ByVal index As Long) As Variant
+Private Function Linear_Item(ByVal index As Long) As Variant
 
-    Set IIterable_Item = DictAt(index)
+    Set Linear_Item = DictAt(index)
 
 End Function
 Public Function LowerBound() As Long
@@ -169,9 +169,9 @@ Public Function LowerBound() As Long
     LowerBound = 0
 
 End Function
-Private Function IIterable_LowerBound() As Long
+Private Function Linear_LowerBound() As Long
 
-    IIterable_LowerBound = LowerBound
+    Linear_LowerBound = LowerBound
 
 End Function
 Public Function UpperBound() As Maybe
@@ -179,9 +179,9 @@ Public Function UpperBound() As Maybe
     Set UpperBound = pRecords.Map(Lambda.FromShort("UBound( _, 2 )"))
 
 End Function
-Private Function IIterable_UpperBound() As Long
+Private Function Linear_UpperBound() As Long
     
-    IIterable_UpperBound = UpperBound.GetOrElse(-1)
+    Linear_UpperBound = UpperBound.GetOrElse(-1)
 
 End Function
 Public Function ToArray() As Variant()
@@ -189,9 +189,9 @@ Public Function ToArray() As Variant()
     ToArray = defIterable.ToArray(Me)
 
 End Function
-Private Function IIterable_ToArray() As Variant()
+Private Function Linear_ToArray() As Variant()
 
-    IIterable_ToArray = ToArray
+    Linear_ToArray = ToArray
     
 End Function
 Public Function ToCollection() As Collection
@@ -199,18 +199,18 @@ Public Function ToCollection() As Collection
     Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
-Private Function IIterable_ToCollection() As Collection
+Private Function Linear_ToCollection() As Collection
 
-    Set IIterable_ToCollection = ToCollection
+    Set Linear_ToCollection = ToCollection
 
 End Function
-Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
     Set ToBuildable = defIterable.ToBuildable(seed, Me)
 
 End Function
-Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set IIterable_ToBuildable = ToBuildable(seed)
+    Set Linear_ToBuildable = ToBuildable(seed)
 
 End Function

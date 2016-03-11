@@ -17,8 +17,8 @@ Attribute VB_Exposed = True
 '
 '
 Option Explicit
-Implements IShowable
-Implements IApplicable
+Implements Showable
+Implements Applicable
 '
 ' Constants
 ' ---------
@@ -50,7 +50,7 @@ Friend Property Let FunctionName(ByVal funcName As String)
 
 End Property
 '
-' IApplicable
+' Applicable
 ' -----------
 '
 ' ### Meaningful
@@ -85,78 +85,78 @@ Public Function ApplyOnArray(ByRef args() As Variant) As Variant
     Assign ApplyOnArray, defApply.ApplicationRunOnArray(pFunctionName, args)
 
 End Function
-Private Function IApplicable_Apply(ParamArray args()) As Variant
+Private Function Applicable_Apply(ParamArray args()) As Variant
 
-    Assign IApplicable_Apply, IApplicable_ApplyOnArray(CArray(args))
+    Assign Applicable_Apply, Applicable_ApplyOnArray(CArray(args))
     
 End Function
-Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
+Private Function Applicable_ApplyOnArray(ByRef args() As Variant) As Variant
     
-    Assign IApplicable_ApplyOnArray, ApplyOnArray(args)
+    Assign Applicable_ApplyOnArray, ApplyOnArray(args)
     
 End Function
-Public Function Compose(ByVal f As IApplicable) As IApplicable
+Public Function Compose(ByVal f As Applicable) As Applicable
 
     Set Compose = defApply.Compose(Me, f)
 
 End Function
-Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
+Private Function Applicable_Compose(ByVal f As Applicable) As Applicable
 
-    Set IApplicable_Compose = Compose(f)
+    Set Applicable_Compose = Compose(f)
 
 End Function
-Public Function AndThen(ByVal g As IApplicable) As IApplicable
+Public Function AndThen(ByVal g As Applicable) As Applicable
 
     Set AndThen = defApply.AndThen(Me, g)
 
 End Function
-Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
+Private Function Applicable_AndThen(ByVal g As Applicable) As Applicable
 
-    Set IApplicable_AndThen = AndThen(g)
+    Set Applicable_AndThen = AndThen(g)
 
 End Function
-Public Function Partial(ParamArray args() As Variant) As IApplicable
+Public Function Partial(ParamArray args() As Variant) As Applicable
 
     Set Partial = AsPartial(CArray(args))
 
 End Function
-Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
+Private Function Applicable_Partial(ParamArray args() As Variant) As Applicable
 
-    Set IApplicable_Partial = AsPartial(CArray(args))
+    Set Applicable_Partial = AsPartial(CArray(args))
 
 End Function
-Public Function AsPartial(ByRef args() As Variant) As IApplicable
+Public Function AsPartial(ByRef args() As Variant) As Applicable
 
     Set AsPartial = defApply.AsPartial(Me, args)
 
 End Function
-Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+Private Function Applicable_AsPartial(ByRef args() As Variant) As Applicable
 
-    Set IApplicable_AsPartial = AsPartial(args)
+    Set Applicable_AsPartial = AsPartial(args)
 
 End Function
-Public Function Delay(ParamArray args() As Variant) As IDelayed
+Public Function Delay(ParamArray args() As Variant) As delayed
 
     Set Delay = AsDelay(CArray(args))
 
 End Function
-Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+Private Function Applicable_Delay(ParamArray args() As Variant) As delayed
 
-    Set IApplicable_Delay = AsDelay(CArray(args))
+    Set Applicable_Delay = AsDelay(CArray(args))
 
 End Function
-Public Function AsDelay(ByRef args() As Variant) As IDelayed
+Public Function AsDelay(ByRef args() As Variant) As delayed
 
     Set AsDelay = defApply.AsDelay(Me, args)
 
 End Function
-Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+Private Function Applicable_AsDelay(ByRef args() As Variant) As delayed
 
-    Set IApplicable_AsDelay = AsDelay(args)
+    Set Applicable_AsDelay = AsDelay(args)
 
 End Function
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -164,8 +164,8 @@ Public Function Show() As String
     Show = defShow.ParamShowableObject(Me, pFunctionName)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
     
 End Function

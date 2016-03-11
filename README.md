@@ -93,23 +93,23 @@ Since VBA has only Interface Inheritance,
 code that would be put in parent or abstract classesis instead put into `def*` modules.
 While this reduces code duplication, it only reduces it to trivial code like,
 
-    Public Function IsSubSetOf(ByVal other As ISetLike) As Boolean
+    Public Function IsSubSetOf(ByVal other As SetLike) As Boolean
         
         IsSubSetOf = defSetLike.IsSubSetOf(Me, other)
         
     End Function
-    Private Function ISetLike_IsSubSetOf(ByVal other As ISetLike) As Boolean
+    Private Function SetLike_IsSubSetOf(ByVal other As SetLike) As Boolean
 
-        ISetLike_IsSubSetOf = IsSubSetOf(other)
+        SetLike_IsSubSetOf = IsSubSetOf(other)
 
     End Function
 
 This screams for some macro or preprocessing system, but that doesn't exist yet.
 
-### IApplicable
+### Applicable
 
-Implementations of the _IApplicable_ interface allow methods and functions to be treated as objects.
-  - All IApplicable objects are immutable.
+Implementations of the _Applicable_ interface allow methods and functions to be treated as objects.
+  - All Applicable objects are immutable.
   - The _Lambda_ class writes functions to a VBEX modules and allows you to execute that code.
       + Using the Lambda class will sometimes disable the debugger.
       + A lambda has no reference to environment in it was created.

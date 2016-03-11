@@ -1,9 +1,9 @@
 Attribute VB_Name = "IterableErrors"
 Option Explicit
 '
-' Error to assist IIterable Classes
+' Error to assist Linear Classes
 '
-Public Sub CheckIndexRange(ByVal iterable As IIterable, ByVal method As String, ByVal index As Long)
+Public Sub CheckIndexRange(ByVal iterable As Linear, ByVal method As String, ByVal index As Long)
 
     If index < iterable.LowerBound Then
 
@@ -16,7 +16,7 @@ Public Sub CheckIndexRange(ByVal iterable As IIterable, ByVal method As String, 
     End If
     
 End Sub
-Private Sub LowerThanLowerBoundError(ByVal iterable As IIterable, _
+Private Sub LowerThanLowerBoundError(ByVal iterable As Linear, _
         ByVal method As String, ByVal index As Long)
 
     Dim msg As String
@@ -24,7 +24,7 @@ Private Sub LowerThanLowerBoundError(ByVal iterable As IIterable, _
     IndexError iterable, method, msg
 
 End Sub
-Private Sub GreaterThanUpperBoundError(ByVal iterable As IIterable, _
+Private Sub GreaterThanUpperBoundError(ByVal iterable As Linear, _
         ByVal method As String, ByVal index As Long)
 
     Dim msg As String

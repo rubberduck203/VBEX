@@ -18,7 +18,7 @@ Option Explicit
 ' This file (Dict.cls) is distributed under the GPL-3.0 license
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
-Implements IShowable
+Implements Showable
 ' Should implement more Interfaces but this is the only mapping type yet.
 '
 ' Public Members
@@ -43,7 +43,7 @@ Public Function Create(ParamArray assocs()) As Dict
     Set Create = FromAssocs(List.Copy(assocs))
     
 End Function
-Public Function FromLists(ByVal ks As IIterable, ByVal vs As IIterable) As Dict
+Public Function FromLists(ByVal ks As Linear, ByVal vs As Linear) As Dict
     Debug.Assert (ks.UpperBound = vs.UpperBound And _
         ks.LowerBound = vs.LowerBound) ' TODO: raise error
     
@@ -71,7 +71,7 @@ Public Function FromAssocs(ByVal assocs) As Dict
     Set FromAssocs = result
     
 End Function
-Public Function MapKeySet(ByVal keySet As ISetLike, ByVal op As IApplicable) As Dict
+Public Function MapKeySet(ByVal keySet As SetLike, ByVal op As Applicable) As Dict
 
     Dim result As New Dict
     Dim k
@@ -147,7 +147,7 @@ End Function
 ' Produce Dicts
 ' -------------
 '
-Public Function MapValues(ByVal op As IApplicable) As Dict
+Public Function MapValues(ByVal op As Applicable) As Dict
 
     Dim result As New Dict
     Dim k
@@ -164,7 +164,7 @@ End Function
 ' FilterNotKeys
 ' FilterNotValues
 '
-' TODO: is Dict ISetLike?
+' TODO: is Dict SetLike?
 '
 ' Produce Lists
 ' -------------
@@ -232,7 +232,7 @@ Public Sub Clear()
     
 End Sub
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -240,8 +240,8 @@ Public Function Show() As String
     Show = defShow.ShowableObject(Me, Pairs.ToArray)
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

@@ -18,7 +18,7 @@ Option Explicit
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 '
-Implements IShowable
+Implements Showable
 '
 ' Private Members
 ' ---------------
@@ -57,8 +57,8 @@ Public Function Show() As String
     Show = defShow.Show(key) & " -> " & defShow.Show(Value)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

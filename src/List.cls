@@ -17,11 +17,11 @@ Option Explicit
 ' This file (List.cls) is distributed under the GPL-3.0 license
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
-Implements IEquatable
-Implements IIterable
-Implements IBuildable
-Implements IShowable
-Implements IMonadic
+Implements Equatable
+Implements Linear
+Implements Buildable
+Implements Showable
+Implements Monadic
 '
 ' Private Members
 ' ---------------
@@ -121,13 +121,13 @@ End Property
 '
 ' #### Monadic
 '
-Public Function Map(ByVal op As IApplicable) As List
+Public Function Map(ByVal op As Applicable) As List
 Attribute Map.VB_Description = "Return a new List by applying `op` to the elements of this list.  Identical to LINQ Select"
     
     Set Map = defMap.TransversableMap(List, op, Me)
     
 End Function
-Public Function FlatMap(ByVal op As IApplicable) As List
+Public Function FlatMap(ByVal op As Applicable) As List
 Attribute FlatMap.VB_Description = "Return a new List by applying `op` to the elements of this list and concatenating the results."
 
     Set FlatMap = defMap.TransversableBind(List, op, Me)
@@ -136,13 +136,13 @@ End Function
 '
 ' ### Filter
 '
-Public Function Filter(ByVal pred As IApplicable) As List
+Public Function Filter(ByVal pred As Applicable) As List
 Attribute Filter.VB_Description = "Return a new List of only the elements that satisfy `pred`.  Identical to LINQ Where"
     
     Set Filter = defFilter.Filter(List, pred, Me)
     
 End Function
-Public Function FilterNot(ByVal pred As IApplicable) As List
+Public Function FilterNot(ByVal pred As Applicable) As List
 Attribute FilterNot.VB_Description = "Return a new List of only the elements that fail `pred`."
     
     Set FilterNot = defFilter.FilterNot(List, pred, Me)
@@ -151,19 +151,19 @@ End Function
 '
 ' #### Accumulators
 '
-Public Function Fold(ByVal Init As Variant, ByVal accum As IApplicable) As Variant
+Public Function Fold(ByVal Init As Variant, ByVal accum As Applicable) As Variant
 Attribute Fold.VB_Description = "Accumulates a value by applying `accum` to each value using a given intial value. `Tail.Fold(Head,f) = Reduce(f)`"
     
     Assign Fold, defAccum.Fold(accum, Init, Me)
     
 End Function
-Public Function Reduce(ByVal accum As IApplicable) As Variant
+Public Function Reduce(ByVal accum As Applicable) As Variant
 Attribute Reduce.VB_Description = "Accumulates a value by applying `accum` to each value using the first element as the initial value. Identical to LINQ Aggregate"
     
     Assign Reduce, Tail.Fold(Head, accum)
     
 End Function
-Public Function Scan(ByVal Init As Variant, ByVal accum As IApplicable) As List
+Public Function Scan(ByVal Init As Variant, ByVal accum As Applicable) As List
 Attribute Scan.VB_Description = "Accumulates a list of by folding with `accum` and storing each result. `Scan(z,f).Last = Fold(z,f)`"
     
     Set Scan = defAccum.Scan(List, accum, Init, Me)
@@ -239,7 +239,7 @@ Attribute Count.VB_Description = "Returns the number of elements."
 End Function
 ''
 ' GroupBy returns a Dict until Dict has an interface
-Public Function GroupBy(ByVal op As IApplicable) As Dict
+Public Function GroupBy(ByVal op As Applicable) As Dict
 Attribute GroupBy.VB_Description = "Groups elements into a Dict according to `op`."
 
     Dim result As Dict
@@ -290,12 +290,12 @@ Public Function Take(ByVal n As Long) As List
 End Function
 ' FoldLeft, FoldRight, ReduceLeft, ReduceRight
 ' IndexOf(ByVal val) As Maybe[Long]
-' IndexWhere(ByVal pred As IApplicable) As Maybe[Long]
+' IndexWhere(ByVal pred As Applicable) As Maybe[Long]
 ' LastIndexOf(Byval val) As Maybe[Long]
-' lastIndexWhere(Byval pred As IApplicable) As Maybe[long]
-' Find(ByVal pred As IApplicable) As Maybe = IndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
-' FindLast(ByVal pred As IApplicable) As Maybe = LastIndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
-' CountWhere(ByVal pred As IApplicable) As Boolean
+' lastIndexWhere(Byval pred As Applicable) As Maybe[long]
+' Find(ByVal pred As Applicable) As Maybe = IndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
+' FindLast(ByVal pred As Applicable) As Maybe = LastIndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
+' CountWhere(ByVal pred As Applicable) As Boolean
 ' Tails() As Iterator[List] whenever Iterator exists
 ' Inits() As Iterator[List]
 ' Sliding(???) As Iterator[List]
@@ -478,39 +478,39 @@ End Sub
 ' Interfaces
 ' ----------
 '
-' ### IBuildable
+' ### Buildable
 '
-Private Function IBuildable_MakeEmpty() As IBuildable
+Private Function Buildable_MakeEmpty() As Buildable
 
-    Set IBuildable_MakeEmpty = List.Create()
+    Set Buildable_MakeEmpty = List.Create()
 
 End Function
-Private Sub IBuildable_AddItem(ByVal element)
+Private Sub Buildable_AddItem(ByVal element)
 
     Append element
 
 End Sub
-Private Sub IBuildable_AddItems(ByVal sequence)
+Private Sub Buildable_AddItems(ByVal sequence)
 
     Extend sequence
 
 End Sub
 '
-' ### IIterable
+' ### Linear
 '
-Private Function IIterable_Item(ByVal index As Long) As Variant
+Private Function Linear_Item(ByVal index As Long) As Variant
 
-    Assign IIterable_Item, Item(index)
-
-End Function
-Private Function IIterable_LowerBound() As Long
-
-    IIterable_LowerBound = 1
+    Assign Linear_Item, Item(index)
 
 End Function
-Private Function IIterable_UpperBound() As Long
+Private Function Linear_LowerBound() As Long
 
-    IIterable_UpperBound = Count
+    Linear_LowerBound = 1
+
+End Function
+Private Function Linear_UpperBound() As Long
+
+    Linear_UpperBound = Count
 
 End Function
 Public Function ToArray() As Variant()
@@ -518,9 +518,9 @@ Public Function ToArray() As Variant()
     ToArray = defIterable.ToArray(Me)
 
 End Function
-Private Function IIterable_ToArray() As Variant()
+Private Function Linear_ToArray() As Variant()
 
-    IIterable_ToArray = ToArray
+    Linear_ToArray = ToArray
 
 End Function
 Public Function ToCollection() As Collection
@@ -528,23 +528,23 @@ Public Function ToCollection() As Collection
     Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
-Private Function IIterable_ToCollection() As Collection
+Private Function Linear_ToCollection() As Collection
 
-    Set IIterable_ToCollection = ToCollection
+    Set Linear_ToCollection = ToCollection
     
 End Function
-Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
     Set ToBuildable = defIterable.ToBuildable(seed, Me)
 
 End Function
-Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set IIterable_ToBuildable = ToBuildable(seed)
+    Set Linear_ToBuildable = ToBuildable(seed)
 
 End Function
 '
-' ### IEquatable
+' ### Equatable
 '
 Public Function Equals(ByVal x) As Boolean
 Attribute Equals.VB_Description = "Check this list is identical to unknown value `x`."
@@ -571,31 +571,31 @@ Attribute Equals.VB_Description = "Check this list is identical to unknown value
     Equals = True
     
 End Function
-Private Function IEquatable_Equals(ByVal other) As Boolean
+Private Function Equatable_Equals(ByVal other) As Boolean
 
-    IEquatable_Equals = Equals(other)
+    Equatable_Equals = Equals(other)
     
 End Function
 '
-' ### IMonadic
+' ### Monadic
 '
-Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
+Private Function Monadic_Bind(ByVal op As Applicable) As Monadic
     
-    Set IMonadic_Bind = FlatMap(op)
-    
-End Function
-Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
-    
-    Set IMonadic_Map = Map(op)
+    Set Monadic_Bind = FlatMap(op)
     
 End Function
-Private Function IMonadic_Unit(ByVal x) As IMonadic
+Private Function Monadic_Map(ByVal op As Applicable) As Monadic
     
-    Set IMonadic_Unit = List.Create(x)
+    Set Monadic_Map = Map(op)
+    
+End Function
+Private Function Monadic_Unit(ByVal x) As Monadic
+    
+    Set Monadic_Unit = List.Create(x)
     
 End Function
 '
-'  ### IShowable
+'  ### Showable
 '
 Public Function Show() As String
 Attribute Show.VB_Description = "Represent the List as a String."
@@ -603,8 +603,8 @@ Attribute Show.VB_Description = "Represent the List as a String."
     Show = defShow.ShowableObject(Me, ToArray)
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
     
-    IShowable_Show = Show()
+    Showable_Show = Show()
     
 End Function

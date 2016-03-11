@@ -20,8 +20,8 @@ Option Explicit
 ' know if it does anything more useful than `ADODB.Command` other than return
 ' an SqlResult, which will be more interesting.
 '
-Implements IApplicable
-Implements IShowable
+Implements Applicable
+Implements Showable
 '
 ' Private Members
 ' ---------------
@@ -45,7 +45,7 @@ End Property
 ' Interfaces
 ' ----------
 '
-' ### IApplicable
+' ### Applicable
 '
 ' SQLCommands can return two values: a RecordSet if the command is a query (
 ' which is only a SELECT command) or the number of rows affected if the command
@@ -122,7 +122,7 @@ Private Function GetADOTypeOf(ByVal arg As Variant) As ADODB.DataTypeEnum
 
 End Function
 '
-' On problem with this section is that SqlCommand is IApplicable which means
+' On problem with this section is that SqlCommand is Applicable which means
 ' they implement the `Apply` method, but they have two candidates for what the
 ' `Apply` method should call: `ExecuteQuery` and `ExecuteUpdate`.  Currently,
 ' it defaults to `ExecuteQuery`, but I would like it to smartly decide what
@@ -140,89 +140,89 @@ End Function
 '   2. Both would implement an ISqlCommand interface and would need a default
 '      implementation module. So now what was 1 file is now 4.
 '
-Private Function IApplicable_Apply(ParamArray args() As Variant) As Variant
+Private Function Applicable_Apply(ParamArray args() As Variant) As Variant
 
-    Set IApplicable_Apply = ExecuteQueryOnArray(CArray(args))
+    Set Applicable_Apply = ExecuteQueryOnArray(CArray(args))
 
 End Function
-Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
+Private Function Applicable_ApplyOnArray(ByRef args() As Variant) As Variant
 
-    Set IApplicable_ApplyOnArray = ExecuteQueryOnArray(CArray(args))
+    Set Applicable_ApplyOnArray = ExecuteQueryOnArray(CArray(args))
 
 End Function
 '
 ' ### Embeded
 '
-Public Function Compose(ByVal f As IApplicable) As IApplicable
+Public Function Compose(ByVal f As Applicable) As Applicable
 
     Set Compose = defApply.Compose(Me, f)
 
 End Function
-Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
+Private Function Applicable_Compose(ByVal f As Applicable) As Applicable
 
-    Set IApplicable_Compose = Compose(f)
+    Set Applicable_Compose = Compose(f)
 
 End Function
-Public Function AndThen(ByVal g As IApplicable) As IApplicable
+Public Function AndThen(ByVal g As Applicable) As Applicable
 
     Set AndThen = defApply.AndThen(Me, g)
 
 End Function
-Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
+Private Function Applicable_AndThen(ByVal g As Applicable) As Applicable
 
-    Set IApplicable_AndThen = AndThen(g)
+    Set Applicable_AndThen = AndThen(g)
 
 End Function
-Public Function Partial(ParamArray args() As Variant) As IApplicable
+Public Function Partial(ParamArray args() As Variant) As Applicable
 
     Set Partial = AsPartial(CArray(args))
 
 End Function
-Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
+Private Function Applicable_Partial(ParamArray args() As Variant) As Applicable
 
-    Set IApplicable_Partial = AsPartial(CArray(args))
+    Set Applicable_Partial = AsPartial(CArray(args))
 
 End Function
-Public Function AsPartial(ByRef args() As Variant) As IApplicable
+Public Function AsPartial(ByRef args() As Variant) As Applicable
 
     Set AsPartial = defApply.AsPartial(Me, args)
 
 End Function
-Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+Private Function Applicable_AsPartial(ByRef args() As Variant) As Applicable
 
-    Set IApplicable_AsPartial = AsPartial(args)
+    Set Applicable_AsPartial = AsPartial(args)
 
 End Function
-Public Function Delay(ParamArray args() As Variant) As IDelayed
+Public Function Delay(ParamArray args() As Variant) As delayed
 
     Set Delay = AsDelay(CArray(args))
 
 End Function
-Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+Private Function Applicable_Delay(ParamArray args() As Variant) As delayed
 
-    Set IApplicable_Delay = AsDelay(CArray(args))
+    Set Applicable_Delay = AsDelay(CArray(args))
 
 End Function
-Public Function AsDelay(ByRef args() As Variant) As IDelayed
+Public Function AsDelay(ByRef args() As Variant) As delayed
 
     Set AsDelay = defApply.AsDelay(Me, args)
 
 End Function
-Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+Private Function Applicable_AsDelay(ByRef args() As Variant) As delayed
 
-    Set IApplicable_AsDelay = AsDelay(args)
+    Set Applicable_AsDelay = AsDelay(args)
 
 End Function
 '
-' ### IShowable
+' ### Showable
 '
 Public Function Show() As String
 
     Show = defShow.ParamShowableObject(Me, pCommand.CommandText)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

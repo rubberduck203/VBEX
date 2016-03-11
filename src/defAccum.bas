@@ -1,7 +1,7 @@
 Attribute VB_Name = "defAccum"
 Option Explicit
 
-Public Function Fold(ByVal op As IApplicable, ByVal Init, ByVal sequence)
+Public Function Fold(ByVal op As Applicable, ByVal Init, ByVal sequence)
     
     Dim result
     Assign result, Init
@@ -14,9 +14,9 @@ Public Function Fold(ByVal op As IApplicable, ByVal Init, ByVal sequence)
     Assign Fold, result
     
 End Function
-Public Function Scan(ByVal seed As IBuildable, ByVal op As IApplicable, ByVal Init, ByVal sequence) As IBuildable
+Public Function Scan(ByVal seed As Buildable, ByVal op As Applicable, ByVal Init, ByVal sequence) As Buildable
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
     
     Dim temp

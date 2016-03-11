@@ -20,9 +20,9 @@ Private Const ARRCLOSE As String = "]"
 Public Function Show(ByVal x) As String
     Dim result As String
 
-    If TypeOf x Is IShowable Then
+    If TypeOf x Is Showable Then
         
-        Dim s As IShowable
+        Dim s As Showable
         Set s = x
         result = s.Show
         

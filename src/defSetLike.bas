@@ -4,9 +4,9 @@ Option Explicit
 ' Comparison
 ' ----------
 '
-Public Function SetEquals(ByVal xs As ISetLike, ByVal ys) As Boolean
+Public Function SetEquals(ByVal xs As SetLike, ByVal ys) As Boolean
 
-    If TypeOf ys Is ISetLike Then
+    If TypeOf ys Is SetLike Then
         On Error GoTo Nope
         SetEquals = (xs.Difference(ys).Count = 0)
         On Error GoTo 0
@@ -20,12 +20,12 @@ Nope:
     Resume CleanExit:
     
 End Function
-Public Function IsDisJoint(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
+Public Function IsDisJoint(ByVal xs As SetLike, ByVal ys As SetLike) As Boolean
 
     IsDisJoint = (xs.Intersect(ys).Count = 0)
     
 End Function
-Public Function IsSubSetOf(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
+Public Function IsSubSetOf(ByVal xs As SetLike, ByVal ys As SetLike) As Boolean
     
     Dim x
     For Each x In xs
@@ -42,17 +42,17 @@ Public Function IsSubSetOf(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolea
     IsSubSetOf = True
     
 End Function
-Public Function IsProperSubSetOf(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
+Public Function IsProperSubSetOf(ByVal xs As SetLike, ByVal ys As SetLike) As Boolean
 
     IsProperSubSetOf = (xs.IsSubSetOf(ys) And (xs.Count < ys.Count))
     
 End Function
-Public Function IsSuperSetOf(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
+Public Function IsSuperSetOf(ByVal xs As SetLike, ByVal ys As SetLike) As Boolean
 
     IsSuperSetOf = ys.IsSubSetOf(xs)
     
 End Function
-Public Function IsProperSuperSetOf(ByVal xs As ISetLike, ByVal ys As ISetLike) As Boolean
+Public Function IsProperSuperSetOf(ByVal xs As SetLike, ByVal ys As SetLike) As Boolean
 
     IsProperSuperSetOf = ys.IsProperSubSetOf(xs)
     
@@ -61,9 +61,9 @@ End Function
 ' Constructors
 ' ------------
 '
-Public Function Union(ByVal seed As IBuildable, ByVal xs, ByVal ys) As Variant
+Public Function Union(ByVal seed As Buildable, ByVal xs, ByVal ys) As Variant
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
     
     result.AddItems xs
@@ -72,20 +72,20 @@ Public Function Union(ByVal seed As IBuildable, ByVal xs, ByVal ys) As Variant
     Set Union = result
     
 End Function
-Public Function Intersect(ByVal seed As IBuildable, ByVal xs, _
-        ByVal ys As ISetLike) As Variant
+Public Function Intersect(ByVal seed As Buildable, ByVal xs, _
+        ByVal ys As SetLike) As Variant
 
     Set Intersect = GenericJoin(True, seed, xs, ys)
     
 End Function
-Public Function Difference(ByVal seed As IBuildable, ByVal xs, _
-        ByVal ys As ISetLike) As Variant
+Public Function Difference(ByVal seed As Buildable, ByVal xs, _
+        ByVal ys As SetLike) As Variant
     
     Set Difference = GenericJoin(False, seed, xs, ys)
     
 End Function
-Public Function SymmetricDifference(ByVal seed As IBuildable, _
-        ByVal xs As ISetLike, ByVal ys As ISetLike) As Variant
+Public Function SymmetricDifference(ByVal seed As Buildable, _
+        ByVal xs As SetLike, ByVal ys As SetLike) As Variant
 
     Dim leftOuter
     Set leftOuter = xs.Difference(ys)
@@ -97,9 +97,9 @@ Public Function SymmetricDifference(ByVal seed As IBuildable, _
     
 End Function
 Private Function GenericJoin(ByVal contained As Boolean, _
-        ByVal seed As IBuildable, ByVal xs, ByVal ys As ISetLike) As Variant
+        ByVal seed As Buildable, ByVal xs, ByVal ys As SetLike) As Variant
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
     
     Dim x

@@ -11,7 +11,7 @@ Option Explicit
 ' It may be more prudent to split these into the various default files like
 ' defIterable, defTransversable etc...
 '
-' TODO: Should these belong in IBuildable?
+' TODO: Should these belong in Buildable?
 Private Const MAP_ADD As String = "AddItem"
 Private Const BIND_ADD As String = "AddItems"
 '
@@ -23,8 +23,8 @@ Private Const BIND_ADD As String = "AddItems"
 '
 ' These will be the most commonly used.
 '
-Public Function TransversableMap(ByVal seed As IBuildable, _
-        ByVal op As IApplicable, ByVal sequence) As IBuildable
+Public Function TransversableMap(ByVal seed As Buildable, _
+        ByVal op As Applicable, ByVal sequence) As Buildable
     
     On Error GoTo Bubble
     Set TransversableMap = GenericTransversableMap(MAP_ADD, seed, op, sequence)
@@ -34,8 +34,8 @@ Bubble:
     Exceptions.BubbleError "defMap", "TransversableMap", Err
     
 End Function
-Public Function TransversableBind(ByVal seed As IBuildable, _
-        ByVal op As IApplicable, ByVal sequence) As IBuildable
+Public Function TransversableBind(ByVal seed As Buildable, _
+        ByVal op As Applicable, ByVal sequence) As Buildable
     
     On Error GoTo Bubble
     Set TransversableBind = GenericTransversableMap(BIND_ADD, seed, op, sequence)
@@ -46,9 +46,9 @@ Bubble:
     
 End Function
 Private Function GenericTransversableMap(ByVal buildMethod As String, _
-        ByVal seed As IBuildable, ByVal op As IApplicable, ByVal sequence) As IBuildable
+        ByVal seed As Buildable, ByVal op As Applicable, ByVal sequence) As Buildable
     
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
     
     Dim element
@@ -66,8 +66,8 @@ End Function
 ' Use for any iterable classes that are not transversable.
 ' Result must still be buildable.
 '
-Public Function IterableMap(ByVal seed As IBuildable, ByVal op As IApplicable, _
-        ByVal iterable As IIterable) As IBuildable
+Public Function IterableMap(ByVal seed As Buildable, ByVal op As Applicable, _
+        ByVal iterable As Linear) As Buildable
     
     On Error GoTo Bubble
     Set IterableMap = GenericIterableMap(MAP_ADD, seed, op, iterable)
@@ -77,8 +77,8 @@ Bubble:
     Exceptions.BubbleError "defMap", "IterableMap", Err
     
 End Function
-Public Function IterableBind(ByVal seed As IBuildable, ByVal op As IApplicable, _
-        ByVal iterable As IIterable) As IBuildable
+Public Function IterableBind(ByVal seed As Buildable, ByVal op As Applicable, _
+        ByVal iterable As Linear) As Buildable
     
     On Error GoTo Bubble
     Set IterableBind = GenericIterableMap(BIND_ADD, seed, op, iterable)
@@ -89,10 +89,10 @@ Bubble:
     
 End Function
 Private Function GenericIterableMap(ByVal buildMethod As String, _
-        ByVal seed As IBuildable, ByVal op As IApplicable, _
-        ByVal iterable As IIterable) As IBuildable
+        ByVal seed As Buildable, ByVal op As Applicable, _
+        ByVal iterable As Linear) As Buildable
     
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
     
     Dim i As Long

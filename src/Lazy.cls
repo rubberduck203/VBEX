@@ -17,24 +17,24 @@ Option Explicit
 ' This file (Lazy.cls) is distributed under the GPL-3.0 license
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
-Implements IShowable
-Implements IDelayed
+Implements Showable
+Implements delayed
 '
 ' Private Members
 ' ---------------
 '
-Private pDelayed As IDelayed
+Private pDelayed As delayed
 Private pValue As Variant
 '
 ' Constructors
 ' ------------
 '
-Public Function Create(ByVal op As IApplicable, ParamArray args()) As Lazy
+Public Function Create(ByVal op As Applicable, ParamArray args()) As Lazy
 
     Set Create = Make(op, CArray(args))
 
 End Function
-Public Function Make(ByVal op As IApplicable, ByRef args()) As Lazy
+Public Function Make(ByVal op As Applicable, ByRef args()) As Lazy
     
     Dim delayed As ByName
     Set delayed = ByName.Make(op, args)
@@ -42,14 +42,14 @@ Public Function Make(ByVal op As IApplicable, ByRef args()) As Lazy
     Set Make = FromDelayed(delayed)
 
 End Function
-Public Function FromDelayed(ByVal delayed As IDelayed) As Lazy
+Public Function FromDelayed(ByVal delayed As delayed) As Lazy
 
     Dim result As New Lazy
     Set result.DelayedOp = delayed
     Set FromDelayed = result
     
 End Function
-Friend Property Set DelayedOp(ByVal delayed As IDelayed)
+Friend Property Set DelayedOp(ByVal delayed As delayed)
 
     Set pDelayed = delayed
 
@@ -69,7 +69,7 @@ Public Function IsEvaluated() As Boolean
 
 End Function
 '
-' IDelayed
+' Delayed
 ' --------
 '
 Public Property Get Evaluate() As Variant
@@ -82,19 +82,19 @@ Attribute Evaluate.VB_UserMemId = 0
     Assign Evaluate, pValue
 
 End Property
-Private Property Get IDelayed_Evaluate() As Variant
+Private Property Get Delayed_Evaluate() As Variant
 
-    Assign IDelayed_Evaluate, Evaluate
+    Assign Delayed_Evaluate, Evaluate
 
 End Property
-Public Function Map(ByVal op As IApplicable) As Lazy
+Public Function Map(ByVal op As Applicable) As Lazy
 
-    Dim result As IDelayed
+    Dim result As delayed
     If IsDelayed Then
         ' `Me` in a parameter array evauluates the default property...
         Dim args(0 To 0) As Variant
         Assign args(0), Me
-        Set result = ByName.Make(op, args) ' Evaluating result does not evaluate `Me` when using a CallByName IApplicable.
+        Set result = ByName.Make(op, args) ' Evaluating result does not evaluate `Me` when using a CallByName Applicable.
         Debug.Assert IsDelayed
     Else
         Set result = ByName.Create(op, pValue)
@@ -103,13 +103,13 @@ Public Function Map(ByVal op As IApplicable) As Lazy
     Set Map = Lazy.FromDelayed(result)
 
 End Function
-Private Function IDelayed_Map(ByVal op As IApplicable) As IDelayed
+Private Function Delayed_Map(ByVal op As Applicable) As delayed
 
-    Set IDelayed_Map = Map(op)
+    Set Delayed_Map = Map(op)
 
 End Function
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -123,8 +123,8 @@ Public Function Show() As String
     Show = defShow.ParamShowableObject(Me, repr)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

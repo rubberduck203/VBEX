@@ -14,12 +14,12 @@ Option Explicit
 '
 ' Representation of the VBE Immediate Pane
 '
-Implements IOutput
+Implements Output
 '
 ' Interfaces
 ' ----------
 '
-' ### IOutput
+' ### Output
 '
 ' #### Prints
 '
@@ -28,7 +28,7 @@ Public Sub Prints(ByVal x As Variant)
     Debug.Print defShow.Show(x);
     
 End Sub
-Private Sub IOutput_Prints(ByVal x As Variant)
+Private Sub Output_Prints(ByVal x As Variant)
   
     Prints x
   
@@ -42,7 +42,7 @@ Public Sub PrintLine(ByVal x As Variant)
     Debug.Print
     
 End Sub
-Private Sub IOutput_PrintLine(ByVal x As Variant)
+Private Sub Output_PrintLine(ByVal x As Variant)
 
     PrintLine x
     
@@ -58,7 +58,7 @@ Public Sub PrintLines(ByRef xs() As Variant)
     Next x
 
 End Sub
-Private Sub IOutput_PrintLines(ByRef xs() As Variant)
+Private Sub Output_PrintLines(ByRef xs() As Variant)
 
     PrintLines xs
 
