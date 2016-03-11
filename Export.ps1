@@ -9,7 +9,14 @@ Param(
     [String]$outDest
 )
 
-function main {
+$scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
+    $PSScriptRoot
+} else {
+    Split-Path $MyInvocation.MyCommand.Path -Parent
+}
+$display = (Join-Path $scriptRoot "Build-Display.ps1")
+
+function Export {
         Write-Host "Will Export $sourceFile to $outDest`:"
 	$officeCOM = (OfficeComFromFileName $sourceFile)
 	$fileCOM = (OpenMSOfficeFile $officeCOM $sourceFile)
@@ -20,6 +27,7 @@ function main {
         Write-Host "Removing $sourceFile" -ForeGround Red
         Remove-Item $sourceFile
 }
+
 function OfficeComFromFileName([String] $fileName) {
 	$fileExt = [System.IO.Path]::GetExtension($fileName)
 	$officeCOM = switch -wildcard ($fileExt.ToLower()) {
@@ -29,28 +37,29 @@ function OfficeComFromFileName([String] $fileName) {
     }
     return $officeCOM
 }
+
 function OpenMSOfficeFile($officeCOM, [String] $filePath) {
         Write-Host "Opening $filePath with Office Application."
 	$fileCOM = ($officeCOM.Workbooks.Open($filePath))
 	return $fileCOM
 }
+
 function ExportModules($prjCOM, [String] $outDest) {
     
 	$vbComps = ($prjCOM.VBComponents)
         $count = $vbComps.count
-        Write-Host "=> " -ForeGround Blue -noNewLine
-        Write-Host "Exporting $count modules to $outDest`:"
+        & "$display" 1 "Exporting $count modules to $outDest`:"
 	ForEach ($component in $vbComps) {
 		$compFileExt = (GetComponentExt($component))
 		if ($compFileExt -ne "") {
 			$compFileName = $component.name + $compFileExt
 			$exportPath = (Join-Path $outDest $compFileName)
-                        Write-Host "  -> " -ForeGround yellow -noNewLine
-                        Write-Host "$compFileName"
+                        & "$display" 3 "$compFileName"
 			$component.Export($exportPath)
                 }
 	}
 }
+
 function GetComponentExt($component) {
 	$compExt = switch ($component.Type) {
 		1 {".bas"}
@@ -60,4 +69,5 @@ function GetComponentExt($component) {
 	}
 	return $compExt
 }
-main # entry point
+
+Export # entry

@@ -47,3 +47,5 @@ ForEach ($build In $buildRefs.Keys) {
     $refs = $buildRefs[$build]
     & "$buildScript" "$path" $files $refs
 }
+
+& (Join-Path "$scriptRoot" "Close-All-Of.ps1") "$officeApp"
