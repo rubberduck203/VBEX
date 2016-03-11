@@ -1,3 +1,4 @@
+#
 <#
  .Synopsis
   Checks if the user wants to close all instances of a procss before doing so.
@@ -26,12 +27,12 @@ Param (
 Function Close-All-Of {
     Write-Host ""
     Write-Host "I cannot close the instances of $processName I opened."
-    $closeAll = Read-Host "May I close all instances of $processName? [y/N]"
+    $closeAll = Read-Host "May I close all instances of $processName" + "? [y/N]"
     $msg = if ($closeAll -like "y*") {
         Stop-Process -Name "$processName"
         "WARNING! All instances of $procName were closed!"
     } else {
-        "WARNING! There are unused instances of $procName in the background!"
+        "WARNING! There are unused instances of $processName in the background!"
     }
     Write-Host $msg -ForeGround Red
 }

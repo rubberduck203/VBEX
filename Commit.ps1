@@ -11,7 +11,8 @@ $scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
 } else {
     Split-Path $MyInvocation.MyCommand.Path -Parent
 }
-$export = (Join-Path "$scriptRoot" "Export.ps1")
+$export = (Join-Path $scriptRoot "Export.ps1")
+$closeAll = (Join-Path $scriptRoot "Close-All-Of.ps1")
 $builds = @("src", "test")
 
 ForEach($build in $builds) {
@@ -21,3 +22,4 @@ ForEach($build in $builds) {
     & $export "$file" "$dest"
 }
 
+& "$closeAll" "EXCEL"
