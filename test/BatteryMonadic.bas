@@ -49,7 +49,7 @@ Private Sub Associativity(ByVal m As Monadic, ByVal f As Applicable, _
     Set leftSide = m.Bind(f).Bind(g)
 
     Dim nc As Applicable ' .Bind(g)
-    Set nc = OnObject.Make("Bind", VbMethod, g)
+    Set nc = OnObject.Create("Bind", VbMethod, g)
     
     Dim h As Applicable ' nc.Apply(f(x)) ==  f(x).Bind(g)
     Set h = Composed.Make(nc, f)

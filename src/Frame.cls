@@ -24,50 +24,39 @@ Implements Linear
 ' Private Members
 ' ---------------
 '
-Private pIterable As Linear
+Private pLinearSequence As Linear
 Private pLower As Long
 Private pUpper As Long
 '
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal iterable As Linear, _
+Public Function Make(ByVal linSeq As Linear, _
         ByVal lower As Long, ByVal upper As Long) As Frame
     
     Dim result As New Frame
-    Set result.Target = iterable
-    result.SetLowerBound lower
-    result.SetUpperBound upper
-
+    result.Inject linSeq, lower, upper
     Set Make = result
 
 End Function
-Public Function FromLeft(ByVal iterable As Linear, _
+Public Function FromLeft(ByVal linSeq As Linear, _
         ByVal upper As Long) As Frame
 
-    Set FromLeft = Make(iterable, iterable.LowerBound, upper)
+    Set FromLeft = Make(linSeq, linSeq.LowerBound, upper)
 
 End Function
-Public Function FromRight(ByVal iterable As Linear, _
+Public Function FromRight(ByVal linSeq As Linear, _
         ByVal lower As Long) As Frame
 
-    Set FromRight = Make(iterable, lower, iterable.UpperBound)
+    Set FromRight = Make(linSeq, lower, linSeq.UpperBound)
 
 End Function
-Friend Property Set Target(ByVal iterable As Linear)
+Friend Sub Inject(ByVal linSeq As Linear, ByVal lower As Long, ByVal upper As Long)
 
-    Set pIterable = iterable
-
-End Property
-Friend Sub SetLowerBound(ByVal lower As Long)
-
-    CheckIndexRange pIterable, "Item", lower
+    CheckIndexRange pLinearSequence, "Item", lower
+    CheckIndexRange pLinearSequence, "Item", upper
+    Set pLinearSequence = linSeq
     pLower = lower
-
-End Sub
-Friend Sub SetUpperBound(ByVal upper As Long)
-
-    CheckIndexRange pIterable, "Item", upper
     pUpper = upper
 
 End Sub
@@ -119,7 +108,7 @@ Public Property Get Item(ByVal index As Long) As Variant
 Attribute Item.VB_UserMemId = 0
 
     CheckIndexRange Me, "Item", index
-    Assign Item, pIterable.Item(index + pLower)
+    Assign Item, pLinearSequence.Item(index + pLower)
     
 End Property
 Public Function LowerBound() As Long
@@ -187,7 +176,7 @@ End Function
 '
 Public Function Show() As String
 
-    Show = defShow.ParamShowableObject(Me, pIterable, pLower, pUpper)
+    Show = defShow.ParamShowableObject(Me, pLinearSequence, pLower, pUpper)
     
 End Function
 Private Function Showable_Show() As String

@@ -28,10 +28,10 @@ End Function
 Public Function AsPartial(ByRef args() As Variant) As Applicable
 
 End Function
-Public Function Delay(ParamArray args() As Variant) As delayed
+Public Function delay(ParamArray args() As Variant) As Delayed
 
 End Function
-Public Function AsDelay(ByRef args() As Variant) As delayed
+Public Function AsDelay(ByRef args() As Variant) As Delayed
 
 End Function
 

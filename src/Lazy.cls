@@ -18,12 +18,12 @@ Option Explicit
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 Implements Showable
-Implements delayed
+Implements Delayed
 '
 ' Private Members
 ' ---------------
 '
-Private pDelayed As delayed
+Private pDelayed As Delayed
 Private pValue As Variant
 '
 ' Constructors
@@ -36,24 +36,24 @@ Public Function Create(ByVal op As Applicable, ParamArray args()) As Lazy
 End Function
 Public Function Make(ByVal op As Applicable, ByRef args()) As Lazy
     
-    Dim delayed As ByName
-    Set delayed = ByName.Make(op, args)
+    Dim delay As ByName
+    Set delay = ByName.Make(op, args)
 
-    Set Make = FromDelayed(delayed)
+    Set Make = FromDelayed(delay)
 
 End Function
-Public Function FromDelayed(ByVal delayed As delayed) As Lazy
+Public Function FromDelayed(ByVal delay As Delayed) As Lazy
 
     Dim result As New Lazy
-    Set result.DelayedOp = delayed
+    result.Inject delay
     Set FromDelayed = result
     
 End Function
-Friend Property Set DelayedOp(ByVal delayed As delayed)
+Friend Sub Inject(ByVal delay As Delayed)
 
-    Set pDelayed = delayed
+    Set pDelayed = delay
 
-End Property
+End Sub
 '
 ' Public Methods
 ' --------------
@@ -89,7 +89,7 @@ Private Property Get Delayed_Evaluate() As Variant
 End Property
 Public Function Map(ByVal op As Applicable) As Lazy
 
-    Dim result As delayed
+    Dim result As Delayed
     If IsDelayed Then
         ' `Me` in a parameter array evauluates the default property...
         Dim args(0 To 0) As Variant
@@ -103,7 +103,7 @@ Public Function Map(ByVal op As Applicable) As Lazy
     Set Map = Lazy.FromDelayed(result)
 
 End Function
-Private Function Delayed_Map(ByVal op As Applicable) As delayed
+Private Function Delayed_Map(ByVal op As Applicable) As Delayed
 
     Set Delayed_Map = Map(op)
 

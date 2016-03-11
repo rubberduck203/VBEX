@@ -16,7 +16,7 @@ Public Function AsPartial(ByVal f As Applicable, ByRef args() As Variant) As App
     Set AsPartial = Partial.Make(f, args)
 
 End Function
-Public Function AsDelay(ByVal f As Applicable, ByRef args() As Variant) As delayed
+Public Function AsDelay(ByVal f As Applicable, ByRef args() As Variant) As Delayed
 
     Set AsDelay = ByName.Make(f, args)
 

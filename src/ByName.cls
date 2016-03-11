@@ -18,7 +18,7 @@ Option Explicit
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 Implements Showable
-Implements delayed
+Implements Delayed
 '
 ' Private Members
 ' ---------------
@@ -37,18 +37,13 @@ End Function
 Public Function Make(ByVal op As Applicable, ByRef args()) As ByName
     
     Dim result As New ByName
-    result.SetOp op
-    result.SetArgs args
+    result.Inject op, args
     Set Make = result
 
 End Function
-Friend Sub SetOp(ByVal op As Applicable)
+Friend Sub Inject(ByVal op As Applicable, ByRef args())
 
     Set pApplicable = op
-
-End Sub
-Friend Sub SetArgs(ByRef args())
-
     pArgs = args
 
 End Sub
@@ -78,7 +73,7 @@ Public Function Map(ByVal op As Applicable) As ByName
     Set Map = result
 
 End Function
-Private Function Delayed_Map(ByVal op As Applicable) As delayed
+Private Function Delayed_Map(ByVal op As Applicable) As Delayed
 
     Set Delayed_Map = Map(op)
 

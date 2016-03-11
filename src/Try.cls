@@ -42,17 +42,16 @@ Public Function Create(ByVal op As Applicable, ParamArray args()) As Try
 End Function
 Public Function Make(ByVal op As Applicable, ByRef args() As Variant) As Try
     
-    Dim delayed As ByName
-    Set delayed = ByName.Make(op, args)
-
-    Set Make = FromDelayed(delayed)
+    Dim delay As ByName
+    Set delay = ByName.Make(op, args)
+    Set Make = FromDelayed(delay)
 
 End Function
-Public Function FromDelayed(ByVal Attempt As delayed) As Try
+Public Function FromDelayed(ByVal delay As Delayed) As Try
     
     Dim result As Try
     On Error GoTo Fail
-    Set result = Success(Attempt.Evaluate())
+    Set result = Success(delay.Evaluate())
     On Error GoTo 0
 
 CleanExit:

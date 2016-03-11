@@ -32,7 +32,7 @@ Private pString As String
 Public Function Make(ByVal s As String) As Str
     
     Dim result As New Str
-    result.Encapsulated = s
+    result.Inject s
     Set Make = result
 
 End Function
@@ -131,11 +131,11 @@ Public Function DoubleQuote() As Str
     Set DoubleQuote = Make(Chr(34))
 
 End Function
-Friend Property Let Encapsulated(ByVal s As String)
+Friend Sub Inject(ByVal s As String)
 
     pString = s
 
-End Property
+End Sub
 '
 ' Transversable
 ' -------------

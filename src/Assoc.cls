@@ -30,11 +30,11 @@ Private pPair As Tuple
 Public Function Make(ByVal k, ByVal v) As Assoc
 
     Dim result As New Assoc
-    result.AssignKeyVal k, v
+    result.Inject k, v
     Set Make = result
 
 End Function
-Friend Sub AssignKeyVal(ByVal k, ByVal v)
+Friend Sub Inject(ByVal k, ByVal v)
 
     Set pPair = Tuple.Pack(k, v)
     

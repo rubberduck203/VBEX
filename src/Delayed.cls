@@ -13,6 +13,6 @@ Public Property Get Evaluate() As Variant
 Attribute Evaluate.VB_UserMemId = 0
 
 End Property
-Public Function Map(ByVal op As Applicable) As delayed
+Public Function Map(ByVal op As Applicable) As Delayed
 
 End Function

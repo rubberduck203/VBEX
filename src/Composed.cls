@@ -32,21 +32,16 @@ Public Function Make(ByVal outerOp As Applicable, _
         ByVal innerOp As Applicable) As Composed
 
     Dim result As New Composed
-    Set result.inner = innerOp
-    Set result.outer = outerOp
+    result.Inject innerOp, outerOp
     Set Make = result
 
 End Function
-Friend Property Set inner(ByVal innerOp As Applicable)
+Friend Sub Inject(ByVal innerOp As Applicable, ByVal outerOp As Applicable)
 
     Set pInnerOp = innerOp
-
-End Property
-Friend Property Set outer(ByVal outerOp As Applicable)
-
     Set pOuterOp = outerOp
 
-End Property
+End Sub
 '
 ' Applicable
 ' -----------
@@ -118,22 +113,22 @@ Private Function Applicable_AsPartial(ByRef args() As Variant) As Applicable
     Set Applicable_AsPartial = AsPartial(args)
 
 End Function
-Public Function Delay(ParamArray args() As Variant) As delayed
+Public Function delay(ParamArray args() As Variant) As Delayed
 
-    Set Delay = AsDelay(CArray(args))
+    Set delay = AsDelay(CArray(args))
 
 End Function
-Private Function Applicable_Delay(ParamArray args() As Variant) As delayed
+Private Function Applicable_Delay(ParamArray args() As Variant) As Delayed
 
     Set Applicable_Delay = AsDelay(CArray(args))
 
 End Function
-Public Function AsDelay(ByRef args() As Variant) As delayed
+Public Function AsDelay(ByRef args() As Variant) As Delayed
 
     Set AsDelay = defApply.AsDelay(Me, args)
 
 End Function
-Private Function Applicable_AsDelay(ByRef args() As Variant) As delayed
+Private Function Applicable_AsDelay(ByRef args() As Variant) As Delayed
 
     Set Applicable_AsDelay = AsDelay(args)
 

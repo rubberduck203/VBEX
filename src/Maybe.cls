@@ -36,7 +36,7 @@ Private pVar As Variant
 Public Function Some(ByVal x) As Maybe
     
     Dim result As New Maybe
-    result.AssignOpt x
+    result.Inject x
     Set Some = result
     
 End Function
@@ -55,11 +55,11 @@ Public Function MakeIf(ByVal pred As Boolean, ByVal x) As Maybe
     End If
     
 End Function
-Public Function Attempt(ByVal delayed As delayed) As Maybe
+Public Function Attempt(ByVal delay As Delayed) As Maybe
 
     Dim result As Maybe
     On Error GoTo Fail
-    Set result = Some(delayed.Evaluate())
+    Set result = Some(delay.Evaluate())
     On Error GoTo 0
 
 CleanExit:
@@ -75,7 +75,7 @@ End Function
 '
 ' ### Friend Methods
 '
-Friend Sub AssignOpt(ByVal x)
+Friend Sub Inject(ByVal x)
 
     Assign pVar, x
 

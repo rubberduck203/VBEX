@@ -35,8 +35,7 @@ Private pArgUpper As Long
 Public Function Make(ByVal app As Applicable, ByRef storedArgs()) As Partial
 
     Dim result As New Partial
-    Set result.Applicable = app
-    result.StoreArguments storedArgs
+    result.Inject app, storedArgs
     Set Make = result
 
 End Function
@@ -49,13 +48,9 @@ End Function
 ' Friend Methods
 ' --------------
 '
-Friend Property Set Applicable(ByVal app As Applicable)
+Friend Sub Inject(ByVal app As Applicable, ByRef args())
     
     Set pApplicable = app
-    
-End Property
-Friend Sub StoreArguments(ByRef args())
-
     pStoredArgs = args
     pArgLower = LBound(pStoredArgs)
     pArgUpper = UBound(pStoredArgs)
@@ -175,22 +170,22 @@ Private Function Applicable_AsPartial(ByRef args() As Variant) As Applicable
     Set Applicable_AsPartial = AsPartial(args)
 
 End Function
-Public Function Delay(ParamArray args() As Variant) As delayed
+Public Function delay(ParamArray args() As Variant) As Delayed
 
-    Set Delay = AsDelay(CArray(args))
+    Set delay = AsDelay(CArray(args))
 
 End Function
-Private Function Applicable_Delay(ParamArray args() As Variant) As delayed
+Private Function Applicable_Delay(ParamArray args() As Variant) As Delayed
 
     Set Applicable_Delay = AsDelay(CArray(args))
 
 End Function
-Public Function AsDelay(ByRef args() As Variant) As delayed
+Public Function AsDelay(ByRef args() As Variant) As Delayed
 
     Set AsDelay = defApply.AsDelay(Me, args)
 
 End Function
-Private Function Applicable_AsDelay(ByRef args() As Variant) As delayed
+Private Function Applicable_AsDelay(ByRef args() As Variant) As Delayed
 
     Set Applicable_AsDelay = AsDelay(args)
 
