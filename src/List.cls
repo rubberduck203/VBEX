@@ -57,7 +57,7 @@ End Sub
 Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Variant)
 
     Dim msg As String
-    msg = """" & TypeName(scalar) & """ is not an iterable type."
+    msg = """" & TypeName(scalar) & """ is not an sequence type."
     
     TypeError Me, method, msg
     
@@ -118,6 +118,33 @@ End Property
 ' --------------
 '
 ' ### Immutable operations
+'
+' #### Combiners
+'
+Public Function Concat(ByVal other As List) As List
+
+    Dim result As List
+    Set result = List.Copy(Me)
+    result.Extend other
+    Set Concat = result
+
+End Function
+Public Function Appended(ParamArray elems() As Variant) As List
+
+    Dim result As List
+    Set result = List.Copy(Me)
+    result.Extend CArray(elems)
+    Set Appended = result
+
+End Function
+Public Function Prepended(ParamArray elems() As Variant) As List
+
+    Dim result As List
+    Set result = List.Copy(Me)
+    result.Insert 1, CArray(elems)
+    Set Prepended = result
+
+End Function
 '
 ' #### Monadic
 '
@@ -181,7 +208,7 @@ End Function
 Public Function MaybeHead() As Maybe
 Attribute MaybeHead.VB_Description = "Returns the first element if the list is not empty."
     
-    If Count > 0 Then
+    If Not IsEmpty Then
         Set MaybeHead = Maybe.Some(Head)
     Else
         Set MaybeHead = Maybe.None
@@ -210,7 +237,7 @@ End Function
 Public Function MaybeLast() As Variant
 Attribute MaybeLast.VB_Description = "Returns the last element if the list is not empty"
     
-    If Count > 0 Then
+    If Not IsEmpty Then
         Set MaybeLast = Maybe.Some(Last)
     Else
         Set MaybeLast = Maybe.None
@@ -236,6 +263,11 @@ Attribute Count.VB_Description = "Returns the number of elements."
     
     Count = pCollec.Count
     
+End Function
+Public Function IsEmpty() As Boolean
+
+    IsEmpty = (Linear_UpperBound < Linear_LowerBound)
+
 End Function
 ''
 ' GroupBy returns a Dict until Dict has an interface
@@ -288,14 +320,46 @@ Public Function Take(ByVal n As Long) As List
     Set Take = result
 
 End Function
-' FoldLeft, FoldRight, ReduceLeft, ReduceRight
-' IndexOf(ByVal val) As Maybe[Long]
-' IndexWhere(ByVal pred As Applicable) As Maybe[Long]
-' LastIndexOf(Byval val) As Maybe[Long]
-' lastIndexWhere(Byval pred As Applicable) As Maybe[long]
-' Find(ByVal pred As Applicable) As Maybe = IndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
-' FindLast(ByVal pred As Applicable) As Maybe = LastIndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
-' CountWhere(ByVal pred As Applicable) As Boolean
+Public Function Size() As Long
+
+    Size = Count
+
+End Function
+Public Function IndexWhere(ByVal pred As Applicable) As Maybe
+
+    Set IndexWhere = defLinear.IndexWhere(Me, pred)
+
+End Function
+Public Function IndexOf(ByVal val) As Maybe
+
+    Set IndexOf = defLinear.IndexOf(Me, val)
+    
+End Function
+Public Function LastIndexWhere(ByVal pred As Applicable) As Maybe
+
+    Set LastIndexWhere = defLinear.LastIndexWhere(Me, pred)
+    
+End Function
+Public Function LastIndexOf(ByVal val) As Maybe
+
+    Set LastIndexOf = defLinear.LastIndexOf(Me, val)
+    
+End Function
+Public Function Find(ByVal pred As Applicable) As Maybe
+
+    Set Find = defLinear.Find(Me, pred)
+    
+End Function
+Public Function FindLast(ByVal pred As Applicable) As Maybe
+
+    Set FindLast = defLinear.FindLast(Me, pred)
+
+End Function
+Public Function CountWhere(ByVal pred As Applicable) As Long
+
+    CountWhere = defLinear.CountWhere(Me, pred)
+
+End Function
 ' Tails() As Iterator[List] whenever Iterator exists
 ' Inits() As Iterator[List]
 ' Sliding(???) As Iterator[List]
@@ -405,13 +469,13 @@ Attribute Remove.VB_Description = "Removes the element at `index`."
 End Sub
 ''
 ' Revisions from CR
-Public Sub Clear(ByVal start As Long, ByVal size As Long)
+Public Sub Clear(ByVal start As Long, ByVal Size As Long)
 Attribute Clear.VB_Description = "Removes `size` elements at `start`."
     
     TransformIndex start
     
     Dim i As Long
-    For i = 1 To size
+    For i = 1 To Size
         pCollec.Remove start
     Next i
 
@@ -423,7 +487,14 @@ End Sub
 ' Append: Vanilla `Add`
 Public Sub Append(ParamArray elems() As Variant)
 Attribute Append.VB_Description = "Adds `elems` to the end of the list."
+
     Extend CVar(elems)
+    
+End Sub
+Public Sub Prepend(ParamArray elems() As Variant)
+
+    Insert 1, elems
+    
 End Sub
 ''
 ' Extend: Append sequence
@@ -515,7 +586,7 @@ Private Function Linear_UpperBound() As Long
 End Function
 Public Function ToArray() As Variant()
 
-    ToArray = defIterable.ToArray(Me)
+    ToArray = defLinear.ToArray(Me)
 
 End Function
 Private Function Linear_ToArray() As Variant()
@@ -525,7 +596,7 @@ Private Function Linear_ToArray() As Variant()
 End Function
 Public Function ToCollection() As Collection
 
-    Set ToCollection = defIterable.ToCollection(Me)
+    Set ToCollection = defLinear.ToCollection(Me)
 
 End Function
 Private Function Linear_ToCollection() As Collection
@@ -535,7 +606,7 @@ Private Function Linear_ToCollection() As Collection
 End Function
 Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set ToBuildable = defIterable.ToBuildable(seed, Me)
+    Set ToBuildable = defLinear.ToBuildable(seed, Me)
 
 End Function
 Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable
