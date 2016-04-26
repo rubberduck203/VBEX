@@ -39,8 +39,8 @@ Public Function ConvertTo(ByVal seed As Buildable, ByVal transversable) _
         As Variant
         
     Dim result As Buildable
-    Set result = Buildable.MakeEmpty
-    result.AddItems (transversable)
+    Set result = seed.MakeEmpty
+    result.AddItems transversable
     Set ConvertTo = result
 
 End Function
