@@ -19,14 +19,8 @@ Option Explicit
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 Implements IShowable
+'
 ' Should implement more Interfaces but this is the only mapping type yet.
-'
-' Public Members
-' --------------
-' None
-'
-' Private Members
-' ---------------
 '
 Private pDict As Scripting.Dictionary
 '
@@ -70,6 +64,18 @@ Public Function FromAssocs(ByVal assocs) As Dict
     
     Set FromAssocs = result
     
+End Function
+Public Function FromKeys(ByVal keySet as ISetLike, ByVal op As IApplicable) As Dict
+
+    Dim result As New Dict
+    
+    Dim key As Variant
+    For Each key In keySet.Elements
+        result.Add key, op.Apply(key)
+    Next
+
+    Set FromKeys = result
+
 End Function
 Public Function Copy(ByVal thatD As Dict) As Dict
 
@@ -133,8 +139,21 @@ Public Function Pair(ByVal k) As Assoc
     
 End Function
 '
-' Produce Lists
-' -------------
+' ### Produce Dicts
+'
+Public Function MapValues(ByVal op As IApplicable) As Dict
+
+    Dim result As New Dict
+    Dim key As Variant
+    For Each key In pDict.keys
+        result.Add key, op.Apply(pDict(key))
+    Next
+
+    Set MapValues = result
+
+End Function
+'
+' ### Produce Lists
 '
 Public Function keys() As List
 
