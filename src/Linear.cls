@@ -54,6 +54,6 @@ End Function
 'Public Function FindLast(ByVal pred As Applicable) As Maybe
 '
 'End Function
-'Public Function CountyWhere(ByVal pred As Applicable) As Long
+'Public Function CountWhere(ByVal pred As Applicable) As Long
 '
 'End Function
