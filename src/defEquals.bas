@@ -9,14 +9,14 @@ Private Sub CheckEquatable(ByVal x)
 End Sub
 Private Function IsEquatable(ByVal x) As Boolean
 
-    IsEquatable = (TypeOf x Is IEquatable)
+    IsEquatable = (TypeOf x Is Equatable)
 
 End Function
 '
 ' Public Functions
 ' ----------------
 '
-Public Function AsEquatable(ByVal x) As IEquatable
+Public Function AsEquatable(ByVal x) As Equatable
     
     CheckEquatable x
     Set AsEquatable = x

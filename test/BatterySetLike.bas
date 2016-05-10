@@ -2,11 +2,11 @@ Attribute VB_Name = "BatterySetLike"
 Option Explicit
 Private Assert As New Rubberduck.AssertClass
 
-Public Sub Battery(ByVal setA As ISetLike, _
-        ByVal setB As ISetLike, _
-        ByVal setC As ISetLike, _
-        ByVal emptySet As ISetLike, _
-        ByVal super As ISetLike)
+Public Sub Battery(ByVal setA As SetLike, _
+        ByVal setB As SetLike, _
+        ByVal setC As SetLike, _
+        ByVal emptySet As SetLike, _
+        ByVal super As SetLike)
 
     IdentityLaw setA, super, emptySet
     DomainLaw setA, super, emptySet
@@ -17,7 +17,7 @@ Public Sub Battery(ByVal setA As ISetLike, _
 
 End Sub
 
-Private Sub IdentityLaw(ByVal setA As ISetLike, ByVal super As ISetLike, ByVal emptySet As ISetLike)
+Private Sub IdentityLaw(ByVal setA As SetLike, ByVal super As SetLike, ByVal emptySet As SetLike)
 
     ' A U 0 = A
     Assert.IsTrue Equals(setA.Union(emptySet), setA)
@@ -25,7 +25,7 @@ Private Sub IdentityLaw(ByVal setA As ISetLike, ByVal super As ISetLike, ByVal e
     Assert.IsTrue Equals(setA.Intersect(super), setA)
     
 End Sub
-Private Sub DomainLaw(ByVal setA As ISetLike, ByVal super As ISetLike, ByVal emptySet As ISetLike)
+Private Sub DomainLaw(ByVal setA As SetLike, ByVal super As SetLike, ByVal emptySet As SetLike)
 
     ' A u U = U
     Assert.IsTrue Equals(setA.Union(super), super)
@@ -33,7 +33,7 @@ Private Sub DomainLaw(ByVal setA As ISetLike, ByVal super As ISetLike, ByVal emp
     Assert.IsTrue Equals(setA.Intersect(emptySet), emptySet)
 
 End Sub
-Private Sub IdempotentLaw(ByVal setA As ISetLike)
+Private Sub IdempotentLaw(ByVal setA As SetLike)
 
     ' A u A = A
     Assert.IsTrue Equals(setA.Union(setA), setA)
@@ -41,7 +41,7 @@ Private Sub IdempotentLaw(ByVal setA As ISetLike)
     Assert.IsTrue Equals(setA.Intersect(setA), setA)
 
 End Sub
-Private Sub CommutativeLaw(ByVal setA As ISetLike, ByVal setB As ISetLike)
+Private Sub CommutativeLaw(ByVal setA As SetLike, ByVal setB As SetLike)
 
     ' A u B = B u A
     Assert.IsTrue Equals(setA.Union(setB), setB.Union(setA))
@@ -49,44 +49,44 @@ Private Sub CommutativeLaw(ByVal setA As ISetLike, ByVal setB As ISetLike)
     Assert.IsTrue Equals(setA.Intersect(setB), setB.Intersect(setA))
 
 End Sub
-Private Sub AssociatveLaw(ByVal setA As ISetLike, ByVal setB As ISetLike, ByVal setC As ISetLike)
+Private Sub AssociatveLaw(ByVal setA As SetLike, ByVal setB As SetLike, ByVal setC As SetLike)
 
     ' (A u B) u C = A u (B u C)
-    Dim lhsLaw1 As IEquatable
+    Dim lhsLaw1 As Equatable
     Set lhsLaw1 = setA.Union(setB).Union(setC)
 
-    Dim rhsLaw1 As IEquatable
+    Dim rhsLaw1 As Equatable
     Set rhsLaw1 = setA.Union(setB.Union(setC))
 
     Assert.IsTrue Equals(lhsLaw1, rhsLaw1)
 
     ' (A n B) n C = A n (B n C)
-    Dim lhsLaw2 As IEquatable
+    Dim lhsLaw2 As Equatable
     Set lhsLaw2 = setA.Intersect(setB).Intersect(setC)
 
-    Dim rhsLaw2 As IEquatable
+    Dim rhsLaw2 As Equatable
     Set rhsLaw2 = setA.Intersect(setB.Intersect(setC))
 
     Assert.IsTrue Equals(lhsLaw2, rhsLaw2)
 
 End Sub
-Private Sub DistributiveLaw(ByVal setA As ISetLike, ByVal setB As ISetLike, ByVal setC As ISetLike)
+Private Sub DistributiveLaw(ByVal setA As SetLike, ByVal setB As SetLike, ByVal setC As SetLike)
 
     ' A u (B n C) = (A u B) n (A u C)
-    Dim lhsLaw1 As IEquatable
+    Dim lhsLaw1 As Equatable
     Set lhsLaw1 = setA.Union(setB.Intersect(setC))
 
-    Dim rhsLaw1 As IEquatable
+    Dim rhsLaw1 As Equatable
     Set rhsLaw1 = setA.Union(setB).Intersect(setA.Union(setC))
 
     Assert.IsTrue Equals(lhsLaw1, rhsLaw1)
 
 
     ' A n (B u C) = (A n B) u (A n C)
-    Dim lhsLaw2 As IEquatable
+    Dim lhsLaw2 As Equatable
     Set lhsLaw2 = setA.Intersect(setB.Union(setC))
 
-    Dim rhsLaw2 As IEquatable
+    Dim rhsLaw2 As Equatable
     Set rhsLaw2 = setA.Intersect(setB).Union(setA.Intersect(setC))
 
     Assert.IsTrue Equals(lhsLaw2, rhsLaw2)

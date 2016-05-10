@@ -1,4 +1,4 @@
-﻿# Build.ps1
+# Build.ps1
 #
 # Collects VBEX files into an office add-in file
 #
@@ -47,3 +47,5 @@ ForEach ($build In $buildRefs.Keys) {
     $refs = $buildRefs[$build]
     & "$buildScript" "$path" $files $refs
 }
+
+& (Join-Path "$scriptRoot" "Close-All-Of.ps1") "$officeApp"

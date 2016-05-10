@@ -1,22 +1,22 @@
 Attribute VB_Name = "defApply"
 Option Explicit
 
-Public Function Compose(ByVal outer As IApplicable, ByVal inner As IApplicable) As IApplicable
+Public Function Compose(ByVal outer As Applicable, ByVal inner As Applicable) As Applicable
 
     Set Compose = Composed.Make(outer, inner)
 
 End Function
-Public Function AndThen(ByVal inner As IApplicable, ByVal outer As IApplicable) As IApplicable
+Public Function AndThen(ByVal inner As Applicable, ByVal outer As Applicable) As Applicable
 
     Set AndThen = Composed.Make(outer, inner)
 
 End Function
-Public Function AsPartial(ByVal f As IApplicable, ByRef args() As Variant) As IApplicable
+Public Function AsPartial(ByVal f As Applicable, ByRef args() As Variant) As Applicable
 
     Set AsPartial = Partial.Make(f, args)
 
 End Function
-Public Function AsDelay(ByVal f As IApplicable, ByRef args() As Variant) As IDelayed
+Public Function AsDelay(ByVal f As Applicable, ByRef args() As Variant) As Delayed
 
     Set AsDelay = ByName.Make(f, args)
 

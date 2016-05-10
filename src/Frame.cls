@@ -12,62 +12,51 @@ Option Explicit
 ' Frame
 ' =====
 '
-' Wrapper for a IIterable with mutable bounds
+' Wrapper for a Linear with mutable bounds
 '
 ' Copywrite (C) 2014 Philip Wales
 ' This file (Frame.cls) is distributed under the GPL-3.0 license
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
-Implements IShowable
-Implements IIterable
+Implements Showable
+Implements Linear
 '
 ' Private Members
 ' ---------------
 '
-Private pIterable As IIterable
+Private pLinearSequence As Linear
 Private pLower As Long
 Private pUpper As Long
 '
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal iterable As IIterable, _
+Public Function Make(ByVal linSeq As Linear, _
         ByVal lower As Long, ByVal upper As Long) As Frame
     
     Dim result As New Frame
-    Set result.Target = iterable
-    result.SetLowerBound lower
-    result.SetUpperBound upper
-
+    result.Inject linSeq, lower, upper
     Set Make = result
 
 End Function
-Public Function FromLeft(ByVal iterable As IIterable, _
+Public Function FromLeft(ByVal linSeq As Linear, _
         ByVal upper As Long) As Frame
 
-    Set FromLeft = Make(iterable, iterable.LowerBound, upper)
+    Set FromLeft = Make(linSeq, linSeq.LowerBound, upper)
 
 End Function
-Public Function FromRight(ByVal iterable As IIterable, _
+Public Function FromRight(ByVal linSeq As Linear, _
         ByVal lower As Long) As Frame
 
-    Set FromRight = Make(iterable, lower, iterable.UpperBound)
+    Set FromRight = Make(linSeq, lower, linSeq.UpperBound)
 
 End Function
-Friend Property Set Target(ByVal iterable As IIterable)
+Friend Sub Inject(ByVal linSeq As Linear, ByVal lower As Long, ByVal upper As Long)
 
-    Set pIterable = iterable
-
-End Property
-Friend Sub SetLowerBound(ByVal lower As Long)
-
-    CheckIndexRange pIterable, "Item", lower
+    CheckIndexRange pLinearSequence, "Item", lower
+    CheckIndexRange pLinearSequence, "Item", upper
+    Set pLinearSequence = linSeq
     pLower = lower
-
-End Sub
-Friend Sub SetUpperBound(ByVal upper As Long)
-
-    CheckIndexRange pIterable, "Item", upper
     pUpper = upper
 
 End Sub
@@ -75,9 +64,9 @@ End Sub
 ' Public Methods
 ' --------------
 '
-Public Function ConvertTo(ByVal seed As IBuildable) As IBuildable
+Public Function ConvertTo(ByVal seed As Buildable) As Buildable
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
 
     Dim i As Long
@@ -88,12 +77,12 @@ Public Function ConvertTo(ByVal seed As IBuildable) As IBuildable
     Set ConvertTo = result
 
 End Function
-Public Function MapTo(ByVal seed As IBuildable, ByVal op As IApplicable) As IBuildable
+Public Function MapTo(ByVal seed As Buildable, ByVal op As Applicable) As Buildable
 
     Set MapTo = defMap.IterableMap(seed, op, Me)
 
 End Function
-Public Function FlatMapTo(ByVal seed As IBuildable, ByVal op As IApplicable) As IBuildable
+Public Function FlatMapTo(ByVal seed As Buildable, ByVal op As Applicable) As Buildable
 
     Set FlatMapTo = defMap.IterableBind(seed, op, Me)
     
@@ -112,14 +101,14 @@ Attribute NewEnum.VB_UserMemId = -4
 
 End Property
 ''
-' IIterable
+' Linear
 ' ---------
 '
 Public Property Get Item(ByVal index As Long) As Variant
 Attribute Item.VB_UserMemId = 0
 
     CheckIndexRange Me, "Item", index
-    Assign Item, pIterable.Item(index + pLower)
+    Assign Item, pLinearSequence.Item(index + pLower)
     
 End Property
 Public Function LowerBound() As Long
@@ -136,62 +125,62 @@ Public Function UpperBound() As Long
     
 End Function
 
-Private Function IIterable_Item(ByVal index As Long) As Variant
+Private Function Linear_Item(ByVal index As Long) As Variant
 
-    Assign IIterable_Item, Item(index)
-
-End Function
-Private Function IIterable_LowerBound() As Long
-
-    IIterable_LowerBound = LowerBound
+    Assign Linear_Item, Item(index)
 
 End Function
-Private Function IIterable_UpperBound() As Long
+Private Function Linear_LowerBound() As Long
 
-    IIterable_UpperBound = UpperBound
+    Linear_LowerBound = LowerBound
+
+End Function
+Private Function Linear_UpperBound() As Long
+
+    Linear_UpperBound = UpperBound
 
 End Function
 Public Function ToArray() As Variant()
 
-    ToArray = defIterable.ToArray(Me)
+    ToArray = defLinear.ToArray(Me)
 
 End Function
-Private Function IIterable_ToArray() As Variant()
+Private Function Linear_ToArray() As Variant()
 
-    IIterable_ToArray = ToArray()
+    Linear_ToArray = ToArray()
 
 End Function
 Public Function ToCollection() As Collection
 
-    Set ToCollection = defIterable.ToCollection(Me)
+    Set ToCollection = defLinear.ToCollection(Me)
 
 End Function
-Private Function IIterable_ToCollection() As Collection
+Private Function Linear_ToCollection() As Collection
 
-    Set IIterable_ToCollection = ToCollection
+    Set Linear_ToCollection = ToCollection
     
 End Function
-Public Function ToBuildable(ByVal seed As IBuildable) As IBuildable
+Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set ToBuildable = defIterable.ToBuildable(seed, Me)
+    Set ToBuildable = defLinear.ToBuildable(seed, Me)
 
 End Function
-Private Function IIterable_ToBuildable(ByVal seed As IBuildable) As IBuildable
+Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set IIterable_ToBuildable = ToBuildable(seed)
+    Set Linear_ToBuildable = ToBuildable(seed)
 
 End Function
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
 
-    Show = defShow.ParamShowableObject(Me, pIterable, pLower, pUpper)
+    Show = defShow.ParamShowableObject(Me, pLinearSequence, pLower, pUpper)
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
     
 End Function

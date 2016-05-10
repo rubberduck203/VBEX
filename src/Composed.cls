@@ -16,41 +16,36 @@ Attribute VB_Exposed = True
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 Option Explicit
-Implements IShowable
-Implements IApplicable
+Implements Showable
+Implements Applicable
 '
 ' Private Members
 ' ---------------
 '
-Private pInnerOp As IApplicable
-Private pOuterOp As IApplicable
+Private pInnerOp As Applicable
+Private pOuterOp As Applicable
 '
 ' Constructors
 ' ------------
 '
-Public Function Make(ByVal outerOp As IApplicable, _
-        ByVal innerOp As IApplicable) As Composed
+Public Function Make(ByVal outerOp As Applicable, _
+        ByVal innerOp As Applicable) As Composed
 
     Dim result As New Composed
-    Set result.inner = innerOp
-    Set result.outer = outerOp
+    result.Inject innerOp, outerOp
     Set Make = result
 
 End Function
-Friend Property Set inner(ByVal innerOp As IApplicable)
+Friend Sub Inject(ByVal innerOp As Applicable, ByVal outerOp As Applicable)
 
     Set pInnerOp = innerOp
-
-End Property
-Friend Property Set outer(ByVal outerOp As IApplicable)
-
     Set pOuterOp = outerOp
 
-End Property
+End Sub
 '
-' IApplicable
+' Applicable
 ' -----------
-' 
+'
 ' ### Meaningful
 '
 Public Function ApplyOnArray(ByRef args() As Variant) As Variant
@@ -61,9 +56,9 @@ End Function
 '
 ' ### Embedded
 '
-Private Function IApplicable_ApplyOnArray(ByRef args() As Variant) As Variant
+Private Function Applicable_ApplyOnArray(ByRef args() As Variant) As Variant
 
-    Assign IApplicable_ApplyOnArray, ApplyOnArray(args)
+    Assign Applicable_ApplyOnArray, ApplyOnArray(args)
    
 End Function
 '! default member
@@ -73,73 +68,73 @@ Attribute Apply.VB_UserMemId = 0
     Assign Apply, ApplyOnArray(cast.CArray(args))
 
 End Function
-Private Function IApplicable_Apply(ParamArray args() As Variant) As Variant
+Private Function Applicable_Apply(ParamArray args() As Variant) As Variant
 
-    Assign IApplicable_Apply, ApplyOnArray(CArray(args))
+    Assign Applicable_Apply, ApplyOnArray(CArray(args))
    
 End Function
-Public Function Compose(ByVal f As IApplicable) As IApplicable
+Public Function Compose(ByVal f As Applicable) As Applicable
 
     Set Compose = defApply.Compose(Me, f)
 
 End Function
-Private Function IApplicable_Compose(ByVal f As IApplicable) As IApplicable
+Private Function Applicable_Compose(ByVal f As Applicable) As Applicable
 
-    Set IApplicable_Compose = Compose(f)
+    Set Applicable_Compose = Compose(f)
 
 End Function
-Public Function AndThen(ByVal g As IApplicable) As IApplicable
+Public Function AndThen(ByVal g As Applicable) As Applicable
 
     Set AndThen = defApply.AndThen(Me, g)
 
 End Function
-Private Function IApplicable_AndThen(ByVal g As IApplicable) As IApplicable
+Private Function Applicable_AndThen(ByVal g As Applicable) As Applicable
 
-    Set IApplicable_AndThen = AndThen(g)
+    Set Applicable_AndThen = AndThen(g)
 
 End Function
-Public Function Partial(ParamArray args() As Variant) As IApplicable
+Public Function Partial(ParamArray args() As Variant) As Applicable
 
     Set Partial = AsPartial(CArray(args))
 
 End Function
-Private Function IApplicable_Partial(ParamArray args() As Variant) As IApplicable
+Private Function Applicable_Partial(ParamArray args() As Variant) As Applicable
 
-    Set IApplicable_Partial = AsPartial(Carray(args)
-
-End Function
-Public Function AsPartial(ParamArray args() As Variant) As IApplicable
-
-    Set AsPartial = defApply.AsPartial(args)
+    Set Applicable_Partial = AsPartial(CArray(args))
 
 End Function
-Private Function IApplicable_AsPartial(ByRef args() As Variant) As IApplicable
+Public Function AsPartial(ByRef args() As Variant) As Applicable
 
-    Set IApplicable_AsPartial = AsPartial(args)
-
-End Function
-Public Function Delay(ParamArray args() As Variant) As IDelayed
-
-    Set Delay = AsDelay(CArray(args))
+    Set AsPartial = defApply.AsPartial(Me, args)
 
 End Function
-Private Function IApplicable_Delay(ParamArray args() As Variant) As IDelayed
+Private Function Applicable_AsPartial(ByRef args() As Variant) As Applicable
 
-    Set IApplicable_Delay = AsDelay(CArray(args))
-
-End Function
-Public Function AsDelay(ParamArray args() As Variant) As IDelayed
-
-    Set AsDelay = defDelay.AsDelay(args)
+    Set Applicable_AsPartial = AsPartial(args)
 
 End Function
-Private Function IApplicable_AsDelay(ByRef args() As Variant) As IDelayed
+Public Function delay(ParamArray args() As Variant) As Delayed
 
-    Set IApplicable_AsDelay = AsDelay(args)
+    Set delay = AsDelay(CArray(args))
+
+End Function
+Private Function Applicable_Delay(ParamArray args() As Variant) As Delayed
+
+    Set Applicable_Delay = AsDelay(CArray(args))
+
+End Function
+Public Function AsDelay(ByRef args() As Variant) As Delayed
+
+    Set AsDelay = defApply.AsDelay(Me, args)
+
+End Function
+Private Function Applicable_AsDelay(ByRef args() As Variant) As Delayed
+
+    Set Applicable_AsDelay = AsDelay(args)
 
 End Function
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -147,8 +142,8 @@ Public Function Show() As String
     Show = defShow.ParamShowableObject(Me, pOuterOp, pInnerOp)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

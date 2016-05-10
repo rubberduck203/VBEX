@@ -18,7 +18,7 @@ Option Explicit
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
 '
-Implements IShowable
+Implements Showable
 '
 ' Private Members
 ' ---------------
@@ -30,11 +30,11 @@ Private pPair As Tuple
 Public Function Make(ByVal k, ByVal v) As Assoc
 
     Dim result As New Assoc
-    result.AssignKeyVal k, v
+    result.Inject k, v
     Set Make = result
 
 End Function
-Friend Sub AssignKeyVal(ByVal k, ByVal v)
+Friend Sub Inject(ByVal k, ByVal v)
 
     Set pPair = Tuple.Pack(k, v)
     
@@ -57,8 +57,8 @@ Public Function Show() As String
     Show = defShow.Show(key) & " -> " & defShow.Show(Value)
 
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

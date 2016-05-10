@@ -26,7 +26,7 @@ Public Const CURDIR As String = "."
 ' See <http://msdn.microsoft.com/en-us/library/dk008ty4(v=vs.90).aspx>
 ' for more types
 Public Function Exists(ByVal filePath As String, _
-        Optional ByVal vbType As Integer = vbDirectory) As Boolean
+        Optional ByVal vbType As VbFileAttribute = vbDirectory) As Boolean
 
     If Not filePath = vbNullString Then
     
@@ -55,7 +55,7 @@ End Function
 ' returns a List of strings that are paths of subitems in root which
 ' match pat.
 Public Function SubItems(ByVal Root As String, Optional ByVal pat As String = ALLPAT, _
-        Optional ByVal vbType As Integer = vbDirectory) As List
+        Optional ByVal vbType As VbFileAttribute = vbDirectory) As List
                   
     Set SubItems = List.Create
     
@@ -98,11 +98,13 @@ Public Function SubFolders(ByVal Root As String, Optional ByVal pat As String = 
         
     End If
 
-    Set SubFolders = result.FilterNot(InternalDelegate.Make("FileExists"))
+    ' Do not use FilterNot(FileExists) as an optimization
+    ' it will crash on illegal file names
+    Set SubFolders = result.Filter(InternalDelegate.Make("FolderExists"))
     
 End Function
 Public Function Find(ByVal Root As String, Optional ByVal pat As String = "*", _
-        Optional ByVal vbType As Integer = vbNormal) As List
+        Optional ByVal vbType As VbFileAttribute = vbNormal) As List
 
     Dim result As List
     Set result = List.Create
@@ -113,7 +115,8 @@ Public Function Find(ByVal Root As String, Optional ByVal pat As String = "*", _
     
 End Function
 Private Sub FindRecurse(ByVal Root As String, ByRef foundItems As List, _
-        Optional pat As String = "*", Optional ByVal vbType As Integer = vbNormal)
+        Optional pat As String = "*", _
+        Optional ByVal vbType As VbFileAttribute = vbNormal)
     
     Dim folder As Variant
     For Each folder In SubFolders(Root)
@@ -123,7 +126,8 @@ Private Sub FindRecurse(ByVal Root As String, ByRef foundItems As List, _
     foundItems.Extend SubItems(Root, pat, vbType)
     
 End Sub
-Public Function Glob(ByVal pattern As String, Optional ByVal vbType As Integer = vbNormal) As List
+Public Function Glob(ByVal pattern As String, _
+    Optional ByVal vbType As VbFileAttribute = vbNormal) As List
     
     Dim Root As String
     Root = Path.LongestRoot(pattern)
@@ -135,7 +139,7 @@ Public Function Glob(ByVal pattern As String, Optional ByVal vbType As Integer =
     
 End Function
 Private Function GlobRecurse(ByVal Root As String, ByRef patterns() As String, _
-        ByVal index As Integer, ByVal vbType As Integer) As List
+        ByVal index As Integer, ByVal vbType As VbFileAttribute) As List
     
     Dim result As List
     

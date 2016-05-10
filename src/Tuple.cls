@@ -15,8 +15,8 @@ Option Explicit
 '
 ' Implementation of Tuple in VB
 '
-Implements IShowable
-Implements IEquatable
+Implements Showable
+Implements Equatable
 '
 ' Private Members
 ' ---------------
@@ -103,13 +103,13 @@ Public Function Implode(ByRef arr) As Tuple
     Dim a()
     a = cast.CArray(arr)
     
-    Dim size As Long
-    size = ArraySize(a)
+    Dim Size As Long
+    Size = ArraySize(a)
     
-    If Not ((IsEmpty(arr)) Or (size = -1)) Then
+    If Not ((IsEmpty(arr)) Or (Size = -1)) Then
         
         Dim newArray()
-        ReDim newArray(0 To size)
+        ReDim newArray(0 To Size)
         
         CopyArray newArray, a
         result.Contain newArray
@@ -124,10 +124,10 @@ End Function
 ''
 ' Zip, create a list of tuples...
 ' TODO: use param array instead of just 2
-Public Function Zip(ByVal seed As IBuildable, ByVal xs As IIterable, _
-        ByVal ys As IIterable) As IBuildable
+Public Function Zip(ByVal seed As Buildable, ByVal xs As Linear, _
+        ByVal ys As Linear) As Buildable
 
-    Dim result As IBuildable
+    Dim result As Buildable
     Set result = seed.MakeEmpty
 
     Dim lower As Long
@@ -195,7 +195,7 @@ Public Property Get Count() As Long
     
 End Property
 '
-' ### IEquatable
+' ### Equatable
 '
 Public Function Equals(ByVal other) As Boolean
 
@@ -217,22 +217,22 @@ Public Function Equals(ByVal other) As Boolean
     Equals = True
     
 End Function
-Private Function IEquatable_Equals(ByVal other) As Boolean
+Private Function Equatable_Equals(ByVal other) As Boolean
 
-    IEquatable_Equals = Equals(other)
+    Equatable_Equals = Equals(other)
     
 End Function
 '
 '
-' ### IShowable
+' ### Showable
 '
 Public Function Show() As String
 
     Show = defShow.ShowableObject(Me, pArray)
     
 End Function
-Public Function IShowable_Show() As String
+Public Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
     
 End Function

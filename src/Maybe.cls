@@ -21,9 +21,9 @@ Option Explicit
 ' checking if a method returned a value or not.
 '
 '
-Implements IEquatable
-Implements IShowable
-Implements IMonadic
+Implements Equatable
+Implements Showable
+Implements Monadic
 '
 ' Private Members
 ' ---------------
@@ -36,7 +36,7 @@ Private pVar As Variant
 Public Function Some(ByVal x) As Maybe
     
     Dim result As New Maybe
-    result.AssignOpt x
+    result.Inject x
     Set Some = result
     
 End Function
@@ -55,11 +55,11 @@ Public Function MakeIf(ByVal pred As Boolean, ByVal x) As Maybe
     End If
     
 End Function
-Public Function Attempt(ByVal delayed As IDelayed) As Maybe
+Public Function Attempt(ByVal delay As Delayed) As Maybe
 
     Dim result As Maybe
     On Error GoTo Fail
-    Set result = Some(delayed.Evaluate())
+    Set result = Some(delay.Evaluate())
     On Error GoTo 0
 
 CleanExit:
@@ -75,7 +75,7 @@ End Function
 '
 ' ### Friend Methods
 '
-Friend Sub AssignOpt(ByVal x)
+Friend Sub Inject(ByVal x)
 
     Assign pVar, x
 
@@ -114,7 +114,7 @@ Public Function GetOrElse(ByVal other) As Variant
 
 End Function
 '
-' IEquatable
+' Equatable
 ' ----------
 '
 Public Function Equals(ByVal x) As Boolean
@@ -135,16 +135,16 @@ Public Function Equals(ByVal x) As Boolean
     End If
 
 End Function
-Private Function IEquatable_Equals(ByVal x) As Boolean
+Private Function Equatable_Equals(ByVal x) As Boolean
 
-    IEquatable_Equals = Equals(x)
+    Equatable_Equals = Equals(x)
 
 End Function
 '
-' IMonadic
+' Monadic
 ' --------
 '
-Public Function Bind(ByVal op As IApplicable) As Maybe
+Public Function Bind(ByVal op As Applicable) As Maybe
 
     Dim result As Maybe
     If IsSome Then
@@ -171,7 +171,7 @@ ErrHandler:
             Exceptions.BubbleError Me, "Bind", Err
     End Select
 End Function
-Public Function Map(ByVal op As IApplicable) As Maybe
+Public Function Map(ByVal op As Applicable) As Maybe
 
     Dim result As Maybe
     If IsSome Then
@@ -182,23 +182,23 @@ Public Function Map(ByVal op As IApplicable) As Maybe
     Set Map = result
     
 End Function
-Private Function IMonadic_Bind(ByVal op As IApplicable) As IMonadic
+Private Function Monadic_Bind(ByVal op As Applicable) As Monadic
 
-    Set IMonadic_Bind = Bind(op)
-
-End Function
-Private Function IMonadic_Map(ByVal op As IApplicable) As IMonadic
-
-    Set IMonadic_Map = Map(op)
+    Set Monadic_Bind = Bind(op)
 
 End Function
-Private Function IMonadic_Unit(ByVal x) As IMonadic
+Private Function Monadic_Map(ByVal op As Applicable) As Monadic
 
-    Set IMonadic_Unit = Some(x)
+    Set Monadic_Map = Map(op)
+
+End Function
+Private Function Monadic_Unit(ByVal x) As Monadic
+
+    Set Monadic_Unit = Some(x)
 
 End Function
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -213,8 +213,8 @@ Public Function Show() As String
     Show = result
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

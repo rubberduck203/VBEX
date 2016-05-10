@@ -24,10 +24,10 @@ Attribute VB_Exposed = True
 '
 Option Explicit
 
-Implements IEquatable
-Implements IShowable
-Implements ISetLike
-Implements IBuildable
+Implements Equatable
+Implements Showable
+Implements SetLike
+Implements Buildable
 '
 ' Public Members
 ' --------------
@@ -102,22 +102,22 @@ End Function
 '
 ' ### Functional Constructors
 '
-Public Function Map(ByVal op As IApplicable) As SortedSet
+Public Function Map(ByVal op As Applicable) As SortedSet
     
     Set Map = defMap.TransversableMap(SortedSet, op, pList)
     
 End Function
-Public Function FlatMap(ByVal op As IApplicable) As SortedSet
+Public Function FlatMap(ByVal op As Applicable) As SortedSet
     
     Set FlatMap = defMap.TransversableBind(SortedSet, op, pList)
     
 End Function
-Public Function Filter(ByVal pred As IApplicable) As SortedSet
+Public Function Filter(ByVal pred As Applicable) As SortedSet
     
     Set Filter = defFilter.Filter(SortedSet, pred, pList)
     
 End Function
-Public Function FilterNot(ByVal pred As IApplicable) As SortedSet
+Public Function FilterNot(ByVal pred As Applicable) As SortedSet
     
     Set FilterNot = defFilter.FilterNot(SortedSet, pred, pList)
     
@@ -217,25 +217,25 @@ End Sub
 ' ----------
 '
 '
-' ### IBuildable
+' ### Buildable
 '
-Private Function IBuildable_MakeEmpty() As IBuildable
+Private Function Buildable_MakeEmpty() As Buildable
 
-    Set IBuildable_MakeEmpty = Create()
+    Set Buildable_MakeEmpty = Create()
 
 End Function
-Private Sub IBuildable_AddItem(ByVal element)
+Private Sub Buildable_AddItem(ByVal element)
 
     Add element
 
 End Sub
-Private Sub IBuildable_AddItems(ByVal sequence)
+Private Sub Buildable_AddItems(ByVal sequence)
 
     Extend sequence
     
 End Sub
 '
-' ### ISetLike
+' ### SetLike
 '
 Public Function Contains(ByVal sought) As Boolean
 
@@ -255,134 +255,134 @@ Public Function Count() As Long
     Count = pList.Count
 
 End Function
-Public Function IsDisJoint(ByVal other As ISetLike) As Boolean
+Public Function IsDisJoint(ByVal other As SetLike) As Boolean
 
     IsDisJoint = defSetLike.IsDisJoint(Me, other)
     
 End Function
-Public Function IsSubSetOf(ByVal other As ISetLike) As Boolean
+Public Function IsSubSetOf(ByVal other As SetLike) As Boolean
     
     IsSubSetOf = defSetLike.IsSubSetOf(Me, other)
     
 End Function
-Public Function IsProperSubSetOf(ByVal other As ISetLike) As Boolean
+Public Function IsProperSubSetOf(ByVal other As SetLike) As Boolean
 
     IsProperSubSetOf = defSetLike.IsProperSubSetOf(Me, other)
     
 End Function
-Public Function IsSuperSetOf(ByVal other As ISetLike) As Boolean
+Public Function IsSuperSetOf(ByVal other As SetLike) As Boolean
 
     IsSuperSetOf = defSetLike.IsSuperSetOf(Me, other)
     
 End Function
-Public Function IsProperSuperSetOf(ByVal other As ISetLike) As Boolean
+Public Function IsProperSuperSetOf(ByVal other As SetLike) As Boolean
 
     IsProperSuperSetOf = defSetLike.IsProperSuperSetOf(Me, other)
     
 End Function
-Public Function Union(ByVal other As ISetLike) As SortedSet
+Public Function Union(ByVal other As SetLike) As SortedSet
 
     Set Union = defSetLike.Union(SortedSet, Me, other)
     
 End Function
-Public Function Intersect(ByVal other As ISetLike) As SortedSet
+Public Function Intersect(ByVal other As SetLike) As SortedSet
 
     Set Intersect = defSetLike.Intersect(SortedSet, Me, other)
 
 End Function
-Public Function Difference(ByVal other As ISetLike) As SortedSet
+Public Function Difference(ByVal other As SetLike) As SortedSet
     
     Set Difference = defSetLike.Difference(SortedSet, Me, other)
     
 End Function
-Public Function SymmetricDifference(ByVal other As ISetLike) As SortedSet
+Public Function SymmetricDifference(ByVal other As SetLike) As SortedSet
 
     Set SymmetricDifference = defSetLike.SymmetricDifference(SortedSet, Me, other)
     
 End Function
-Private Property Get ISetLike_Elements() As IUnknown
+Private Property Get SetLike_Elements() As IUnknown
     
-    Set ISetLike_Elements = Me.NewEnum
+    Set SetLike_Elements = Me.NewEnum
     
 End Property
-Private Function ISetLike_Contains(ByVal sought) As Boolean
+Private Function SetLike_Contains(ByVal sought) As Boolean
 
-    ISetLike_Contains = Contains(sought)
-
-End Function
-Private Function ISetLike_Count() As Long
-
-    ISetLike_Count = Count
+    SetLike_Contains = Contains(sought)
 
 End Function
-Private Function ISetLike_IsDisJoint(ByVal other As ISetLike) As Boolean
+Private Function SetLike_Count() As Long
 
-    ISetLike_IsDisJoint = IsDisJoint(other)
-
-End Function
-Private Function ISetLike_IsSubSetOf(ByVal other As ISetLike) As Boolean
-
-    ISetLike_IsSubSetOf = IsSubSetOf(other)
+    SetLike_Count = Count
 
 End Function
-Private Function ISetLike_IsProperSubSetOf(ByVal other As ISetLike) As Boolean
+Private Function SetLike_IsDisJoint(ByVal other As SetLike) As Boolean
 
-    ISetLike_IsProperSubSetOf = IsProperSubSetOf(other)
-
-End Function
-Private Function ISetLike_IsSuperSetOf(ByVal other As ISetLike) As Boolean
-
-    ISetLike_IsSuperSetOf = IsSuperSetOf(other)
+    SetLike_IsDisJoint = IsDisJoint(other)
 
 End Function
-Private Function ISetLike_IsProperSuperSetOf(ByVal other As ISetLike) As Boolean
+Private Function SetLike_IsSubSetOf(ByVal other As SetLike) As Boolean
 
-    ISetLike_IsProperSuperSetOf = IsProperSuperSetOf(other)
+    SetLike_IsSubSetOf = IsSubSetOf(other)
 
 End Function
-Private Function ISetLike_Union(ByVal other As ISetLike) As ISetLike
+Private Function SetLike_IsProperSubSetOf(ByVal other As SetLike) As Boolean
+
+    SetLike_IsProperSubSetOf = IsProperSubSetOf(other)
+
+End Function
+Private Function SetLike_IsSuperSetOf(ByVal other As SetLike) As Boolean
+
+    SetLike_IsSuperSetOf = IsSuperSetOf(other)
+
+End Function
+Private Function SetLike_IsProperSuperSetOf(ByVal other As SetLike) As Boolean
+
+    SetLike_IsProperSuperSetOf = IsProperSuperSetOf(other)
+
+End Function
+Private Function SetLike_Union(ByVal other As SetLike) As SetLike
     
-    Set ISetLike_Union = Union(other)
+    Set SetLike_Union = Union(other)
 
 End Function
-Private Function ISetLike_Intersect(ByVal other As ISetLike) As ISetLike
+Private Function SetLike_Intersect(ByVal other As SetLike) As SetLike
 
-    Set ISetLike_Intersect = Intersect(other)
-
-End Function
-Private Function ISetLike_Difference(ByVal other As ISetLike) As ISetLike
-
-    Set ISetLike_Difference = Difference(other)
+    Set SetLike_Intersect = Intersect(other)
 
 End Function
-Private Function ISetLike_SymmetricDifference(ByVal other As ISetLike) As ISetLike
+Private Function SetLike_Difference(ByVal other As SetLike) As SetLike
 
-    Set ISetLike_SymmetricDifference = SymmetricDifference(other)
+    Set SetLike_Difference = Difference(other)
+
+End Function
+Private Function SetLike_SymmetricDifference(ByVal other As SetLike) As SetLike
+
+    Set SetLike_SymmetricDifference = SymmetricDifference(other)
 
 End Function
 '
-' ### IEquatable
+' ### Equatable
 '
 Public Function Equals(ByVal other) As Boolean
 
     Equals = defSetLike.SetEquals(Me, other)
     
 End Function
-Private Function IEquatable_Equals(ByVal other) As Boolean
+Private Function Equatable_Equals(ByVal other) As Boolean
 
-    IEquatable_Equals = Equals(other)
+    Equatable_Equals = Equals(other)
     
 End Function
 '
-' ### IShowable
+' ### Showable
 '
 Public Function Show() As String
 
     Show = defShow.ShowableObject(Me, pList.ToArray)
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
     
 End Function

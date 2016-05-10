@@ -15,7 +15,7 @@ Option Explicit
 ' Establishes an ADODB connection to a source and provides a rich interface to
 ' that source.
 '
-Implements IShowable
+Implements Showable
 '
 ' Private Member
 ' --------------
@@ -65,13 +65,14 @@ Public Function ToExcel(ByVal filePath As String) As SqlConnection
 
 End Function
 Public Function ToMySql(ByVal server As String, ByVal db As String, _
-        ByVal username As String, ByVal passwd As String) As SqlConnection
+        ByVal username As String, ByVal passwd As String, _
+        ByVal vers As String) As SqlConnection
         
     Dim connectTemplate As String
-    connectTemplate = "DRIVER={MySQL ODBC 3.51 Driver}; SERVER={0}; DATABASE={1}; UID={2};PASSWORD={3}; OPTION=3"
+    connectTemplate = "DRIVER={MySQL ODBC {4} Driver}; SERVER={0}; DATABASE={1}; UID={2};PASSWORD={3}; OPTION=3"
 
     Dim connect As String
-    connect = Str.Format(connectTemplate, server, db, username, passwd)
+    connect = Str.Format(connectTemplate, server, db, username, passwd, vers)
     
     Set ToMySql = Make(connect)
     
@@ -106,11 +107,11 @@ End Property
 ' Interfaces
 ' ----------
 '
-' ### IShowable
+' ### Showable
 '
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = defShow.ParamShowableObject(Me, pConnection.ConnectionString)
+    Showable_Show = defShow.ParamShowableObject(Me, pConnection.ConnectionString)
 
 End Function
 '

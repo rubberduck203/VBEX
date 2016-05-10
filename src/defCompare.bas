@@ -14,21 +14,21 @@ Private Sub CheckComparable(ByVal x)
     
     If Not IsComparable(x) Then
         Dim msg As String
-        msg = defShow.Show(x) & " Is not a IComparable object"
+        msg = defShow.Show(x) & " Is not a Comparable object"
         TypeError "defCompare", "CheckComparable", msg
     End If
     
 End Sub
 Private Function IsComparable(ByVal x) As Boolean
 
-    IsComparable = (TypeOf x Is IComparable)
+    IsComparable = (TypeOf x Is Comparable)
 
 End Function
 '
 ' Public Functions
 ' ----------------
 '
-Public Function AsComparable(ByVal x) As IComparable
+Public Function AsComparable(ByVal x) As Comparable
     
     CheckComparable x
     Set AsComparable = x

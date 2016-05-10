@@ -39,7 +39,7 @@ Public Sub OnObjectTest()
     Set s2 = SortedSet.Create("a", "b", "c")
 
     Dim nc As OnObject
-    Set nc = OnObject.Make("Contains", VbMethod, 2)
+    Set nc = OnObject.Create("Contains", VbMethod, 2)
 
     BatteryApplicable.Battery nc, s1, True
     BatteryApplicable.Battery nc, s2, False

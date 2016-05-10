@@ -55,13 +55,13 @@ Public Sub LazyMapTestWithInternalDelegate()
     Dim root As Lazy
     Set root = Lazy.Create(InternalDelegate.Make("RootName"), "C:\Some\Path\Yo.txt")
 
-    Dim baser As IApplicable
+    Dim baser As Applicable
     Set baser = InternalDelegate.Make("BaseName")
 
     LazyMapTest root, baser, "Path"
 
 End Sub
-Private Sub LazyMapTest(ByVal initialLazy As Lazy, ByVal toMapWith As IApplicable, ByVal mappedResult)
+Private Sub LazyMapTest(ByVal initialLazy As Lazy, ByVal toMapWith As Applicable, ByVal mappedResult)
 
     Debug.Assert initialLazy.IsDelayed
 

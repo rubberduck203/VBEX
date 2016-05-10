@@ -7,7 +7,7 @@ Private Assert As New Rubberduck.AssertClass
 ' Iterable Battery
 ' ================
 '
-Public Sub Battery(ByVal itbl As IIterable)
+Public Sub Battery(ByVal itbl As Linear)
 
     LowerLTEQUpper itbl
     ItemInRange itbl
@@ -21,7 +21,7 @@ End Sub
 '
 ' ### Tests
 '
-Private Sub LowerLTEQUpper(ByVal itbl As IIterable)
+Private Sub LowerLTEQUpper(ByVal itbl As Linear)
 
     Dim lower As Long
     lower = itbl.LowerBound
@@ -39,7 +39,7 @@ Private Sub LowerLTEQUpper(ByVal itbl As IIterable)
     Assert.IsTrue TestPass, msg
 
 End Sub
-Private Sub ItemInRange(ByVal itbl As IIterable)
+Private Sub ItemInRange(ByVal itbl As Linear)
 
     Dim lower As Long
     lower = itbl.LowerBound
@@ -64,7 +64,7 @@ Fail:
     Resume CleanExit
     
 End Sub
-Private Sub ItemLTLower(ByVal itbl As IIterable)
+Private Sub ItemLTLower(ByVal itbl As Linear)
     
     Dim lower As Long
     lower = itbl.LowerBound
@@ -85,7 +85,7 @@ Pass:
     Assert.AreEqual Err.Number, CLng(9), msg
     
 End Sub
-Private Sub ItemGTUpper(ByVal itbl As IIterable)
+Private Sub ItemGTUpper(ByVal itbl As Linear)
 
     Dim upper As Long
     upper = itbl.UpperBound
@@ -109,7 +109,7 @@ End Sub
 '
 ' ### Helper Functions
 '
-Private Function GetRandomItem(ByVal itbl As IIterable, ByVal lower As Long, _
+Private Function GetRandomItem(ByVal itbl As Linear, ByVal lower As Long, _
         ByVal upper As Long) As Variant
     
     Dim ri As Long

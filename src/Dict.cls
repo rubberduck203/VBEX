@@ -18,7 +18,12 @@ Option Explicit
 ' This file (Dict.cls) is distributed under the GPL-3.0 license
 ' Obtain a copy of the GPL-3.0 license <http://opensource.org/licenses/GPL-3.0>
 '
-Implements IShowable
+Implements Showable
+' Should implement more Interfaces but this is the only mapping type yet.
+'
+' Public Members
+' --------------
+' None
 '
 ' Should implement more Interfaces but this is the only mapping type yet.
 '
@@ -37,7 +42,7 @@ Public Function Create(ParamArray assocs()) As Dict
     Set Create = FromAssocs(List.Copy(assocs))
     
 End Function
-Public Function FromLists(ByVal ks As IIterable, ByVal vs As IIterable) As Dict
+Public Function FromLists(ByVal ks As Linear, ByVal vs As Linear) As Dict
     Debug.Assert (ks.UpperBound = vs.UpperBound And _
         ks.LowerBound = vs.LowerBound) ' TODO: raise error
     
@@ -75,7 +80,6 @@ Public Function FromKeys(ByVal keySet as ISetLike, ByVal op As IApplicable) As D
     Next
 
     Set FromKeys = result
-
 End Function
 Public Function Copy(ByVal thatD As Dict) As Dict
 
@@ -139,6 +143,7 @@ Public Function Pair(ByVal k) As Assoc
     
 End Function
 '
+<<<<<<< HEAD
 ' ### Produce Dicts
 '
 Public Function MapValues(ByVal op As IApplicable) As Dict
@@ -147,17 +152,40 @@ Public Function MapValues(ByVal op As IApplicable) As Dict
     Dim key As Variant
     For Each key In pDict.keys
         result.Add key, op.Apply(pDict(key))
+=======
+' Produce Dicts
+' -------------
+'
+Public Function MapValues(ByVal op As Applicable) As Dict
+
+    Dim result As New Dict
+    Dim k
+    For Each k In pDict.Keys
+        result.Add k, op.Apply(pDict.Item(k))
+>>>>>>> 657e6ad39542e8f79bc640baf67c60ca2cd876a7
     Next
 
     Set MapValues = result
 
 End Function
 '
+<<<<<<< HEAD
 ' ### Produce Lists
+=======
+' FilterKeys
+' FilterValues
+' FilterNotKeys
+' FilterNotValues
 '
-Public Function keys() As List
+' TODO: is Dict SetLike?
+'
+' Produce Lists
+' -------------
+>>>>>>> 657e6ad39542e8f79bc640baf67c60ca2cd876a7
+'
+Public Function Keys() As List
 
-    Set keys = List.Copy(pDict.keys)
+    Set Keys = List.Copy(pDict.Keys)
     
 End Function
 Public Function Values() As List
@@ -171,7 +199,7 @@ Public Function Pairs() As List
     Set result = List.Create
     
     Dim k
-    For Each k In keys
+    For Each k In Keys
         result.Append Pair(k)
     Next
     
@@ -207,7 +235,7 @@ End Function
 Public Sub Update(ByVal other As Dict)
 
     Dim k
-    For Each k In other.keys
+    For Each k In other.Keys
         pDict(k) = other(k)
     Next
     
@@ -218,7 +246,7 @@ Public Sub Clear()
     
 End Sub
 '
-' IShowable
+' Showable
 ' ---------
 '
 Public Function Show() As String
@@ -226,8 +254,8 @@ Public Function Show() As String
     Show = defShow.ShowableObject(Me, Pairs.ToArray)
     
 End Function
-Private Function IShowable_Show() As String
+Private Function Showable_Show() As String
 
-    IShowable_Show = Show
+    Showable_Show = Show
 
 End Function

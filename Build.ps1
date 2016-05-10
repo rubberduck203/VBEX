@@ -4,13 +4,21 @@
 #
 # Copywrite (C) 2015 Philip Wales
 #
+
 Param(
-	[String]$buildPath,
-	[System.Array]$sourceFiles,
-	[System.Array]$references
+    [String]$buildPath,
+    [System.Array]$sourceFiles,
+    [System.Array]$references
 )
 
-function main {
+$scriptRoot = if ($PSVersionTable.PSVersion.Major -ge 3) {
+    $PSScriptRoot
+} else {
+    Split-Path $MyInvocation.MyCommand.Path -Parent
+}
+$display = (Join-Path $scriptRoot "Build-Display.ps1")
+
+function Build {
 
     $fileExt = [System.IO.Path]::GetExtension($buildPath)
     $officeCOM = switch -wildcard ($fileExt.ToLower()) {
@@ -23,6 +31,7 @@ function main {
     $srcAddin = (BuildExcelAddin $officeCOM $sourceFiles $references $buildPath)
     $officeCOM.Quit()
 }
+
 function BuildExcelAddin($officeCOM, 
                     [System.Array] $moduleFiles, 
                     [System.Array] $references,
@@ -37,6 +46,7 @@ function BuildExcelAddin($officeCOM,
     $newFile.SaveAs($outputPath, 55)
     return $newFile
 }
+
 function BuildAccessAddin($officeCOM, [System.Array] $moduleFiles, 
         [System.Array] $references, [String] $outputPath) {
 
@@ -47,38 +57,39 @@ function BuildAccessAddin($officeCOM, [System.Array] $moduleFiles,
     
     return $newDB
 }
+
 function BuildVBProject($prj, [String] $name, [System.Array] $moduleFiles,
         [System.Array] $references) {
     
     $prj.Name = $name
-    Write-Host "=> " -ForeGround Blue -noNewLine
-    Write-Host "Building VBProject $name`:"
+    & "$display" 1 "Building VBProject $name`:"
     $moduleCount = $moduleFiles.length
-    Write-Host "==> " -ForeGround Green -noNewLine
-    Write-Host "Importing $moduleCount Modules:"
+    & "$display" 2 "Importing $moduleCount Modules:"
     ForEach($moduleFile in $modulefiles) {
-        Write-Host "   -> " -ForeGround Yellow -noNewLine 
-        Write-Host "$moduleFile"
+        & "$display" 3 "$moduleFile"
         $prj.VBComponents.Import($moduleFile)
     }
     $refCount = $references.length
     Write-Host "==> " -ForeGround Green -noNewLine
     Write-Host "Linking $refCount References:"
     ForEach($reference in $references) {
-        Write-Host "   -> " -ForeGround Yellow -noNewLine
-        Write-Host "$reference"
+        & "$display" 3 "$reference"
         $prj.References.AddFromFile( $reference ) 
     }
 }
+
 function dosEOLFolder([System.Array] $textFiles) {
     $count = $textFiles.length
     Write-Host "Converting $count files to CRLF"
     $textFiles | ForEach-Object { dosEOL $_ }
 }
+
 function dosEOL([String] $textFile) {
     $tempOut = "$textFile-CRLF"
     Get-Content $textFile | Set-Content $tempOut
     Remove-Item $textFile
     Move-Item $tempOut $textFile
 }
-main # entry point
+
+Build #entry point
+
