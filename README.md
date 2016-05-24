@@ -81,8 +81,10 @@ VBEX is not a normal VBA library, before you start using you should understand t
 All public classes have a predeclared instance of that class called the "predeclared object".
   - The predeclared object has the same name as the class, _e.g._
 
-      Dim xs As List ' word "List" as a type
-      Set xs = List.Create(1, 2, 3) ' word "List" here is the predeclared object
+```
+Dim xs As List ' word "List" as a type
+Set xs = List.Create(1, 2, 3) ' word "List" here is the predeclared object
+```
 
   - All creatable classes are created from the predeclared object.
   - Predeclared objects of mutable classes can be mutated, but there is no reason for one to ever do so.
