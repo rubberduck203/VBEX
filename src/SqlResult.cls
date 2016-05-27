@@ -186,7 +186,7 @@ Private Function Linear_UpperBound() As Long
 End Function
 Public Function ToArray() As Variant()
 
-    ToArray = defLinear.ToArray(Me)
+    ToArray = defIterable.ToArray(Me)
 
 End Function
 Private Function Linear_ToArray() As Variant()
@@ -196,7 +196,7 @@ Private Function Linear_ToArray() As Variant()
 End Function
 Public Function ToCollection() As Collection
 
-    Set ToCollection = defLinear.ToCollection(Me)
+    Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
 Private Function Linear_ToCollection() As Collection
@@ -206,7 +206,7 @@ Private Function Linear_ToCollection() As Collection
 End Function
 Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set ToBuildable = defLinear.ToBuildable(seed, Me)
+    Set ToBuildable = defIterable.ToBuildable(seed, Me)
 
 End Function
 Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable

@@ -57,7 +57,7 @@ End Sub
 Private Sub RaiseNotSequenceError(ByVal method As String, ByVal scalar As Variant)
 
     Dim msg As String
-    msg = """" & TypeName(scalar) & """ is not an sequence type."
+    msg = """" & TypeName(scalar) & """ is not an iterable type."
     
     TypeError Me, method, msg
     
@@ -320,44 +320,60 @@ Public Function Take(ByVal n As Long) As List
     Set Take = result
 
 End Function
-Public Function Size() As Long
-
-    Size = Count
-
-End Function
+' FoldLeft, FoldRight, ReduceLeft, ReduceRight
 Public Function IndexWhere(ByVal pred As Applicable) As Maybe
 
-    Set IndexWhere = defLinear.IndexWhere(Me, pred)
+    Dim result As Maybe
+    Set result = Maybe.None
+    
+    Dim i As Long
+    i = Linear_LowerBound
+    
+    Do While result.IsNone And i <= Linear_UpperBound
+        Set result = Maybe.MakeIf(pred.Apply(Item(i)), i)
+        i = i + 1
+    Loop
+    
+    Set IndexWhere = result
 
 End Function
 Public Function IndexOf(ByVal val) As Maybe
 
-    Set IndexOf = defLinear.IndexOf(Me, val)
+    Set IndexOf = IndexWhere(InternalDelegate.Make("Equals").Partial(val, Empty))
     
 End Function
 Public Function LastIndexWhere(ByVal pred As Applicable) As Maybe
 
-    Set LastIndexWhere = defLinear.LastIndexWhere(Me, pred)
+    Dim indexFromBack As Maybe
+    Set indexFromBack = Reverse.IndexWhere(pred)
+    
+    Dim fromFront As Applicable
+    Set fromFront = Lambda.FromShort(Linear_UpperBound + 1 & " - _")
+    
+    Set LastIndexWhere = indexFromBack.Map(fromFront)
     
 End Function
 Public Function LastIndexOf(ByVal val) As Maybe
 
-    Set LastIndexOf = defLinear.LastIndexOf(Me, val)
+    Dim equalsVal As Applicable
+    Set equalsVal = InternalDelegate.Make("Equals").Partial(val, Empty)
+    
+    Set LastIndexOf = LastIndexWhere(equalsVal)
     
 End Function
 Public Function Find(ByVal pred As Applicable) As Maybe
 
-    Set Find = defLinear.Find(Me, pred)
+    Set Find = IndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
     
 End Function
 Public Function FindLast(ByVal pred As Applicable) As Maybe
 
-    Set FindLast = defLinear.FindLast(Me, pred)
+    Set FindLast = LastIndexWhere(pred).Map(OnArgs.Make("Item", VbGet, Me))
 
 End Function
 Public Function CountWhere(ByVal pred As Applicable) As Long
 
-    CountWhere = defLinear.CountWhere(Me, pred)
+    CountWhere = Filter(pred).Count
 
 End Function
 ' Tails() As Iterator[List] whenever Iterator exists
@@ -469,13 +485,13 @@ Attribute Remove.VB_Description = "Removes the element at `index`."
 End Sub
 ''
 ' Revisions from CR
-Public Sub Clear(ByVal start As Long, ByVal Size As Long)
+Public Sub Clear(ByVal start As Long, ByVal size As Long)
 Attribute Clear.VB_Description = "Removes `size` elements at `start`."
     
     TransformIndex start
     
     Dim i As Long
-    For i = 1 To Size
+    For i = 1 To size
         pCollec.Remove start
     Next i
 
@@ -586,7 +602,7 @@ Private Function Linear_UpperBound() As Long
 End Function
 Public Function ToArray() As Variant()
 
-    ToArray = defLinear.ToArray(Me)
+    ToArray = defIterable.ToArray(Me)
 
 End Function
 Private Function Linear_ToArray() As Variant()
@@ -596,7 +612,7 @@ Private Function Linear_ToArray() As Variant()
 End Function
 Public Function ToCollection() As Collection
 
-    Set ToCollection = defLinear.ToCollection(Me)
+    Set ToCollection = defIterable.ToCollection(Me)
 
 End Function
 Private Function Linear_ToCollection() As Collection
@@ -606,7 +622,7 @@ Private Function Linear_ToCollection() As Collection
 End Function
 Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
-    Set ToBuildable = defLinear.ToBuildable(seed, Me)
+    Set ToBuildable = defIterable.ToBuildable(seed, Me)
 
 End Function
 Private Function Linear_ToBuildable(ByVal seed As Buildable) As Buildable

@@ -149,16 +149,16 @@ Private Function ShowSquareArrayMembers(ByRef xs As Variant) As String
     Dim upper As Long
     upper = UBound(txs)
     
-    Dim Size As Long
-    Size = upper - lower + 1
+    Dim size As Long
+    size = upper - lower + 1
     
     Dim results() As String
     If lower <= upper Then
-        ReDim results(1 To Size)
+        ReDim results(1 To size)
     End If
     
     Dim i As Long
-    For i = 1 To Size
+    For i = 1 To size
         results(i) = ShowArrayMembers(Application.index(txs, i, 0))
     Next
     

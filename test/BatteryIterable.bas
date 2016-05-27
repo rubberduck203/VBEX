@@ -48,7 +48,7 @@ Private Sub ItemInRange(ByVal itbl As Linear)
     upper = itbl.UpperBound
  
     Dim msg As String
-    msg = "???"
+    msg = "ItemInRange"
 
     Dim x
     On Error GoTo Fail
@@ -70,7 +70,7 @@ Private Sub ItemLTLower(ByVal itbl As Linear)
     lower = itbl.LowerBound
 
     Dim msg As String
-    msg = "???"
+    msg = "ItemLTLower"
 
     Dim x
     On Error GoTo Pass
@@ -91,7 +91,7 @@ Private Sub ItemGTUpper(ByVal itbl As Linear)
     upper = itbl.UpperBound
     
     Dim msg As String
-    msg = "???"
+    msg = "ItemGTUpper"
 
     Dim x
     On Error GoTo Pass

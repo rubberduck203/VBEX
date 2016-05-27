@@ -103,13 +103,13 @@ Public Function Implode(ByRef arr) As Tuple
     Dim a()
     a = cast.CArray(arr)
     
-    Dim Size As Long
-    Size = ArraySize(a)
+    Dim size As Long
+    size = ArraySize(a)
     
-    If Not ((IsEmpty(arr)) Or (Size = -1)) Then
+    If Not ((IsEmpty(arr)) Or (size = -1)) Then
         
         Dim newArray()
-        ReDim newArray(0 To Size)
+        ReDim newArray(0 To size)
         
         CopyArray newArray, a
         result.Contain newArray

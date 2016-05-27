@@ -9,7 +9,7 @@ Option Explicit
 ' by using these functions with their predeclared object as `seed`.
 '
 ' It may be more prudent to split these into the various default files like
-' defsequence, defTransversable etc...
+' defIterable, defTransversable etc...
 '
 ' TODO: Should these belong in Buildable?
 Private Const MAP_ADD As String = "AddItem"
@@ -60,17 +60,17 @@ Private Function GenericTransversableMap(ByVal buildMethod As String, _
     
 End Function
 '
-' sequence
+' Iterable
 ' --------
 '
-' Use for any sequence classes that are not transversable.
+' Use for any iterable classes that are not transversable.
 ' Result must still be buildable.
 '
 Public Function IterableMap(ByVal seed As Buildable, ByVal op As Applicable, _
-        ByVal sequence As Linear) As Buildable
+        ByVal iterable As Linear) As Buildable
     
     On Error GoTo Bubble
-    Set IterableMap = GenericIterableMap(MAP_ADD, seed, op, sequence)
+    Set IterableMap = GenericIterableMap(MAP_ADD, seed, op, iterable)
     
 Exit Function
 Bubble:
@@ -78,10 +78,10 @@ Bubble:
     
 End Function
 Public Function IterableBind(ByVal seed As Buildable, ByVal op As Applicable, _
-        ByVal sequence As Linear) As Buildable
+        ByVal iterable As Linear) As Buildable
     
     On Error GoTo Bubble
-    Set IterableBind = GenericIterableMap(BIND_ADD, seed, op, sequence)
+    Set IterableBind = GenericIterableMap(BIND_ADD, seed, op, iterable)
     
 Exit Function
 Bubble:
@@ -90,14 +90,14 @@ Bubble:
 End Function
 Private Function GenericIterableMap(ByVal buildMethod As String, _
         ByVal seed As Buildable, ByVal op As Applicable, _
-        ByVal sequence As Linear) As Buildable
+        ByVal iterable As Linear) As Buildable
     
     Dim result As Buildable
     Set result = seed.MakeEmpty
     
     Dim i As Long
-    For i = sequence.LowerBound To sequence.UpperBound
-         CallByName result, buildMethod, VbMethod, op.Apply(sequence.Item(i))
+    For i = iterable.LowerBound To iterable.UpperBound
+         CallByName result, buildMethod, VbMethod, op.Apply(iterable.Item(i))
     Next
     
     Set GenericIterableMap = result

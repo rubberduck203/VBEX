@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 Option Explicit
 '
 ' Linear
-' =========
+' ======
 '
 ' Has Indexed _read_ access
 '
@@ -24,9 +24,6 @@ End Function
 Public Function UpperBound() As Long
 
 End Function
-'Public Function Size() As Long
-'
-'End Function
 Public Function ToArray() As Variant()
 
 End Function
@@ -36,24 +33,3 @@ End Function
 Public Function ToBuildable(ByVal seed As Buildable) As Buildable
 
 End Function
-'Public Function IndexWhere(ByVal pred As Applicable) As Maybe
-'
-'End Function
-'Public Function IndexOf(ByVal val As Variant) As Maybe
-'
-'End Function
-'Public Function LastIndexWhere(ByVal pred As Applicable) As Maybe
-'
-'End Function
-'Public Function LastIndexOf(ByVal val As Variant) As Maybe
-'
-'End Function
-'Public Function Find(ByVal pred As Applicable) As Maybe
-'
-'End Function
-'Public Function FindLast(ByVal pred As Applicable) As Maybe
-'
-'End Function
-'Public Function CountyWhere(ByVal pred As Applicable) As Long
-'
-'End Function

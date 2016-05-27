@@ -13,11 +13,11 @@ Option Explicit
 ' ==========
 '
 Public Function MakeEmpty() As Buildable
-
+    Exceptions.NotImplementedError Me, "MakeEmpty"
 End Function
 Public Sub AddItem(ByVal x)
-
+    Exceptions.NotImplementedError Me, "AddItem"
 End Sub
 Public Sub AddItems(ByVal x)
-
+    Exceptions.NotImplementedError Me, "AddItems"
 End Sub
