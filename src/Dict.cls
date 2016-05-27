@@ -25,8 +25,7 @@ Implements Showable
 ' --------------
 ' None
 '
-' Private Members
-' ---------------
+' Should implement more Interfaces but this is the only mapping type yet.
 '
 Private pDict As Scripting.Dictionary
 '
@@ -71,16 +70,16 @@ Public Function FromAssocs(ByVal assocs) As Dict
     Set FromAssocs = result
     
 End Function
-Public Function MapKeySet(ByVal keySet As SetLike, ByVal op As Applicable) As Dict
+Public Function FromKeys(ByVal keySet as ISetLike, ByVal op As IApplicable) As Dict
 
     Dim result As New Dict
-    Dim k
-    For Each k In keySet.Elements
-        result.Add k, op.Apply(k)
-    Next
     
-    Set MapKeySet = result
+    Dim key As Variant
+    For Each key In keySet.Elements
+        result.Add key, op.Apply(key)
+    Next
 
+    Set FromKeys = result
 End Function
 Public Function Copy(ByVal thatD As Dict) As Dict
 
@@ -144,6 +143,16 @@ Public Function Pair(ByVal k) As Assoc
     
 End Function
 '
+<<<<<<< HEAD
+' ### Produce Dicts
+'
+Public Function MapValues(ByVal op As IApplicable) As Dict
+
+    Dim result As New Dict
+    Dim key As Variant
+    For Each key In pDict.keys
+        result.Add key, op.Apply(pDict(key))
+=======
 ' Produce Dicts
 ' -------------
 '
@@ -153,12 +162,16 @@ Public Function MapValues(ByVal op As Applicable) As Dict
     Dim k
     For Each k In pDict.Keys
         result.Add k, op.Apply(pDict.Item(k))
+>>>>>>> 657e6ad39542e8f79bc640baf67c60ca2cd876a7
     Next
 
     Set MapValues = result
 
 End Function
 '
+<<<<<<< HEAD
+' ### Produce Lists
+=======
 ' FilterKeys
 ' FilterValues
 ' FilterNotKeys
@@ -168,6 +181,7 @@ End Function
 '
 ' Produce Lists
 ' -------------
+>>>>>>> 657e6ad39542e8f79bc640baf67c60ca2cd876a7
 '
 Public Function Keys() As List
 
